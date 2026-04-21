@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vexify — VEX Robotics Tutoring</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import {
+    getFirestore, collection, addDoc, onSnapshot, query, orderBy,
+    doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
+  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
+    authDomain:        "vexify-cf750.firebaseapp.com",
+    projectId:         "vexify-cf750",
+    storageBucket:     "vexify-cf750.firebasestorage.app",
+    messagingSenderId: "285678258097",
+    appId:             "1:285678258097:web:bff1fd9229ebe134cb5f90"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  let activeListener = null;
+
+  window._firebase = {
+
+    // ── USERS ──────────────────────────────────────────────────────────────
+    async getUser(email) {
+      const snap = await getDoc(doc(db, 'users', email));
+      return snap.exists() ? snap.data() : null;
+    },
+    async createUser(userData) {
+      await setDoc(doc(db, 'users', userData.email), userData);
+    },
+    async updateUser(email, fields) {
+      await updateDoc(doc(db, 'users', email), fields);
+    },
+    async getAllUsers() {
+      const snap = await getDocs(collection(db, 'users'));
+      const out = {};
+      snap.forEach(d => { out[d.id] = d.data(); });
+      return out;
+    },
+
+    // ── CLASSES ────────────────────────────────────────────────────────────
+    async saveClass(classId, classData) {
+      await setDoc(doc(db, 'classes', classId), classData);
+    },
+    async deleteClass(classId) {
+      await deleteDoc(doc(db, 'classes', classId));
+    },
+    async getAllClasses() {
+      const snap = await getDocs(collection(db, 'classes'));
+      const out = {};
+      snap.forEach(d => { out[d.id] = d.data(); });
+      return out;
+    },
+
+    // ── LESSONS ────────────────────────────────────────────────────────────
+    async saveLesson(lessonKey, lessonData) {
+      await setDoc(doc(db, 'lessons', lessonKey), lessonData);
+    },
+    async deleteLesson(lessonKey) {
+      await deleteDoc(doc(db, 'lessons', lessonKey));
+    },
+    async getAllLessons() {
+      const snap = await getDocs(collection(db, 'lessons'));
+      const out = {};
+      snap.forEach(d => { out[d.id] = d.data(); });
+      return out;
+    },
+
+    // ── COMPLETED LESSONS ──────────────────────────────────────────────────
+    async markLessonComplete(key) {
+      await setDoc(doc(db, 'completedLessons', key), { done: true });
+    },
+    async getAllCompleted() {
+      const snap = await getDocs(collection(db, 'completedLessons'));
+      const out = {};
+      snap.forEach(d => { out[d.id] = true; });
+      return out;
+    },
+
+    // ── TICKETS ────────────────────────────────────────────────────────────
+    async addTicket(ticket) {
+      const ref = await addDoc(collection(db, 'tickets'), ticket);
+      return ref.id;
+    },
+    async resolveTicket(ticketId) {
+      await updateDoc(doc(db, 'tickets', ticketId), { status: 'resolved' });
+    },
+    async getAllTickets() {
+      const snap = await getDocs(collection(db, 'tickets'));
+      return snap.docs.map(d => ({ _id: d.id, ...d.data() }));
+    },
+
+    // ── MESSAGES ───────────────────────────────────────────────────────────
+    async sendMessage(classId, user, text) {
+      await addDoc(collection(db, 'messages', classId, 'msgs'), {
+        email: user.email, name: user.name, text,
+        edited: false, timestamp: serverTimestamp()
+      });
+    },
+    listenMessages(classId, cb) {
+      if (activeListener) { activeListener(); activeListener = null; }
+      const q = query(collection(db, 'messages', classId, 'msgs'), orderBy('timestamp', 'asc'));
+      activeListener = onSnapshot(q, snap => {
+        cb(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      });
+    },
+    stopListening() {
+      if (activeListener) { activeListener(); activeListener = null; }
+    },
+    async editMessage(classId, msgId, newText) {
+      await updateDoc(doc(db, 'messages', classId, 'msgs', msgId), { text: newText, edited: true });
+    },
+    async deleteMessage(classId, msgId) {
+      await deleteDoc(doc(db, 'messages', classId, 'msgs', msgId));
+    }
+  };
+
+  // Seed demo accounts if they don't exist yet
+  const teacher = await window._firebase.getUser('teacher@demo.com');
+  if (!teacher) {
+    await window._firebase.createUser({name:'Ms. Rivera',email:'teacher@demo.com',password:'demo',role:'teacher',coins:0,inventory:[]});
+  }
+  const student = await window._firebase.getUser('student@demo.com');
+  if (!student) {
+    await window._firebase.createUser({name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]});
+  }
+
+  // Signal to the main script that Firebase is ready
+  window._firebaseReady = true;
+  document.dispatchEvent(new Event('firebase-ready'));
+</script>
+<style>
+:root{
+  --bg:#f4f5fb;--bg2:#eef0f8;--white:#fff;--navy:#1a1d3b;
+  --indigo:#4f46e5;--indigo-light:#ede9fe;--indigo-mid:#6d63f0;
+  --text:#1a1d3b;--muted:#6b7280;--muted2:#9ca3af;
+  --border:#e5e7eb;--border2:#d1d5db;
+  --green:#10b981;--green-light:#d1fae5;
+  --orange:#f59e0b;--orange-light:#fef3c7;
+  --red:#ef4444;--red-light:#fee2e2;
+  --blue:#3b82f6;--blue-light:#dbeafe;
+  --gold:#f59e0b;--gold-light:#fef3c7;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:0 10px 40px rgba(0,0,0,.12);
+  --r:12px;--rl:16px;--rxl:24px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;min-height:100vh;-webkit-font-smoothing:antialiased;}
+button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none;}
+input,textarea,select{font-family:'Inter',sans-serif;outline:none;}
+.hidden{display:none!important;}
+::-webkit-scrollbar{width:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px;}
+
+/* NAV */
+#nav{display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:60px;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.logo-text{font-size:17px;font-weight:700;color:var(--navy);}
+#nav-right{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--indigo-light);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.nav-coins{display:flex;align-items:center;gap:5px;background:var(--gold-light);border:1px solid rgba(245,158,11,.25);border-radius:50px;padding:4px 12px;font-size:13px;font-weight:700;color:#92400e;}
+.nav-coins svg{width:16px;height:16px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;font-size:14px;font-weight:600;transition:all .15s;cursor:pointer;}
+.btn-primary{background:var(--indigo);color:#fff;}
+.btn-primary:hover{background:#4338ca;transform:translateY(-1px);box-shadow:0 4px 12px rgba(79,70,229,.3);}
+.btn-dark{background:var(--navy);color:#fff;}
+.btn-dark:hover{background:#2d3160;}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border2);}
+.btn-ghost:hover{border-color:var(--indigo);color:var(--indigo);background:var(--indigo-light);}
+.btn-danger{background:var(--red-light);color:var(--red);}
+.btn-danger:hover{background:#fecaca;}
+.btn-gold{background:var(--gold-light);color:#92400e;border:1px solid rgba(245,158,11,.3);}
+.btn-gold:hover{background:#fde68a;}
+.btn-sm{padding:6px 14px;font-size:13px;border-radius:7px;}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px;}
+.btn-pill{border-radius:50px;}
+.btn-pill-lg{border-radius:50px;padding:13px 28px;font-size:15px;font-weight:700;}
+
+/* PAGES */
+.page{display:none;min-height:calc(100vh - 60px);}
+.page.active{display:block;}
+#page-dashboard.active{display:flex;}
+
+/* ── INFO ── */
+#page-info{background:var(--white);}
+.hero{background:linear-gradient(160deg,#f0f1fa 0%,#ebe9fb 50%,#f5f0ff 100%);padding:80px 2rem 70px;text-align:center;}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(79,70,229,.08);color:var(--indigo);border:1px solid rgba(79,70,229,.15);border-radius:50px;padding:5px 14px;font-size:13px;font-weight:500;margin-bottom:1.5rem;}
+.hero h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:800;color:var(--navy);line-height:1.1;letter-spacing:-1.5px;margin-bottom:.5rem;}
+.hero h1 span{color:var(--indigo);display:block;}
+.hero-sub{font-size:17px;color:var(--muted);max-width:520px;margin:1rem auto 2rem;line-height:1.7;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.stat-item{padding:2.5rem 1rem;text-align:center;border-right:1px solid var(--border);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-size:2rem;font-weight:800;color:var(--indigo);letter-spacing:-1px;}
+.stat-lbl{font-size:13px;color:var(--muted);margin-top:4px;}
+.features-section{padding:5rem 2rem;max-width:1000px;margin:0 auto;}
+.section-tag{font-size:13px;font-weight:600;color:var(--indigo);letter-spacing:.5px;text-transform:uppercase;margin-bottom:.75rem;}
+.section-title{font-size:2rem;font-weight:800;color:var(--navy);letter-spacing:-.5px;margin-bottom:.75rem;}
+.section-sub{color:var(--muted);font-size:16px;line-height:1.6;max-width:480px;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;margin-top:2.5rem;}
+.feat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;box-shadow:var(--shadow);}
+.feat-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1rem;}
+.fi-indigo{background:var(--indigo-light)}.fi-green{background:var(--green-light)}.fi-orange{background:var(--orange-light)}.fi-blue{background:var(--blue-light)}.fi-gold{background:var(--gold-light)}
+.feat-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.cta-section{background:linear-gradient(135deg,var(--indigo) 0%,#7c3aed 100%);padding:4rem 2rem;text-align:center;color:#fff;}
+.cta-section h2{font-size:2rem;font-weight:800;letter-spacing:-.5px;margin-bottom:.75rem;}
+.cta-section p{opacity:.85;font-size:16px;margin-bottom:2rem;}
+
+/* ── AUTH ── */
+#page-auth{display:none;align-items:center;justify-content:center;min-height:calc(100vh - 60px);background:linear-gradient(160deg,#f0f1fa,#ebe9fb,#f5f0ff);}
+#page-auth.active{display:flex;}
+.auth-card{background:var(--white);border-radius:var(--rxl);box-shadow:var(--shadow-lg);width:100%;max-width:440px;padding:2.5rem;margin:1rem;}
+.auth-logo-icon{width:64px;height:64px;background:var(--navy);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-bottom:1rem;}
+.auth-title{font-size:1.6rem;font-weight:800;color:var(--navy);text-align:center;margin-bottom:6px;letter-spacing:-.5px;}
+.auth-sub{color:var(--muted);font-size:14px;text-align:center;margin-bottom:1.75rem;}
+.auth-toggle{display:flex;background:var(--bg);border-radius:10px;padding:4px;gap:4px;margin-bottom:1.5rem;}
+.auth-toggle-btn{flex:1;padding:8px;font-size:14px;font-weight:600;border-radius:8px;background:none;color:var(--muted);transition:all .15s;}
+.auth-toggle-btn.active{background:var(--white);color:var(--navy);box-shadow:var(--shadow);}
+.field{margin-bottom:1.1rem;}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;}
+.input-wrap{position:relative;}
+.input-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--muted2);pointer-events:none;}
+.field input,.field select{width:100%;background:var(--white);border:1.5px solid var(--border2);border-radius:10px;padding:11px 14px 11px 40px;color:var(--text);font-size:14px;transition:border .15s;}
+.field input:focus,.field select:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+.field select{padding-left:14px;}
+.auth-err{color:var(--red);font-size:13px;margin-bottom:1rem;min-height:16px;font-weight:500;}
+.auth-footer{display:flex;justify-content:space-between;align-items:center;margin-top:1.25rem;font-size:13px;color:var(--muted);}
+.auth-footer a{color:var(--indigo);font-weight:600;cursor:pointer;}
+.demo-links{text-align:center;margin-top:1.25rem;font-size:13px;color:var(--muted);}
+.demo-links a{color:var(--indigo);font-weight:600;cursor:pointer;}
+
+/* ── DASHBOARD ── */
+#page-dashboard{display:none;flex-direction:column;}
+#page-dashboard.active{display:flex;}
+.app-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:2px;position:sticky;top:60px;z-index:100;overflow-x:auto;}
+.app-nav-item{display:flex;align-items:center;gap:7px;padding:14px 14px;font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all .15s;}
+.app-nav-item:hover{color:var(--text);}
+.app-nav-item.active{color:var(--indigo);border-bottom-color:var(--indigo);font-weight:600;}
+.app-nav-item svg{width:16px;height:16px;flex-shrink:0;stroke-width:2;}
+.app-nav-item.hidden{display:none!important;}
+.main-content{flex:1;overflow-y:auto;background:var(--bg);}
+.panel{padding:2rem;max-width:980px;margin:0 auto;}
+/* class cards on home panel */
+.class-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem 1.5rem;box-shadow:var(--shadow);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;margin-bottom:.75rem;}
+.class-card:hover{border-color:var(--indigo);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.class-card-av{width:44px;height:44px;border-radius:12px;background:var(--indigo-light);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;flex-shrink:0;}
+.class-card-info{flex:1;}
+.class-card-name{font-size:15px;font-weight:700;color:var(--navy);}
+.class-card-meta{font-size:13px;color:var(--muted);margin-top:3px;}
+.class-card-arrow{color:var(--muted2);font-size:18px;}
+.panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap;}
+.panel-title{font-size:1.4rem;font-weight:800;color:var(--navy);letter-spacing:-.3px;}
+.panel-sub{font-size:14px;color:var(--muted);margin-top:4px;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;box-shadow:var(--shadow);}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;box-shadow:var(--shadow);}
+.stat-val{font-size:2rem;font-weight:800;letter-spacing:-1px;margin-bottom:4px;}
+.stat-lbl2{font-size:13px;color:var(--muted);font-weight:500;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:12px;font-weight:600;padding:3px 10px;border-radius:50px;}
+.badge-indigo{background:var(--indigo-light);color:var(--indigo);}
+.badge-green{background:var(--green-light);color:var(--green);}
+.badge-orange{background:var(--orange-light);color:#d97706;}
+.badge-red{background:var(--red-light);color:var(--red);}
+.badge-blue{background:var(--blue-light);color:var(--blue);}
+.badge-gray{background:#f3f4f6;color:#374151;}
+.badge-gold{background:var(--gold-light);color:#92400e;}
+
+/* AVATAR */
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+.av-indigo{background:var(--indigo-light);color:var(--indigo);}
+.av-green{background:var(--green-light);color:var(--green);}
+.av-orange{background:var(--orange-light);color:#d97706;}
+.av-blue{background:var(--blue-light);color:var(--blue);}
+
+/* TABS */
+.tab-row{display:flex;gap:4px;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.tab-btn{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted);background:none;transition:all .12s;}
+.tab-btn.active{background:var(--white);color:var(--indigo);box-shadow:var(--shadow);}
+.tab-btn:hover:not(.active){color:var(--text);}
+
+/* FORMS */
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+.form-group label{font-size:13px;font-weight:600;color:var(--text);}
+.form-group input,.form-group select,.form-group textarea{background:var(--white);border:1.5px solid var(--border2);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border .15s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(79,70,229,.1);}
+.form-group textarea{resize:vertical;min-height:80px;line-height:1.5;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,29,59,.5);backdrop-filter:blur(2px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem;}
+.modal-overlay.hidden{display:none!important;}
+.modal{background:var(--white);border-radius:var(--rxl);box-shadow:var(--shadow-lg);width:100%;max-width:480px;padding:2rem;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.modal-title{font-size:1.1rem;font-weight:800;color:var(--navy);}
+.modal-close{background:var(--bg);border-radius:8px;color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:1px solid var(--border);font-weight:700;}
+.modal-close:hover{background:var(--border);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);}
+
+/* CALENDAR */
+.cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;}
+.cal-nav-btn{background:var(--bg);border:1px solid var(--border);color:var(--text);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;font-weight:700;}
+.cal-nav-btn:hover{background:var(--border);}
+.cal-month-label{font-size:16px;font-weight:700;color:var(--navy);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{text-align:center;font-size:11px;font-weight:700;color:var(--muted2);padding:4px 0 8px;letter-spacing:.5px;}
+.cal-cell{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:6px 4px;cursor:pointer;border:1.5px solid transparent;transition:all .12s;background:var(--bg);}
+.cal-cell:hover{border-color:var(--indigo);background:var(--indigo-light);}
+.cal-cell.today{border-color:var(--indigo);}
+.cal-cell.has-lesson{background:rgba(79,70,229,.06);}
+.cal-cell.empty,.cal-cell.other-month{background:transparent;cursor:default;border-color:transparent;opacity:.3;}
+.cal-date{font-size:12px;font-weight:700;color:var(--muted);}
+.cal-cell.today .cal-date{color:var(--indigo);}
+.cal-cell.completed .cal-date{color:var(--green);}
+.cal-cell.completed{background:rgba(16,185,129,.06);border-color:var(--green);}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:var(--indigo);margin-top:3px;}
+.cal-label{font-size:8px;color:var(--indigo);text-align:center;line-height:1.2;margin-top:2px;overflow:hidden;max-width:100%;padding:0 2px;}
+.lesson-detail-card{background:var(--indigo-light);border:1.5px solid rgba(79,70,229,.2);border-radius:var(--rl);padding:1.25rem;margin-top:1rem;}
+.lesson-detail-date{font-size:12px;font-weight:700;color:var(--indigo);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+.lesson-detail-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px;}
+.lesson-detail-body{font-size:14px;color:#4b5563;line-height:1.7;}
+
+/* MESSAGES */
+.msg-area{background:var(--bg);border-radius:var(--r);padding:1rem;min-height:280px;max-height:340px;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px;}
+.msg-row{display:flex;gap:10px;align-items:flex-end;}
+.msg-row.own{flex-direction:row-reverse;}
+.msg-bubble{max-width:68%;background:var(--white);border-radius:14px 14px 14px 4px;padding:10px 14px;box-shadow:var(--shadow);position:relative;}
+.msg-row.own .msg-bubble{background:var(--indigo);border-radius:14px 14px 4px 14px;}
+.msg-row.own .msg-text{color:#fff;}
+.msg-row.own .msg-time{color:rgba(255,255,255,.6);}
+.msg-row.own .msg-author{color:rgba(255,255,255,.8);}
+.msg-author{font-size:11px;font-weight:700;color:var(--indigo);margin-bottom:3px;}
+.msg-text{font-size:14px;line-height:1.5;color:var(--text);}
+.msg-time{font-size:11px;color:var(--muted2);margin-top:4px;}
+.msg-actions{display:none;gap:4px;margin-top:6px;}
+.msg-bubble:hover .msg-actions{display:flex;}
+.msg-input-bar{display:flex;gap:10px;}
+.msg-input{flex:1;background:var(--white);border:1.5px solid var(--border2);border-radius:50px;padding:10px 18px;font-size:14px;color:var(--text);font-family:'Inter',sans-serif;}
+.msg-input:focus{border-color:var(--indigo);outline:none;}
+
+/* TICKETS */
+.ticket-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:10px;box-shadow:var(--shadow);display:flex;gap:14px;}
+.ticket-body{flex:1;}
+.ticket-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.ticket-desc{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:8px;}
+.ticket-meta{font-size:12px;color:var(--muted2);display:flex;gap:12px;flex-wrap:wrap;}
+
+/* MEMBER ROW */
+.member-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.member-row:last-child{border-bottom:none;}
+.member-info{flex:1;}
+.member-name{font-size:14px;font-weight:600;color:var(--navy);}
+.member-email{font-size:12px;color:var(--muted);margin-top:1px;}
+
+/* EMPTY */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4rem 2rem;color:var(--muted);text-align:center;gap:12px;}
+.empty-icon{width:56px;height:56px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:24px;}
+.empty-title{font-size:15px;font-weight:700;color:var(--navy);}
+.empty-desc{font-size:13px;max-width:280px;line-height:1.6;}
+.select-prompt{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;gap:10px;color:var(--muted);text-align:center;}
+
+/* OVERVIEW */
+.overview-class{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+.overview-class:last-child{border-bottom:none;}
+.ov-icon{width:42px;height:42px;border-radius:11px;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:var(--indigo);flex-shrink:0;}
+
+/* PROGRESS */
+.progress-bar-bg{width:100%;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--indigo);border-radius:4px;transition:width .4s;}
+.progress-bar-fill.green{background:var(--green);}
+
+/* SHOP */
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;}
+.shop-item{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;box-shadow:var(--shadow);text-align:center;}
+.shop-item-icon{font-size:36px;margin-bottom:.75rem;display:block;}
+.shop-item-name{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.shop-item-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:1rem;}
+.shop-item-price{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;color:#92400e;background:var(--gold-light);padding:4px 10px;border-radius:50px;margin-bottom:1rem;}
+
+/* CHATBOT REMOVED */
+
+/* LESSONS CURRICULUM */
+.track-tabs{display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.track-tab{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;cursor:pointer;border:1.5px solid var(--border2);background:var(--white);color:var(--muted);transition:all .15s;}
+.track-tab:hover{border-color:var(--indigo);color:var(--indigo);}
+.track-tab.active{background:var(--indigo);color:#fff;border-color:var(--indigo);}
+.track-tab span{font-size:18px;}
+.unit-block{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:1rem;box-shadow:var(--shadow);overflow:hidden;}
+.unit-header{padding:1.1rem 1.5rem;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .12s;}
+.unit-header:hover{background:var(--bg);}
+.unit-num{width:32px;height:32px;border-radius:8px;background:var(--indigo-light);color:var(--indigo);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.unit-title{font-size:15px;font-weight:700;color:var(--navy);flex:1;}
+.unit-progress-text{font-size:12px;color:var(--muted);font-weight:500;white-space:nowrap;}
+.unit-chevron{font-size:14px;color:var(--muted2);transition:transform .2s;}
+.unit-chevron.open{transform:rotate(90deg);}
+.unit-progress-bar{height:4px;background:var(--bg2);margin:0 1.5rem;}
+.unit-progress-fill{height:100%;background:var(--indigo);border-radius:2px;transition:width .4s;}
+.unit-lessons{border-top:1px solid var(--border);}
+.lesson-row{display:flex;align-items:center;gap:14px;padding:1rem 1.5rem;border-bottom:1px solid var(--border);transition:background .12s;}
+.lesson-row:last-child{border-bottom:none;}
+.lesson-row:hover{background:var(--bg);}
+.lesson-check{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;transition:all .2s;}
+.lesson-check.done{background:var(--green);border-color:var(--green);color:#fff;}
+.lesson-info{flex:1;}
+.lesson-title{font-size:14px;font-weight:600;color:var(--navy);}
+.lesson-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-top:3px;}
+.lesson-coins-badge{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#92400e;background:var(--gold-light);padding:4px 10px;border-radius:50px;white-space:nowrap;}
+.lesson-complete-btn{padding:6px 14px;border-radius:50px;font-size:13px;font-weight:600;background:var(--indigo);color:#fff;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.lesson-complete-btn:hover{background:#4338ca;}
+.track-summary{display:flex;align-items:center;gap:16px;background:var(--indigo-light);border:1px solid rgba(79,70,229,.2);border-radius:var(--rl);padding:1.1rem 1.5rem;margin-bottom:1.5rem;}
+.track-summary-stat{text-align:center;}
+.track-summary-val{font-size:1.4rem;font-weight:800;color:var(--indigo);}
+.track-summary-lbl{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.lesson-expand-chevron{font-size:18px;color:var(--muted2);margin-left:10px;transition:transform .2s;display:inline-block;}
+.lesson-expand-chevron.open{transform:rotate(90deg);}
+.lesson-row-wrap{border-bottom:1px solid var(--border);}
+.lesson-row-wrap:last-child{border-bottom:none;}
+.lesson-row{cursor:pointer;}
+.lesson-content-panel{padding:1.5rem 1.5rem 1.25rem 4.5rem;background:var(--bg);border-top:1px solid var(--border);}
+.lc-intro{font-size:14px;color:#374151;line-height:1.75;margin-bottom:1.25rem;}
+.lc-section{margin-bottom:1.25rem;}
+.lc-section-title{font-size:12px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.6rem;}
+.lc-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;}
+.lc-list li{font-size:13px;color:#374151;line-height:1.6;padding-left:1.25rem;position:relative;}
+.lc-list li::before{content:"→";position:absolute;left:0;color:var(--indigo);font-weight:700;}
+.lc-code{background:#1e1e2e;border-radius:10px;margin-bottom:1.25rem;overflow:hidden;}
+.lc-code-title{font-size:11px;font-weight:700;color:#a0a0b8;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.08);text-transform:uppercase;letter-spacing:.5px;}
+.lc-code pre{margin:0;padding:14px;font-size:12px;line-height:1.7;color:#cdd6f4;font-family:monospace;overflow-x:auto;white-space:pre;}
+.lc-tip{background:var(--gold-light);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:.875rem 1rem;font-size:13px;color:#78350f;line-height:1.6;margin-bottom:.5rem;}
+.lc-done-banner{margin-top:1rem;padding:.75rem 1rem;background:var(--green-light);border-radius:10px;font-size:13px;font-weight:600;color:var(--green);}
+.inline-edit-input{background:var(--bg);border:1.5px solid var(--indigo);border-radius:7px;padding:5px 10px;font-size:14px;font-weight:600;color:var(--navy);width:100%;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo" onclick="goHome()">
+    <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="36" height="36" rx="10" fill="#1a1d3b"/>
+      <path d="M8 12L14 24L18 16L22 24L28 12" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="18" cy="8" r="3" fill="#e8ff47"/>
+      <path d="M12 28h12" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <span class="logo-text">Vexify</span>
+  </div>
+  <div id="nav-right">
+    <div id="nav-user" class="hidden" style="display:flex;align-items:center;gap:12px">
+      <div class="nav-coins hidden" id="nav-coins">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span id="nav-coins-val">0</span> VCoins
+      </div>
+      <div style="text-align:right;line-height:1.3">
+        <div style="font-size:14px;font-weight:600;color:var(--navy)" id="nav-name"></div>
+        <div style="font-size:12px;color:var(--muted)" id="nav-role-label"></div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="signOut()" title="Sign out" style="padding:7px 10px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+    <button class="btn btn-primary btn-pill btn-sm" id="nav-signin-btn" onclick="showPage('auth')">Sign In →</button>
+  </div>
+</nav>
+
+<!-- INFO -->
+<div id="page-info" class="page active">
+  <div class="hero">
+    <div class="hero-pill">⚡ The future of VEX robotics education</div>
+    <h1>Learn VEX Robotics<span>from the best tutors</span></h1>
+    <p class="hero-sub">Join classes, follow structured lesson plans, earn VCoins, and get expert help — all in one platform.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-pill-lg" onclick="showPage('auth')">Get Started →</button>
+      <button class="btn btn-ghost btn-pill-lg" onclick="document.querySelector('.stats-bar').scrollIntoView({behavior:'smooth'})">Learn More</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">500+</div><div class="stat-lbl">Active Students</div></div>
+    <div class="stat-item"><div class="stat-num">50+</div><div class="stat-lbl">Expert Tutors</div></div>
+    <div class="stat-item"><div class="stat-num">1,200+</div><div class="stat-lbl">Lessons Taught</div></div>
+    <div class="stat-item"><div class="stat-num">98%</div><div class="stat-lbl">Satisfaction</div></div>
+  </div>
+  <div class="features-section">
+    <div class="section-tag">Features</div>
+    <h2 class="section-title">Everything you need to succeed</h2>
+    <p class="section-sub">Vexify brings teachers and students together with tools built for VEX Robotics education.</p>
+    <div class="features-grid">
+      <div class="feat-card"><div class="feat-icon fi-indigo">📅</div><div class="feat-title">Class Calendars</div><div class="feat-desc">Schedule lessons by day with topics, goals, and resources for each session.</div></div>
+      <div class="feat-card"><div class="feat-icon fi-blue">💬</div><div class="feat-title">Class Messaging</div><div class="feat-desc">Each class has a dedicated channel. Collaborate and stay in sync.</div></div>
+      <div class="feat-card"><div class="feat-icon fi-orange">🎫</div><div class="feat-title">Help Tickets</div><div class="feat-desc">Students submit tickets for issues. Teachers track and resolve them fast.</div></div>
+      <div class="feat-card"><div class="feat-icon fi-gold">🪙</div><div class="feat-title">VCoins & Shop</div><div class="feat-desc">Earn coins by completing lessons. Spend them in the shop on prizes and rewards.</div></div>
+    </div>
+  </div>
+  <div class="cta-section">
+    <h2>Ready to start building?</h2>
+    <p>Join hundreds of students already learning VEX Robotics on Vexify.</p>
+    <button class="btn btn-pill-lg" style="background:#fff;color:var(--indigo);font-weight:800" onclick="showPage('auth')">Create Free Account →</button>
+  </div>
+</div>
+
+<!-- AUTH -->
+<div id="page-auth" class="page">
+  <div class="auth-card">
+    <div style="text-align:center;margin-bottom:1.5rem">
+      <div class="auth-logo-icon">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><path d="M6 10L12 22L18 14L24 22L30 10" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="18" cy="6" r="3" fill="#e8ff47"/><path d="M10 28h16" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="auth-title" id="auth-heading">Welcome to Vexify</div>
+      <div class="auth-sub" id="auth-subhead">Sign in to continue</div>
+    </div>
+    <div class="auth-toggle">
+      <button class="auth-toggle-btn active" id="tab-login" onclick="authSwitch('login')">Sign In</button>
+      <button class="auth-toggle-btn" id="tab-register" onclick="authSwitch('register')">Register</button>
+    </div>
+    <div id="form-login">
+      <div class="field"><label>Email</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="login-email" placeholder="you@example.com"></div></div>
+      <div class="field"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div></div>
+      <div class="auth-err" id="login-err"></div>
+      <button class="btn btn-dark btn-pill" style="width:100%;padding:13px;font-size:15px;justify-content:center" onclick="doLogin()">Sign in</button>
+      <div class="auth-footer"><a>Forgot password?</a><span>No account? <a onclick="authSwitch('register')">Sign up</a></span></div>
+    </div>
+    <div id="form-register" class="hidden">
+      <div class="field"><label>Full Name</label><div class="input-wrap"><span class="input-icon">👤</span><input type="text" id="reg-name" placeholder="Your full name"></div></div>
+      <div class="field"><label>Email</label><div class="input-wrap"><span class="input-icon">✉</span><input type="email" id="reg-email" placeholder="you@example.com"></div></div>
+      <div class="field"><label>Password</label><div class="input-wrap"><span class="input-icon">🔒</span><input type="password" id="reg-password" placeholder="Min 6 characters"></div></div>
+      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:10px;font-size:14px;color:var(--text);background:#fff"><option value="student">Student</option><option value="teacher">Teacher / Coach</option></select></div>
+      <div class="auth-err" id="reg-err"></div>
+      <button class="btn btn-primary btn-pill" style="width:100%;padding:13px;font-size:15px;justify-content:center" onclick="doRegister()">Create Account</button>
+      <div class="auth-footer"><span></span><span>Have account? <a onclick="authSwitch('login')">Sign in</a></span></div>
+    </div>
+    <div class="demo-links">Demo: <a onclick="demoLogin('teacher')">Teacher</a> · <a onclick="demoLogin('student')">Student</a></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <!-- App-level top nav (shown when logged in) -->
+  <nav class="app-nav" id="app-nav">
+    <div class="app-nav-item active" data-panel="home" onclick="showPanel('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
+    </div>
+    <div class="app-nav-item" data-panel="calendar" onclick="showPanel('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Calendar
+    </div>
+    <div class="app-nav-item" data-panel="lessons" onclick="showPanel('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Lessons</div>
+    <div class="app-nav-item" data-panel="messages" onclick="showPanel('messages')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Messages
+    </div>
+    <div class="app-nav-item" data-panel="shop" onclick="showPanel('shop')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Shop
+    </div>
+    <div class="app-nav-item" data-panel="progress" onclick="showPanel('progress')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Progress
+    </div>
+    <div class="app-nav-item" data-panel="tickets" onclick="showPanel('tickets')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets
+    </div>
+    <div class="app-nav-item hidden" data-panel="manage" id="sidebar-manage" onclick="showPanel('manage')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage
+    </div>
+  </nav>
+  <div class="main-content">
+    <!-- HOME -->
+    <div id="panel-home" class="panel">
+      <div class="panel-header">
+        <div><div class="panel-title" id="home-greeting">Welcome back</div><div class="panel-sub" id="home-sub"></div></div>
+        <button class="btn btn-primary btn-sm hidden" id="home-new-class" onclick="openCreateClassModal()">+ New Class</button>
+      </div>
+      <div class="stat-cards" id="home-stats"></div>
+      <div class="card">
+        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:1.1rem">My Classes</div>
+        <div id="home-classes"></div>
+      </div>
+    </div>
+    <!-- LESSONS -->
+    <div id="panel-lessons" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Lessons</div><div class="panel-sub">Structured VEX Robotics curriculum — work through tracks at your own pace</div></div>
+      </div>
+      <div class="track-tabs">
+        <div class="track-tab active" data-track="foundations" onclick="switchTrack('foundations')"><span>🔧</span> Foundations</div>
+        <div class="track-tab" data-track="cad" onclick="switchTrack('cad')"><span>📐</span> Design & CAD</div>
+        <div class="track-tab" data-track="programming" onclick="switchTrack('programming')"><span>💻</span> Programming</div>
+      </div>
+      <div id="track-summary"></div>
+      <div id="track-units"></div>
+    </div>
+    <!-- CALENDAR -->
+    <div id="panel-calendar" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Calendar</div><div class="panel-sub">View and manage class lessons</div></div>
+        <button class="btn btn-primary btn-sm hidden" id="add-lesson-btn" onclick="openLessonModal()">+ Add Lesson</button>
+      </div>
+      <div class="tab-row" id="cal-tabs"></div>
+      <div id="cal-body"><div class="select-prompt"><div class="empty-icon">📅</div><div style="font-size:14px">Select a class above</div></div></div>
+    </div>
+    <!-- MESSAGES -->
+    <div id="panel-messages" class="panel hidden">
+      <div class="panel-header"><div><div class="panel-title">Messages</div><div class="panel-sub">Chat with your class</div></div></div>
+      <div class="tab-row" id="msg-tabs"></div>
+      <div id="msg-body"><div class="select-prompt"><div class="empty-icon">💬</div><div style="font-size:14px">Select a class above</div></div></div>
+    </div>
+    <!-- TICKETS -->
+    <div id="panel-tickets" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Help Tickets</div><div class="panel-sub">Submit and track support requests</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openTicketModal()">+ New Ticket</button>
+      </div>
+      <div id="tickets-body"></div>
+    </div>
+    <!-- PROGRESS -->
+    <div id="panel-progress" class="panel hidden">
+      <div class="panel-header"><div><div class="panel-title">Progress</div><div class="panel-sub">Track lesson completion and performance</div></div></div>
+      <div id="progress-body"></div>
+    </div>
+    <!-- SHOP -->
+    <div id="panel-shop" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">VCoin Shop</div><div class="panel-sub">Spend your earned VCoins on rewards</div></div>
+        <div class="nav-coins" style="display:inline-flex" id="shop-coin-display">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span id="shop-coins-val">0</span> VCoins
+        </div>
+      </div>
+      <div id="shop-body"></div>
+    </div>
+    <!-- MANAGE -->
+    <div id="panel-manage" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Manage Classes</div><div class="panel-sub">Create classes and manage rosters</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>
+      </div>
+      <div id="manage-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHATBOT REMOVED -->
+
+<!-- MODALS -->
+<div class="modal-overlay hidden" id="modal-create-class">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Create New Class</div><button class="modal-close" onclick="closeModal('modal-create-class')">✕</button></div>
+    <div class="form-group"><label>Class Name</label><input type="text" id="cc-name" placeholder="e.g. VEX IQ Beginners"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Season</label><input type="text" id="cc-season" placeholder="e.g. 2024-25"></div>
+      <div class="form-group"><label>Room / Location</label><input type="text" id="cc-room" placeholder="e.g. Room 204"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-create-class')">Cancel</button><button class="btn btn-primary btn-sm" onclick="createClass()">Create Class</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-rename-class">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Rename Class</div><button class="modal-close" onclick="closeModal('modal-rename-class')">✕</button></div>
+    <div class="form-group"><label>New Class Name</label><input type="text" id="rename-class-input" placeholder="Class name"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-rename-class')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doRenameClass()">Save</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-add-member">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Member to Class</div><button class="modal-close" onclick="closeModal('modal-add-member')">✕</button></div>
+    <div class="form-group"><label>Email address</label><input type="email" id="as-email" placeholder="member@email.com"></div>
+    <div style="color:var(--red);font-size:13px;font-weight:500;min-height:18px;margin-bottom:8px" id="as-err"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-member')">Cancel</button><button class="btn btn-primary btn-sm" onclick="addMember()">Add Member</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-lesson">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="lesson-modal-title">Add Lesson</div><button class="modal-close" onclick="closeModal('modal-lesson')">✕</button></div>
+    <div class="form-group"><label>Date</label><input type="date" id="lesson-date"></div>
+    <div class="form-group"><label>Topic / Title</label><input type="text" id="lesson-title" placeholder="e.g. Introduction to Sensors"></div>
+    <div class="form-group"><label>Description</label><textarea id="lesson-desc" placeholder="What will be covered?"></textarea></div>
+    <div class="form-group"><label>VCoin Reward</label><input type="number" id="lesson-coins" min="0" max="100" value="10" placeholder="Coins awarded on completion"></div>
+    <div style="color:var(--red);font-size:13px;font-weight:500;min-height:18px;margin-bottom:8px" id="lesson-err"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-lesson')">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveLesson()">Save Lesson</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-ticket">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">New Help Ticket</div><button class="modal-close" onclick="closeModal('modal-ticket')">✕</button></div>
+    <div class="form-group"><label>Class</label><select id="ticket-class" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
+    <div class="form-group"><label>Subject</label><input type="text" id="ticket-title" placeholder="Brief description"></div>
+    <div class="form-group"><label>Priority</label><select id="ticket-priority" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+    <div class="form-group"><label>Details</label><textarea id="ticket-desc" placeholder="Describe your problem..."></textarea></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-ticket')">Cancel</button><button class="btn btn-primary btn-sm" onclick="submitTicket()">Submit Ticket</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-give-coins">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Give VCoins</div><button class="modal-close" onclick="closeModal('modal-give-coins')">✕</button></div>
+    <div class="form-group"><label>Student</label><select id="gc-student" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
+    <div class="form-group"><label>Amount of VCoins</label><input type="number" id="gc-amount" min="1" max="999" value="10" placeholder="How many coins?"></div>
+    <div class="form-group"><label>Reason (optional)</label><input type="text" id="gc-reason" placeholder="e.g. Great work today!"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-give-coins')">Cancel</button><button class="btn btn-gold btn-sm" onclick="doGiveCoins()">🪙 Give Coins</button></div>
+  </div>
+</div>
+<div class="modal-overlay hidden" id="modal-edit-msg">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Edit Message</div><button class="modal-close" onclick="closeModal('modal-edit-msg')">✕</button></div>
+    <div class="form-group"><label>Message</label><textarea id="edit-msg-input" style="min-height:80px"></textarea></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-edit-msg')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doEditMsg()">Save</button></div>
+  </div>
+</div>
+
+<script>
+// ═══════ STATE ═══════
+let DB={users:{},classes:{},messages:{},tickets:[],lessons:{},completedLessons:{},purchases:{}};
+let currentUser=null,calClassId=null,msgClassId=null;
+let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
+let editingLessonKey=null,addMemberClassId=null,renamingClassId=null;
+let editMsgClassId=null,editMsgIdx=null,giveCoinClassId=null;
+
+const SHOP_ITEMS=[
+  {id:'badge_gold',name:'Gold Badge',icon:'🥇',desc:'Display a gold badge on your profile',price:50},
+  {id:'badge_robot',name:'Robot Master Badge',icon:'🤖',desc:'Show off your robotics expertise',price:75},
+  {id:'sticker_vex',name:'VEX Sticker Pack',icon:'🎨',desc:'Unlock exclusive VEX digital stickers',price:30},
+  {id:'title_champ',name:'"Champion" Title',icon:'🏆',desc:'Add Champion to your display name',price:100},
+  {id:'theme_dark',name:'Dark Theme Profile',icon:'🌙',desc:'Unlock a dark theme for your profile card',price:40},
+  {id:'extra_tries',name:'Bonus Lesson Attempt',icon:'🔄',desc:'Get an extra attempt on any lesson',price:25},
+];
+
+// ═══════ CURRICULUM ═══════
+// Helper to build lesson content HTML
+function _lc(intro, concepts, tip, code=null){
+  return `<p class="lc-intro">${intro}</p>
+    <div class="lc-section"><div class="lc-section-title">📌 Key Concepts</div><ul class="lc-list">${concepts.map(c=>`<li>${c}</li>`).join('')}</ul></div>
+    ${code?`<div class="lc-code"><div class="lc-code-title">Code Example</div><pre>${code}</pre></div>`:''}
+    <div class="lc-tip">💡 <strong>Pro Tip:</strong> ${tip}</div>`;
+}
+
+const CURRICULUM={
+  foundations:{label:'Foundations',icon:'🔧',units:[
+    {id:'f1',title:'VEX Parts & Hardware',lessons:[
+      {id:'f1l1',title:'Introduction to VEX Robotics',desc:'Competition formats, the V5 system, and how a VRC season works.',coins:10,content:_lc('VEX Robotics Competition (VRC) is one of the largest robotics programs in the world, with over 20,000 teams competing annually. The V5 system is the primary platform for high school teams, while VEX IQ is designed for middle school. Every year in late April, a new game is revealed — teams spend the full season designing, building, and competing with a robot built for that game.',['VRC uses the V5 system (high school). VEX IQ uses a simpler snap-together system (middle school).','A new game is revealed every April and played through the following April at World Championship.','Competitions: scrimmage → qualifier → state/regional → World Championship.','Each match is 2 min: 15 sec autonomous, then 1:45 of driver control.','Robots are inspected before every event — must meet 18"×18"×18" size, weight, and rules requirements.'],'Watch the game reveal video the day it drops. Understanding the game deeply is half the battle — teams that win usually master the strategy before they master their robot.')},
+      {id:'f1l2',title:'Structural Parts',desc:'C-channels, beams, plates, standoffs, and the 0.5" hole grid system.',coins:10,content:_lc('VEX V5 uses aluminum structural parts with holes spaced exactly 0.5 inches apart. This consistent spacing means almost everything lines up perfectly — a massive advantage when iterating quickly. The five parts you\'ll use most are C-channels, beams, plates, angles, and standoffs.',['C-channels are the backbone of most robots — strong in bending and torsion. The most-used structural part in VRC.','Beams are flat bars great for spanning gaps or connecting C-channels.','Plates are large flat sheets — ideal for mounting electronics or building walls.','Standoffs are threaded cylinders that create exact spacing between layers of metal.','All holes are spaced 0.5" apart — this grid system makes alignment predictable and planning straightforward.'],'Always plan hole alignment on paper or in CAD before building. Misaligned holes cost time and create weak connections that fail at competition.')},
+      {id:'f1l3',title:'Motors & the V5 Brain',desc:'Smart ports, V5 motors, the brain, and how power flows through your robot.',coins:15,content:_lc('The VEX V5 system is built around the V5 Brain — a powerful computer with 11 smart ports connecting motors, sensors, and devices using one cable type. V5 motors are "smart" — they have built-in encoders tracking position, velocity, and torque without separate hardware.',['The V5 Brain has 11 smart ports — all motors and sensors share the same port and cable type.','V5 motors include built-in encoders measuring rotation in degrees — no separate encoder hardware needed.','Motor power is 0–100%. You can also set a torque limit in code to protect mechanisms.','The V5 Battery connects to the brain and powers everything — always fully charge it before competition.','The brain runs two programs: autonomous() for 15 sec, and usercontrol() for driver control.'],'Label all motor ports in both the brain\'s Device screen and your code comments. At competition, when something breaks under pressure, labeled ports save critical time.')},
+      {id:'f1l4',title:'Sensors Overview',desc:'Inertial, rotation, distance, and optical sensors — what each measures and when to use it.',coins:15,content:_lc('Sensors give your robot information about the world. While V5 motors have built-in encoders, additional sensors let your robot perceive its environment — detecting objects, measuring heading, tracking distance, and identifying colors.',['Inertial Sensor: measures heading (direction you\'re facing) and acceleration. Essential for autonomous.','Rotation Sensor: higher-precision position tracking than motor encoders — great for mechanisms and odometry.','Distance Sensor: uses ultrasound to measure object distance. Range: 20mm–2,000mm.','Optical Sensor: detects color (hue/saturation) and proximity — identifies and sorts game objects.','Vision Sensor: a camera that tracks colored objects in its FOV — complex but powerful for targeting.'],'Mount your Inertial Sensor as close to the robot\'s center of gravity as possible, and perfectly level. A tilted or off-center sensor gives noisy heading data that will break your autonomous routines.')},
+      {id:'f1l5',title:'Connectors & Cables',desc:'Smart cables, power cables, and best practices for reliable competition wiring.',coins:10,content:_lc('A robot that breaks mechanically can usually be fixed in the pits. A robot with wiring problems is much harder to diagnose under time pressure. Clean, intentional wiring prevents failures, speeds up repairs, and impresses judges during inspection.',['Smart cables carry both power and data — one cable type fits all V5 smart devices.','Power cables (red/black) only connect battery to brain. Do not confuse them with smart cables.','Route cables away from all moving parts — a cable caught in a gear will disable your robot mid-match.','Use cable anchors or zip ties every 3–4 inches to firmly secure cables to the frame.','Use the shortest cable that reaches comfortably with a small amount of slack — excess length adds weight.'],'Label both ends of every cable with tape and a marker. When you\'re unplugging 6 motors in the pits at 11pm, labeled cables are the difference between a 5-minute fix and a 30-minute disaster.')},
+    ]},
+    {id:'f2',title:'Building Techniques',lessons:[
+      {id:'f2l1',title:'Chassis & Drivetrains',desc:'Tank drive, X-drive, and mecanum — trade-offs, use cases, and how to choose.',coins:15,content:_lc('The drivetrain is the most critical subsystem on your robot. A reliable, fast drivetrain wins more matches than any other single design decision. There are three main types used in VRC, each with distinct trade-offs.',['Tank Drive (4 or 6 wheels): Most reliable, highest torque, easy to program. Used by most competitive robots.','X-Drive (4 omni wheels at 45°): Moves in any direction (holonomic). Faster but lower torque — complex to build.','Mecanum Drive: Also holonomic, can strafe sideways. Complex to build and program; traction on competition tiles is inconsistent.','6-wheel tank with dropped center wheel: Reduces turning resistance significantly — very popular for high-traction environments.','Gear ratio matters as much as drive type — most competitive robots run a 3:5 speed ratio on a tank drive.'],'For your first serious competition robot, build a reliable 4-motor tank drive. Master the fundamentals before experimenting with holonomic drives. A well-tuned tank drive outperforms a wobbly X-drive in almost every real match.')},
+      {id:'f2l2',title:'Gear Ratios & Torque',desc:'How gears trade speed for torque, calculating ratios, and choosing the right gearing.',coins:20,content:_lc('Gears let you trade speed for torque. Understanding ratios is essential for drivetrains, lifts, and any mechanism needing a specific speed or force. Core principle: large gear driving small gear = speed up. Small driving large = torque up.',['Gear ratio = driven gear teeth ÷ driving gear teeth.','Ratio > 1: more torque (slower). Ratio < 1: more speed (less torque).','Example: 12-tooth driving 60-tooth = 5:1 — 5× more torque, 5× slower rotation.','VEX sprockets and chain follow the same principle for transmitting motion over distance.','Motor cartridges have built-in ratios: 100 RPM (torque/red), 200 RPM (standard/green), 600 RPM (speed/blue).'],'Use the VEX Gear Ratio Calculator on the VEX website before building — it calculates final RPM and torque multiplier automatically. Always verify your math before cutting metal.')},
+      {id:'f2l3',title:'Bracing & Structural Stability',desc:'Triangulation, cross-bracing, and building robots that stay rigid under competition stress.',coins:15,content:_lc('Nothing is more frustrating than a robot that worked in practice but shakes apart at competition. Structural stability is the difference between a robot that runs all day and one that needs constant repairs. The golden rule: triangles are the strongest shape.',['Triangles cannot deform without changing side lengths — they are inherently rigid.','Cross-brace long unsupported spans diagonally to eliminate flex and torsional twisting.','Use screw-through-bearing joints rather than standoffs alone for connections that experience repeated stress.','Standoffs are good for static spacing but weak under lateral force — reinforce with angle brackets at stress points.','Test rigidity by grabbing the top of your robot and attempting to twist it. You should feel almost no flex.'],'After every build session, shake your robot firmly in all directions. If anything rattles or flexes — fix it before competition. A loose screw mid-match can cascade into a complete mechanism failure at the worst possible moment.')},
+      {id:'f2l4',title:'Lifts & Mechanisms',desc:'4-bar linkages, DR4B, and linear slides — choosing the right lift for your game.',coins:20,content:_lc('Most VEX games require picking up or scoring objects at height — which means your robot needs a lift. The right choice depends on how high you need to reach, how much weight you\'re lifting, and speed requirements.',['4-bar linkage: Maintains end-effector angle throughout range of motion. Simple, reliable, moderate height.','DR4B (Double Reverse 4-bar): Two stacked 4-bars for very high reach while keeping the attachment level. Complex but powerful.','Linear Slide: Moves straight up and down — smooth but needs careful alignment and tensioning.','Scissor Lift: Compact folded, extends high. Heavy and complex — rarely competitive in modern VRC.','All lifts need counterbalancing — rubber bands or surgical tubing offset mechanism weight and prevent brownouts.'],'Always counterbalance your lift with rubber bands. A properly rubber-banded lift requires far less motor effort, extends motor life, and prevents voltage brownouts that can reset your V5 Brain mid-match.')},
+      {id:'f2l5',title:'Intakes & Game Object Handling',desc:'Roller intakes, flex wheels, and building reliable, consistent game object pickup.',coins:20,content:_lc('Your intake determines how your robot interacts with game objects. An unreliable intake loses matches even when everything else is perfect. The best intakes are fast, consistent, and forgiving of imperfect driver alignment.',['Roller intakes using flex wheels or rubber flaps are most common — fast, consistent, relatively simple.','Flex wheels (a VEX part) deform slightly to grip objects of varying sizes, dramatically improving consistency.','Intake speed matters: too slow misses objects, too fast bounces them out. Tune with real testing.','Passive indexers (bumps or walls in the path) align game objects automatically without sensor-based indexing.','Always test your intake with 10+ game objects in a row — one successful pickup doesn\'t validate a design.'],'Test your intake at multiple battery levels (100%, 75%, 50%). Motor speed drops as battery drains, so an intake that works at full charge may fail late in a match or long tournament day.')},
+    ]},
+  ]},
+  cad:{label:'Design & CAD',icon:'📐',units:[
+    {id:'c1',title:'CAD Fundamentals',lessons:[
+      {id:'c1l1',title:'What is CAD & Why It Matters',desc:'Introduction to computer-aided design and its role in competitive VRC.',coins:10,content:_lc('CAD (Computer-Aided Design) software lets you design your robot digitally before cutting any metal. Teams that CAD before building save enormous time — problems found in software take seconds to fix, while the same problems discovered mid-build cost hours and materials.',['CAD creates precise 3D models of parts and full assemblies that can be measured, checked for fit, and simulated.','VEX provides a free official library of every V5 part in CAD format for Fusion 360, Inventor, and SolidWorks.','CAD lets you verify hole alignment, mechanism range of motion, and part interference before turning a single screw.','Excellence Award judges strongly reward teams that show CAD models and design iterations in their engineering notebooks.','Common CAD tools for VRC: Autodesk Fusion 360 (most popular, free for students), Inventor, SolidWorks.'],'Fusion 360 is free for students and the VEX community uses it most widely. Start here — there are far more tutorials, YouTube videos, and community part libraries for Fusion 360 than any other tool.')},
+      {id:'c1l2',title:'Getting Started with Fusion 360',desc:'Installing Fusion 360, navigating the interface, and loading the VEX parts library.',coins:15,content:_lc('Fusion 360 is a cloud-based CAD tool from Autodesk — free for students. It combines 3D modeling, assemblies, rendering, and simulation in one program. The VEX community has built an extensive parts library containing every V5 component, saving you from modeling parts from scratch.',['Download Fusion 360 free at autodesk.com/education. Use your school email for student license.','The BLRS or TJ2 VEX parts library (on GitHub) has pre-made models of every VEX part — download it first.','Key areas: Browser (left panel), Canvas (3D viewport), Toolbar (top), Timeline (bottom edit history).','Navigation: middle-click + drag to orbit, scroll to zoom, Shift+middle-click to pan.','Fusion saves to Autodesk cloud — accessible from any computer, automatically version-controlled.'],'Join the VRC Discord or r/VEX and search "Fusion 360 parts library" — the community maintains up-to-date downloads. Don\'t start from zero; use what the community has already built.')},
+      {id:'c1l3',title:'Basic Sketching & Constraints',desc:'Creating 2D sketches, applying constraints and dimensions, and extruding to 3D.',coins:15,content:_lc('Everything in Fusion 360 starts with a 2D sketch drawn on a flat plane. You then extrude the sketch into a 3D solid. The key to clean, predictable CAD is applying constraints — rules that lock how sketch elements relate to each other geometrically.',['Sketches are drawn on a flat plane (XY, XZ, or YZ) or any flat face of an existing body.','Constraints: Horizontal, Vertical, Coincident, Parallel, Perpendicular, Equal, Tangent.','Dimensions (shortcut D): define exact sizes for any line, arc, radius, or angle.','Fully constrained sketch = all lines black. Blue lines mean geometry still has undefined degrees of freedom.','Extrude (shortcut E): pushes a closed sketch into a 3D solid. Can also cut through existing bodies.'],'Always fully constrain your sketches before extruding. Under-constrained sketches create hard-to-debug problems when changing dimensions later. Fully constrained = all lines black = completely locked.')},
+      {id:'c1l4',title:'Assemblies & Motion Joints',desc:'Assembling VEX parts, applying joints, and simulating mechanism movement in CAD.',coins:20,content:_lc('An assembly in Fusion 360 is where individual parts come together into a complete robot. You bring in components and use joints to define how they connect and move. For VEX robots this means rigid joints for structures and revolute joints for mechanisms.',['Use "Insert Component" to bring parts into an assembly — insert the same part multiple times (bolts, wheels, etc.).','Rigid joints: hold two parts in a completely fixed relationship — used for all structural connections.','Revolute joints: define a rotating connection — used for arms, wheels, and any pivoting mechanism.','Slider joints: define linear motion — used for linear slides and elevator mechanisms.','As-Built Joint positions parts at their current locations; Joint snaps geometry to precise alignment.'],'Build your assembly section by section — drivetrain first, then lift, then intake. Trying to assemble everything at once is overwhelming. Section-by-section assembly also makes modules reusable across different robot iterations.')},
+      {id:'c1l5',title:'Exporting & Sharing Designs',desc:'Generating drawings, exporting files, and sharing your model with teammates and judges.',coins:15,content:_lc('Your CAD model is only useful if you can communicate it clearly to teammates, mentors, and competition judges. Fusion 360 has several professional tools for sharing and exporting your design work.',['The Drawing workspace creates 2D technical drawings with dimensions from your 3D model.','Export to STEP or F3D format to share with someone using different CAD software.','The "Share Public Link" feature generates a URL to view your model in any browser — no install needed.','BOM (Bill of Materials) lists every component and quantity — useful for ordering parts and verifying your build.','Screenshots and embedded 3D views from CAD are strong additions to an engineering notebook.'],'Use the "Share Public Link" and embed a live 3D view in your engineering notebook. Judges can spin the model and examine every mechanism — it\'s a detail very few teams include and makes a strong impression.')},
+    ]},
+    {id:'c2',title:'Robot Design Process',lessons:[
+      {id:'c2l1',title:'Game Analysis',desc:'Reading the game manual, identifying scoring priorities, and setting design goals.',coins:15,content:_lc('Before touching metal or opening CAD, you need to deeply understand the game. The VRC game manual is the rulebook — every team gets the same one, but teams that read it most carefully find the best strategies. Game analysis is how you decide what robot to build.',['Download the game manual from vex.com the day of the game reveal. Read it cover to cover.','Identify all scoring methods: what objects score, where they score, and exact point values.','Calculate the theoretical maximum score — this defines what a "perfect robot" looks like.','Identify highest-value scoring per time spent — these should be your primary design goals.','Read all robot rules carefully: size/weight limits, legal starting positions, prohibited interactions.'],'After reading the manual, watch top teams from the previous World Championship analyze the new game. Elite teams often figure out optimal strategies within days of the reveal — studying their early robots reveals a great deal about the season\'s meta.')},
+      {id:'c2l2',title:'Brainstorming & Concept Sketches',desc:'Generating robot ideas, rough sketches, and evaluating concepts before committing.',coins:15,content:_lc('Great robots start with bad sketches. Brainstorming is about quantity before quality — generate as many ideas as possible before evaluating any of them. Teams that skip this step tend to build the first idea they had, not the best one.',['Set a 20-minute timer and sketch as many different robot concepts as you can — aim for 10+ distinct concepts.','Do not self-censor during brainstorming — even "bad" ideas can spark unexpectedly good ones.','For each concept, note its biggest advantage and biggest risk or challenge.','After brainstorming, evaluate concepts on: scoring potential, reliability, buildability, programmability.','Narrow to 2–3 strongest concepts, then build quick prototypes of the riskiest mechanisms to validate.'],'Brainstorm individually before discussing as a group. Research shows individual ideation before group discussion produces more diverse, creative ideas — group brainstorming alone tends to let dominant voices narrow thinking too early.')},
+      {id:'c2l3',title:'Prototyping',desc:'Building quick physical prototypes to validate design ideas before committing to metal.',coins:20,content:_lc('A prototype is a quick, rough version of a mechanism built to answer one question: "Will this actually work?" Good prototyping is fast and cheap — use cardboard, zip ties, rubber bands, and scrap VEX metal. The goal is learning whether an idea is worth building fully.',['Build prototypes with cheapest, fastest materials: cardboard, tape, zip ties, scrap metal.','Define one specific question before each prototype: "Can this roller intake pick up the game object reliably?"','Test prototypes with real game objects — objects are often heavier or differently shaped than they appear in reveal videos.','Prototype the riskiest parts of your design first. If the risky part fails, you\'ve saved yourself a complete rebuild.','Photograph every prototype, even failed ones — failures are documented lessons for this season and next.'],'Give yourself a strict time limit — 30–60 minutes maximum per prototype. If you can\'t demonstrate the core concept in that time, either simplify the prototype or reconsider the design. Open-ended prototyping sessions often become premature full builds.')},
+      {id:'c2l4',title:'Iterating on Your Design',desc:'Making systematic, documented design improvements based on testing data.',coins:20,content:_lc('No robot design survives first contact with competition intact. The best teams treat each iteration as an experiment — form a hypothesis ("if we change X, Y will improve"), make the change, test it, and document the result. Systematic iteration is what separates teams that improve steadily from teams that rebuild randomly.',['Iteration means deliberate, documented changes — not random tinkering.','Change one variable at a time. If you change three things and performance improves, you don\'t know which change helped.','After each change, quantify the result: count cycles per minute, measure consistency rate, time your autonomous.','Keep a log of every iteration: what changed, why, and what actually happened. This IS your engineering notebook.','Plan iterations based on competition data — fix what actually failed, not what looked aesthetically unpleasant.'],'Score yourself in practice with a stopwatch. Track cycles per minute, autonomous success rate over 10 attempts, and driver control scores over multiple runs. Data-driven iteration is dramatically more effective than intuition-based iteration.')},
+      {id:'c2l5',title:'Engineering Notebook',desc:'What judges evaluate, how to document your process, and tips for a winning notebook.',coins:25,content:_lc('The engineering notebook is required for VRC awards including Excellence (highest award), Design, and Think. A great notebook tells the story of your team\'s engineering process, demonstrating systematic thinking. Judges spend 2–5 minutes reading — clarity and organization are critical.',['Document every meeting: date, attendees, decisions made, and the reasoning behind them.','Include problem statements, alternatives considered, test results with data, and post-competition reflections.','Use photos liberally — an annotated photo of a mechanism communicates more than a paragraph of text.','Show you considered and rejected alternative designs — this demonstrates real engineering thinking.','Maintain consistent format: dated entries, labeled photos, organized sections throughout the season.'],'Don\'t write your notebook the night before competition. Judges can always tell. The best notebooks are updated at every meeting throughout the entire season. Set up a shared Google Doc and write entries immediately after each session while details are fresh.')},
+    ]},
+  ]},
+  programming:{label:'Programming',icon:'💻',units:[
+    {id:'p1',title:'VEXcode Basics',lessons:[
+      {id:'p1l1',title:'Introduction to VEXcode V5',desc:'Setting up VEXcode, configuring devices, and uploading your first program.',coins:10,content:_lc('VEXcode V5 is the official programming environment for VEX V5 robots, using C++ — a professional language used in games, systems software, and robotics worldwide. VEXcode handles the low-level hardware details so you can focus entirely on your robot\'s behavior.',['Download VEXcode V5 free from vex.com. Available on Windows, Mac, Chromebook, and iPad.','Configure devices: open the Devices screen in VEXcode to assign what\'s plugged into each brain port.','The V5 runs two user functions: autonomous() for the 15-sec period, and usercontrol() for the 1:45 driver period.','The brain\'s home screen shows connection status, battery percentage, program list, and port health.','Upload via USB cable (most reliable) or wirelessly via the controller\'s built-in radio.'],'Name your projects clearly from day one: "DriverControl_v1", "Auton_skills_v3". Use multiple brain program slots. Never overwrite a working program without saving a copy — always keep your last known-good version.')},
+      {id:'p1l2',title:'Variables & Data Types',desc:'Integers, floats, booleans, and using variables to control your robot.',coins:15,content:_lc('Variables are named containers that store data. In VEXcode (C++), every variable has a type defining what kind of data it holds. Choosing the right data type affects precision, memory, and what operations you can perform.',['int: whole numbers. Use for speeds (0–100), port numbers, counters.','double: decimal numbers with high precision. Use for sensor readings, distances, PID values.','bool: only true or false. Use for flags: isIntakeRunning, hasGameObject, autonComplete.','Declare with type and name: int speed = 50;   double heading = 0.0;   bool intakeOn = false;','Use descriptive names always: "leftMotorSpeed" not "x". Code is read more often than it is written.'],'Avoid magic numbers — never write Motor.spin(forward, 75, pct) with a raw 75. Declare: const int DRIVE_SPEED = 75; and use the name. When you need to change it, you change it in exactly one place.',`// Good variable naming and constants
+const int DRIVE_SPEED = 75;
+const int INTAKE_SPEED = 100;
+const double WHEEL_CIRC = 12.57; // inches
+
+int leftSpeed = DRIVE_SPEED;
+double currentHeading = 0.0;
+bool intakeActive = false;`)},
+      {id:'p1l3',title:'Motor Control',desc:'Spinning motors, setting velocities, and using encoders to drive precise distances.',coins:15,content:_lc('Motor control is the foundation of everything your robot does. In VEXcode, motors are objects configured in the Devices screen and controlled using built-in methods. You can spin continuously, for a time, to a position, or stop with different brake behaviors.',['Continuous: LeftMotor.spin(forward, 60, percent); — runs until stop() is called.','Timed: LeftMotor.spinFor(2.0, seconds, 80, percent); — runs for given duration then stops.','Position: LeftMotor.spinToPosition(360, degrees); — rotates to specific encoder count.','Stop modes: brake (holds position), coast (free spin), hold (actively holds with power).','Read encoder: LeftMotor.position(degrees) — resets with LeftMotor.resetPosition();'],'Use spinFor() with async=false on the first motor so both motors start near-simultaneously. Example: Left.spinFor(400,deg,70,pct,false); Right.spinFor(400,deg,70,pct); — the false means "don\'t wait" on left, so right starts immediately.',`// Drive forward then stop
+LeftMotors.spinFor(2.0, seconds, 70, percent, false);
+RightMotors.spinFor(2.0, seconds, 70, percent);
+
+LeftMotors.stop(brake);
+RightMotors.stop(brake);
+
+// Read encoder position
+double pos = LeftMotors.position(degrees);`)},
+      {id:'p1l4',title:'Conditional Logic (if / else)',desc:'Decision-making with if/else — the foundation of adaptive autonomous behavior.',coins:15,content:_lc('Conditional logic lets your robot make decisions. With if/else statements, your program checks a condition and takes different actions based on whether it\'s true or false. This is the core of autonomous behavior — instead of a blind fixed sequence, your robot adapts to what it senses.',['if(condition){} — runs only when condition is true.','else{} — runs only when the preceding if was false.','else if(condition2){} — chains multiple conditions in sequence.','Comparison operators: == != > < >= <=','Logical: && (AND — both true), || (OR — either true), ! (NOT — flips true↔false).'],'Keep conditions readable. Extract complex conditions into a named bool: bool wallNearby=(WallSensor.objectDistance(mm)<150); then write if(wallNearby). Self-documenting code is far easier to debug under competition pressure.',`double dist = WallSensor.objectDistance(mm);
+
+if(dist < 150) {
+  LeftMotors.stop(brake);
+  RightMotors.stop(brake);
+} else if(dist < 400) {
+  LeftMotors.spin(forward, 30, percent);
+  RightMotors.spin(forward, 30, percent);
+} else {
+  LeftMotors.spin(forward, 70, percent);
+  RightMotors.spin(forward, 70, percent);
+}`)},
+      {id:'p1l5',title:'Loops',desc:'Using while and for loops to repeat actions and build control sequences.',coins:15,content:_lc('Loops repeat a block of code multiple times. In robot code, loops are everywhere — your entire driver control period runs inside an infinite while loop, continuously reading controller input and updating motor speeds every 20 milliseconds.',['while(condition){} — repeats as long as condition is true. while(true){} loops forever.','for(int i=0; i<n; i++){} — repeats exactly n times. Use when you know the count.','break; — immediately exits the loop. Used to stop when a target is reached.','continue; — skips the rest of the current iteration, jumps to the next.','Always have an exit condition for non-infinite loops, or your program will freeze.'],'Always add wait(20, msec) at the end of your main control loop. Without it, the loop runs thousands of times per second, overloading the V5 Brain CPU and causing unpredictable behavior. 20ms is the standard loop delay in VRC.',`void usercontrol(void) {
+  while(true) {
+    int leftY  = Controller.Axis3.position();
+    int rightY = Controller.Axis2.position();
+
+    LeftMotors.spin(forward, leftY,  percent);
+    RightMotors.spin(forward, rightY, percent);
+
+    wait(20, msec); // ALWAYS include this
+  }
+}`)},
+    ]},
+    {id:'p2',title:'Driver Control & Autonomous',lessons:[
+      {id:'p2l1',title:'Reading Controller Input',desc:'Joystick axes, button states, and mapping inputs to robot actions.',coins:15,content:_lc('The V5 Controller connects wirelessly to the brain and gives your drivers two joysticks and 12 buttons. You read the controller\'s state every loop iteration and map inputs to motor commands.',['Axes return −100 to +100: Axis3 (left vertical), Axis4 (left horizontal), Axis2 (right vertical), Axis1 (right horizontal).','pressing() — returns true the entire time button is held. Best for continuous actions like running an intake.','pressed() — fires exactly once per button press. Best for toggling something on/off.','Controller.ButtonR1.pressing() — read any button by name.','Read values every loop: int speed = Controller.Axis3.position();'],'Print controller values to the brain screen while testing: Brain.Screen.printAt(1,1,"L:%d R:%d",leftY,rightY); — verify actual values before trusting them to control motors, and catch deadzone/drift issues early.',`void usercontrol(void) {
+  while(true) {
+    int leftY  = Controller.Axis3.position();
+    int rightY = Controller.Axis2.position();
+    bool intakeBtn = Controller.ButtonR1.pressing();
+    bool reverseBtn = Controller.ButtonR2.pressing();
+
+    LeftMotors.spin(forward,  leftY,  percent);
+    RightMotors.spin(forward, rightY, percent);
+
+    if(intakeBtn)       Intake.spin(forward, 100, percent);
+    else if(reverseBtn) Intake.spin(reverse, 100, percent);
+    else                Intake.stop(coast);
+
+    wait(20, msec);
+  }
+}`)},
+      {id:'p2l2',title:'Tank Drive & Arcade Drive',desc:'The two most common drive schemes — how they work and how to code them.',coins:20,content:_lc('Tank drive uses one stick per side. Arcade drive uses one stick for forward/backward plus turning simultaneously. Most experienced drivers prefer arcade; most beginners start on tank. Let your driver try both before committing.',['Tank Drive: left stick → left motors, right stick → right motors. Intuitive but requires two-handed coordination.','Arcade Drive: Y axis = forward/backward, X axis = turning. One stick drives the whole robot.','Arcade formula: leftSpeed = Y + X,   rightSpeed = Y − X','Apply a deadband: ignore inputs smaller than ±5 to prevent drift from imperfect joystick centering.','Scale max speed (e.g. ×0.8) for finer control during precision tasks inside the field.'],'Run 3+ practice sessions with your driver using both styles before committing. Some drivers are dramatically faster with arcade, others with tank. Driver speed and consistency wins more matches than almost any other variable.',`// Arcade Drive with deadband
+void usercontrol(void) {
+  while(true) {
+    int Y = Controller.Axis3.position(); // forward/back
+    int X = Controller.Axis1.position(); // turning
+
+    if(abs(Y) < 5) Y = 0;  // deadband
+    if(abs(X) < 5) X = 0;
+
+    LeftMotors.spin(forward,  Y + X, percent);
+    RightMotors.spin(forward, Y - X, percent);
+
+    wait(20, msec);
+  }
+}`)},
+      {id:'p2l3',title:'Basic Timed Autonomous',desc:'Writing autonomous routines with spinFor() — the fastest way to get started.',coins:20,content:_lc('A timed autonomous uses spinFor() with specific durations to move through a sequence of actions. It\'s the simplest approach — quick to write, easy to understand, and reasonably reliable. A well-tuned timed routine is competitive and the right place to start.',['spinFor(time, seconds, speed, percent) — runs motor for a fixed duration then stops.','Chain multiple spinFor() calls in sequence to create a multi-step routine.','Run paired motors in parallel: use false (async) on first motor so second starts immediately.','Test on the same surface type always — timed routines depend on traction, carpet vs tiles differ.','Start simple: drive forward, score one element, park. Add complexity only after basic version is consistent.'],'Film your autonomous on video and watch frame by frame. Small variations invisible to the eye show clearly on video. Video analysis is the fastest way to identify drift and inconsistency.',`void autonomous(void) {
+  // Drive forward 1.5 seconds
+  LeftMotors.spinFor(1.5, seconds, 80, percent, false);
+  RightMotors.spinFor(1.5, seconds, 80, percent);
+
+  // Run intake 0.5 seconds
+  Intake.spinFor(0.5, seconds, 100, percent);
+
+  // Turn ~90 degrees (tune this value!)
+  LeftMotors.spinFor(0.65, seconds,  60, percent, false);
+  RightMotors.spinFor(0.65, seconds, -60, percent);
+}`)},
+      {id:'p2l4',title:'Sensor-Based Autonomous',desc:'Using encoders and the inertial sensor for accurate, repeatable autonomous routines.',coins:25,content:_lc('Sensor-based autonomous measures exactly how far the robot has traveled and how much it has turned — rather than trusting time. This makes routines dramatically more repeatable. At the competitive level, nearly all winning programs use sensor-based autonomous.',['Encoders: reset with motor.resetPosition() at the start. Read with motor.position(degrees).','Inertial Sensor: calibrate at start with Inertial.calibrate(); wait(2, seconds); — robot must be completely still.','Drive a specific distance: (target_inches / wheel_circumference_inches) × 360 = encoder degrees.','Turn to a heading: spin motors opposite directions, check Inertial.heading() until target is reached.','Test 5–10 times in a row and measure variance — consistency, not best-case, is what wins.'],'Calibrate your inertial sensor while the robot is completely still at the very start of autonomous. Skipping calibration or calibrating while moving gives inaccurate heading data throughout the entire routine.',`void autonomous(void) {
+  Inertial.calibrate();
+  wait(2.0, seconds);
+
+  // Drive 24 inches (4" wheel ~452 encoder degrees)
+  LeftMotors.spinFor(452, degrees, 70, percent, false);
+  RightMotors.spinFor(452, degrees, 70, percent);
+
+  // Turn to 90 degree heading
+  while(Inertial.heading() < 88.0) {
+    LeftMotors.spin(forward,  40, percent);
+    RightMotors.spin(reverse, 40, percent);
+    wait(10, msec);
+  }
+  LeftMotors.stop(brake);
+  RightMotors.stop(brake);
+}`)},
+      {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID (Proportional-Integral-Derivative) control adjusts motor speed in real time based on how far the motor is from its target — instead of running at a fixed speed. It\'s the single biggest step up in autonomous accuracy and is used in nearly every competitive robot.',['P (Proportional): speed = kP × error. Farther from target = faster. Simple but can overshoot.','I (Integral): accumulates past error over time to correct persistent offsets P alone can\'t fix.','D (Derivative): reacts to rate-of-change of error — predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first (increase until oscillates, back off), then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible. A robot tuned on carpet behaves differently on field tiles due to different traction. Always re-tune or verify on competition tiles when you arrive at the event.',`void driveDistance(double targetDeg) {
+  const double kP = 0.5;
+  const double kD = 0.02;
+  double prevError = 0;
+  LeftMotors.resetPosition();
+
+  while(true) {
+    double error = targetDeg - LeftMotors.position(degrees);
+    double deriv = error - prevError;
+    double speed = (kP * error) + (kD * deriv);
+
+    speed = fmax(-100, fmin(100, speed));
+
+    LeftMotors.spin(forward,  speed, percent);
+    RightMotors.spin(forward, speed, percent);
+
+    if(fabs(error) < 3.0) break;
+    prevError = error;
+    wait(20, msec);
+  }
+  LeftMotors.stop(hold);
+  RightMotors.stop(hold);
+}`)},
+    ]},
+  ]},
+};
+
+let activeTrack = 'foundations';
+let openLesson = null;
+const openUnits = {};
+
+function renderLessonsPanel(){ switchTrack(activeTrack); }
+
+function switchTrack(trackId){
+  activeTrack = trackId;
+  openLesson = null;
+  document.querySelectorAll('.track-tab').forEach(t=>t.classList.toggle('active',t.dataset.track===trackId));
+  const track = CURRICULUM[trackId];
+  const allLessons = track.units.flatMap(u=>u.lessons);
+  const doneCount = allLessons.filter(l=>DB.completedLessons['cl_'+l.id]).length;
+  const totalCoins = allLessons.reduce((s,l)=>s+l.coins,0);
+  const earnedCoins = allLessons.filter(l=>DB.completedLessons['cl_'+l.id]).reduce((s,l)=>s+l.coins,0);
+  const pct = Math.round(doneCount/allLessons.length*100);
+  document.getElementById('track-summary').innerHTML=`
+    <div class="track-summary">
+      <div class="track-summary-stat"><div class="track-summary-val">${doneCount}/${allLessons.length}</div><div class="track-summary-lbl">Lessons Done</div></div>
+      <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
+      <div class="track-summary-stat"><div class="track-summary-val">🪙 ${earnedCoins}</div><div class="track-summary-lbl">VCoins Earned</div></div>
+      <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
+      <div class="track-summary-stat"><div class="track-summary-val">${totalCoins-earnedCoins}</div><div class="track-summary-lbl">Still Available</div></div>
+      <div style="flex:1;margin-left:16px">
+        <div style="font-size:12px;font-weight:600;color:var(--indigo);margin-bottom:6px">${pct}% complete</div>
+        <div class="progress-bar-bg" style="height:10px;border-radius:5px"><div class="progress-bar-fill ${doneCount===allLessons.length?'green':''}" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  document.getElementById('track-units').innerHTML=track.units.map((unit,i)=>{
+    const ud=unit.lessons.filter(l=>DB.completedLessons['cl_'+l.id]).length;
+    const up=Math.round(ud/unit.lessons.length*100);
+    const isOpen=openUnits[unit.id]!==false;
+    return`<div class="unit-block">
+      <div class="unit-header" onclick="toggleUnit('${unit.id}')">
+        <div class="unit-num">${i+1}</div>
+        <div class="unit-title">${unit.title}</div>
+        <div class="unit-progress-text">${ud}/${unit.lessons.length} done</div>
+        <span class="badge ${up===100?'badge-green':'badge-indigo'}" style="margin-left:8px">${up}%</span>
+        <span class="unit-chevron ${isOpen?'open':''}">›</span>
+      </div>
+      <div class="unit-progress-bar"><div class="unit-progress-fill" style="width:${up}%"></div></div>
+      <div class="unit-lessons" ${isOpen?'':'style="display:none"'} id="unit-body-${unit.id}">
+        ${unit.lessons.map((lesson,li)=>{
+          const done=!!DB.completedLessons['cl_'+lesson.id];
+          const isStudent=currentUser.role==='student';
+          return`<div class="lesson-row-wrap">
+            <div class="lesson-row" onclick="toggleLesson('${lesson.id}')">
+              <div class="lesson-check ${done?'done':''}">${done?'✓':li+1}</div>
+              <div class="lesson-info"><div class="lesson-title">${lesson.title}</div><div class="lesson-desc">${lesson.desc}</div></div>
+              <div class="lesson-coins-badge">🪙 ${lesson.coins}</div>
+              ${done?`<span class="badge badge-green" style="white-space:nowrap;margin-left:8px">✓ Done</span>`:''}
+              <span class="lesson-expand-chevron" id="lchev-${lesson.id}">›</span>
+            </div>
+            <div class="lesson-content-panel" id="lcontent-${lesson.id}" style="display:none">
+              ${lesson.content}
+              ${isStudent&&!done?`<button class="lesson-complete-btn" onclick="completeCurriculumLesson('${lesson.id}',${lesson.coins},event)">✓ Mark as Complete — Earn 🪙 ${lesson.coins} VCoins</button>`:''}
+              ${done?`<div class="lc-done-banner">✅ You completed this lesson and earned 🪙 ${lesson.coins} VCoins!</div>`:''}
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleUnit(unitId){
+  openUnits[unitId]=openUnits[unitId]===false?true:false;
+  const body=document.getElementById('unit-body-'+unitId);
+  if(body) body.style.display=openUnits[unitId]===false?'none':'';
+  const chev=body?.parentElement?.querySelector('.unit-chevron');
+  if(chev) chev.classList.toggle('open',openUnits[unitId]!==false);
+}
+
+function toggleLesson(lessonId){
+  const panel=document.getElementById('lcontent-'+lessonId);
+  const chev=document.getElementById('lchev-'+lessonId);
+  if(!panel) return;
+  const opening=panel.style.display==='none';
+  if(openLesson&&openLesson!==lessonId){
+    const prev=document.getElementById('lcontent-'+openLesson);
+    const prevC=document.getElementById('lchev-'+openLesson);
+    if(prev) prev.style.display='none';
+    if(prevC) prevC.classList.remove('open');
+  }
+  panel.style.display=opening?'':'none';
+  if(chev) chev.classList.toggle('open',opening);
+  openLesson=opening?lessonId:null;
+  if(opening) setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+async function completeCurriculumLesson(lessonId,coins,event){
+  if(event) event.stopPropagation();
+  const key='cl_'+lessonId;
+  if(DB.completedLessons[key]) return;
+  DB.completedLessons[key]=true;
+  currentUser.coins=(currentUser.coins||0)+coins;
+  DB.users[currentUser.email].coins=currentUser.coins;
+  await window._firebase.markLessonComplete(key);
+  await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins});
+  updateCoinDisplay();
+  showToast(`🪙 +${coins} VCoins earned!`);
+  openLesson=null;
+  switchTrack(activeTrack);
+}
+// DB is still used as an in-memory cache; Firestore is the source of truth.
+async function loadDB(){
+  if(!window._firebase) return;
+  DB.users     = await window._firebase.getAllUsers();
+  DB.classes   = await window._firebase.getAllClasses();
+  DB.lessons   = await window._firebase.getAllLessons();
+  DB.completedLessons = await window._firebase.getAllCompleted();
+  DB.tickets   = await window._firebase.getAllTickets();
+  // ensure fields
+  Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
+  if(!DB.purchases)DB.purchases={};
+}
+// saveDB is now a no-op — all writes go directly to Firestore via _firebase helpers
+function saveDB(){}
+
+// Boot: wait for Firebase module to signal ready, then load data and show app
+async function boot(){
+  await loadDB();
+  showPage('info');
+}
+if(window._firebaseReady){ boot(); }
+else { document.addEventListener('firebase-ready', boot); }
+
+// ═══════ ROUTING ═══════
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  if(p==='dashboard')renderDashboard();
+}
+function goHome(){currentUser?showPage('dashboard'):showPage('info');}
+// ── Class gate: returns true if user has no classes ──────────────────────────
+function noClasses(){ return getMyClasses().length === 0; }
+
+function _noClassHTML(){
+  const isT = currentUser.role === 'teacher';
+  return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center;gap:1rem;">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:32px">🔒</div>
+    <div style="font-size:1.2rem;font-weight:800;color:var(--navy)">You need a class first</div>
+    <div style="font-size:14px;color:var(--muted);max-width:340px;line-height:1.7">${isT
+      ? 'Create a class to unlock Calendar, Messages, Progress, Tickets, and the Shop.'
+      : 'Ask your teacher to add you to a class. Once you\'re enrolled, all features will unlock automatically.'
+    }</div>
+    ${isT ? `<button class="btn btn-primary btn-pill" style="margin-top:.5rem" onclick="openCreateClassModal()">+ Create Your First Class</button>` : ''}
+  </div>`;
+}
+
+function showPanel(p){
+  document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.app-nav-item[data-panel="${p}"]`)?.classList.add('active');
+  document.querySelectorAll('.main-content > .panel').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('panel-'+p).classList.remove('hidden');
+  const renders={calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,progress:renderProgress,shop:renderShop,manage:renderManage,home:renderHome,lessons:renderLessonsPanel};
+  if(renders[p]) renders[p]();
+  // Dim locked nav items when no classes
+  _updateNavLockState();
+}
+
+function _updateNavLockState(){
+  const locked = noClasses();
+  const gatedPanels = ['calendar','messages','progress','tickets','shop'];
+  gatedPanels.forEach(p=>{
+    const el = document.querySelector(`.app-nav-item[data-panel="${p}"]`);
+    if(!el) return;
+    el.style.opacity = locked ? '0.4' : '';
+    el.title = locked ? 'Enroll in a class to unlock this' : '';
+  });
+}
+
+// ═══════ AUTH ═══════
+function authSwitch(t){
+  document.getElementById('form-login').classList.toggle('hidden',t!=='login');
+  document.getElementById('form-register').classList.toggle('hidden',t!=='register');
+  document.getElementById('tab-login').classList.toggle('active',t==='login');
+  document.getElementById('tab-register').classList.toggle('active',t!=='login');
+  document.getElementById('auth-heading').textContent=t==='login'?'Welcome to Vexify':'Create your account';
+  document.getElementById('auth-subhead').textContent=t==='login'?'Sign in to continue':'Get started for free';
+}
+async function doLogin(){
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pw=document.getElementById('login-password').value;
+  const errEl=document.getElementById('login-err');
+  errEl.textContent='Signing in…';
+  const u = await window._firebase.getUser(email);
+  if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
+  DB.users[email]=u;
+  errEl.textContent='';
+  login(u);
+}
+async function doRegister(){
+  const name=document.getElementById('reg-name').value.trim();
+  const email=document.getElementById('reg-email').value.trim().toLowerCase();
+  const pw=document.getElementById('reg-password').value;
+  const role=document.getElementById('reg-role').value;
+  const errEl=document.getElementById('reg-err');
+  if(!name||!email||!pw){errEl.textContent='All fields required.';return;}
+  if(pw.length<6){errEl.textContent='Password must be 6+ chars.';return;}
+  const existing = await window._firebase.getUser(email);
+  if(existing){errEl.textContent='Email already registered.';return;}
+  errEl.textContent='Creating account…';
+  const userData={name,email,password:pw,role,coins:0,inventory:[]};
+  await window._firebase.createUser(userData);
+  DB.users[email]=userData;
+  errEl.textContent='';
+  login(userData);
+}
+async function demoLogin(r){
+  const u = await window._firebase.getUser(r+'@demo.com');
+  if(u){ DB.users[u.email]=u; login(u); }
+}
+function login(u){
+  currentUser=u;
+  document.getElementById('nav-signin-btn').classList.add('hidden');
+  const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
+  document.getElementById('nav-name').textContent=u.name;
+  document.getElementById('nav-role-label').textContent=u.role==='teacher'?'Teacher':'Student';
+  if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
+  showPage('dashboard');
+}
+function signOut(){
+  currentUser=null;calClassId=null;msgClassId=null;
+  document.getElementById('nav-signin-btn').classList.remove('hidden');
+  document.getElementById('nav-user').classList.add('hidden');
+  document.getElementById('nav-coins').classList.add('hidden');
+  showPage('info');
+}
+function updateCoinDisplay(){
+  if(!currentUser)return;
+  const c=currentUser.coins||0;
+  document.getElementById('nav-coins-val').textContent=c;
+  const sv=document.getElementById('shop-coins-val');if(sv)sv.textContent=c;
+}
+
+// ═══════ HELPERS ═══════
+function getMyClasses(){
+  return Object.entries(DB.classes).filter(([id,c])=>
+    currentUser.role==='teacher'?c.teacherEmail===currentUser.email:(c.members||[]).includes(currentUser.email));
+}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();}
+function avCol(n){const c=['av-indigo','av-green','av-orange','av-blue'];return c[(n.charCodeAt(0)||0)%c.length];}
+function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return`${mo[parseInt(m)-1]} ${parseInt(day)}, ${y}`;}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function today(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+
+// ═══════ DASHBOARD ═══════
+function renderDashboard(){
+  const isT=currentUser.role==='teacher';
+  document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
+  _updateNavLockState();
+  renderHome();
+}
+function renderSidebarClasses(){} // no-op — no sidebar in new layout
+
+// ═══════ HOME ═══════
+function renderHome(){
+  const isT=currentUser.role==='teacher';
+  const classes=getMyClasses();
+  document.getElementById('home-greeting').textContent='My Classes';
+  document.getElementById('home-sub').textContent=isT?'Manage your classes and students':'Your enrolled classes';
+  document.getElementById('home-new-class').classList.toggle('hidden',!isT);
+  let studs=0,lessons=0;
+  classes.forEach(([id])=>{
+    studs+=(DB.classes[id].members||[]).filter(e=>DB.users[e]?.role==='student').length;
+    lessons+=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
+  });
+  const myIds=classes.map(([id])=>id);
+  const tickets=DB.tickets.filter(t=>isT?myIds.includes(t.classId):t.userEmail===currentUser.email).length;
+  const completedCount=Object.keys(DB.completedLessons).filter(k=>k.startsWith(currentUser.email+'_')).length;
+  document.getElementById('home-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-val" style="color:var(--indigo)">${classes.length}</div><div class="stat-lbl2">Classes</div></div>
+    ${isT?`<div class="stat-card"><div class="stat-val" style="color:var(--blue)">${studs}</div><div class="stat-lbl2">Students</div></div>`:''}
+    <div class="stat-card"><div class="stat-val" style="color:var(--green)">${isT?lessons:completedCount}</div><div class="stat-lbl2">${isT?'Lessons':'Completed'}</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--orange)">${tickets}</div><div class="stat-lbl2">Tickets</div></div>
+    ${!isT?`<div class="stat-card"><div class="stat-val" style="color:#92400e">${currentUser.coins||0}</div><div class="stat-lbl2">VCoins</div></div>`:''}`;
+  const list=document.getElementById('home-classes');
+  if(!classes.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">📚</div><div class="empty-title">No classes yet</div><div class="empty-desc">${isT?'Create your first class using the button above.':'Ask your teacher to add you to a class.'}</div></div>`;
+    return;
+  }
+  list.innerHTML=classes.map(([id,c])=>{
+    const lc=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
+    const mc=(c.members||[]).filter(e=>DB.users[e]?.role==='student').length;
+    return`<div class="class-card" onclick="calClassId='${id}';msgClassId='${id}';showPanel('calendar')">
+      <div class="class-card-av">${initials(c.name)}</div>
+      <div class="class-card-info">
+        <div class="class-card-name">${esc(c.name)}</div>
+        <div class="class-card-meta">${c.season||''}${c.room?' · '+c.room:''}</div>
+      </div>
+      <span class="badge badge-gray" style="margin-right:6px">👥 ${mc} student${mc!==1?'s':''}</span>
+      <span class="badge badge-indigo" style="margin-right:10px">📖 ${lc} lesson${lc!==1?'s':''}</span>
+      <span class="class-card-arrow">›</span>
+    </div>`;
+  }).join('');
+}
+
+// ═══════ CALENDAR ═══════
+function renderCalPanel(){
+  if(noClasses()){document.getElementById('cal-body').innerHTML=_noClassHTML();document.getElementById('cal-tabs').innerHTML='';document.getElementById('add-lesson-btn').classList.add('hidden');return;}
+  const classes=getMyClasses();const isT=currentUser.role==='teacher';
+  document.getElementById('cal-tabs').innerHTML=classes.map(([id,c])=>`<button class="tab-btn ${calClassId===id?'active':''}" onclick="selectCalClass('${id}')">${c.name}</button>`).join('');
+  document.getElementById('add-lesson-btn').classList.toggle('hidden',!isT||!calClassId);
+  if(!calClassId||!classes.length){document.getElementById('cal-body').innerHTML=`<div class="select-prompt"><div class="empty-icon">📅</div><div style="font-size:14px">Select a class above</div></div>`;return;}
+  renderCal();
+}
+function selectCalClass(id){calClassId=id;renderCalPanel();}
+function renderCal(){
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const now=new Date(),firstDay=new Date(calYear,calMonth,1).getDay(),dim=new Date(calYear,calMonth+1,0).getDate(),diprev=new Date(calYear,calMonth,0).getDate();
+  const isT=currentUser.role==='teacher';
+  const lbd={};
+  Object.entries(DB.lessons).forEach(([k,l])=>{if(k.startsWith(calClassId+'_'))lbd[l.date]=l;});
+  let cells='';
+  for(let i=firstDay-1;i>=0;i--)cells+=`<div class="cal-cell other-month"><span class="cal-date">${diprev-i}</span></div>`;
+  for(let d=1;d<=dim;d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday=now.getFullYear()===calYear&&now.getMonth()===calMonth&&now.getDate()===d;
+    const l=lbd[ds];
+    const completed=l&&DB.completedLessons[currentUser.email+'_'+calClassId+'_'+ds];
+    cells+=`<div class="cal-cell${isToday?' today':''}${l?' has-lesson':''}${completed?' completed':''}" onclick="handleCalClick('${ds}')">
+      <span class="cal-date">${d}</span>${l?`<div class="cal-dot" style="${completed?'background:var(--green)':''}"></div><div class="cal-label">${esc(l.title)}</div>`:''}
+    </div>`;
+  }
+  const rem=(firstDay+dim)%7;
+  for(let d=1;d<=(rem===0?0:7-rem);d++)cells+=`<div class="cal-cell other-month"><span class="cal-date">${d}</span></div>`;
+  document.getElementById('cal-body').innerHTML=`
+    <div class="card">
+      <div class="cal-nav-row">
+        <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+        <span class="cal-month-label">${months[calMonth]} ${calYear}</span>
+        <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+      </div>
+      <div class="cal-grid">
+        ${['SUN','MON','TUE','WED','THU','FRI','SAT'].map(d=>`<div class="cal-dow">${d}</div>`).join('')}${cells}
+      </div>
+    </div>
+    <div id="cal-detail"></div>
+    <div id="cal-lesson-list" style="margin-top:1rem"></div>`;
+  renderLessonList(lbd);
+}
+function calNav(dir){calMonth+=dir;if(calMonth>11){calMonth=0;calYear++;}if(calMonth<0){calMonth=11;calYear--;}renderCal();}
+function handleCalClick(ds){
+  const l=DB.lessons[calClassId+'_'+ds];
+  const el=document.getElementById('cal-detail');if(!el)return;
+  const isT=currentUser.role==='teacher';
+  const completed=l&&DB.completedLessons[currentUser.email+'_'+calClassId+'_'+ds];
+  if(l){
+    el.innerHTML=`<div class="lesson-detail-card">
+      <div class="lesson-detail-date">${fmtDate(ds)}</div>
+      <div class="lesson-detail-title">${esc(l.title)}</div>
+      <div class="lesson-detail-body">${esc(l.desc)||'No description provided.'}</div>
+      <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="badge badge-gold">🪙 ${l.coins||10} VCoins reward</span>
+        ${completed?`<span class="badge badge-green">✓ Completed</span>`:''}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        ${!isT&&!completed?`<button class="btn btn-green btn-sm" style="background:var(--green-light);color:var(--green);border:1px solid rgba(16,185,129,.3)" onclick="completeLesson('${ds}')">✓ Mark Complete (+${l.coins||10} VCoins)</button>`:''}
+        ${isT?`<button class="btn btn-ghost btn-sm" onclick="openEditLesson('${ds}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteLesson('${ds}')">Delete</button>`:''}
+      </div>
+    </div>`;
+  } else if(isT){
+    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--muted)">No lesson on ${fmtDate(ds)}. <a style="color:var(--indigo);font-weight:600;cursor:pointer" onclick="openLessonModal('${ds}')">Add one?</a></div>`;
+  } else {
+    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--muted)">No lesson on ${fmtDate(ds)}.</div>`;
+  }
+}
+async function completeLesson(ds){
+  const l=DB.lessons[calClassId+'_'+ds];if(!l)return;
+  const key=currentUser.email+'_'+calClassId+'_'+ds;
+  if(DB.completedLessons[key])return;
+  DB.completedLessons[key]=true;
+  const reward=l.coins||10;
+  currentUser.coins=(currentUser.coins||0)+reward;
+  DB.users[currentUser.email].coins=currentUser.coins;
+  await window._firebase.markLessonComplete(key);
+  await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins});
+  updateCoinDisplay();
+  handleCalClick(ds);renderCal();
+  showToast(`🪙 +${reward} VCoins earned!`);
+}
+function renderLessonList(lbd){
+  const el=document.getElementById('cal-lesson-list');if(!el)return;
+  const sorted=Object.entries(lbd).sort(([a],[b])=>a.localeCompare(b));
+  if(!sorted.length){el.innerHTML='';return;}
+  el.innerHTML=`<div class="card"><div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1rem">Lessons This Month</div>`+
+    sorted.map(([date,l])=>{
+      const done=DB.completedLessons[currentUser.email+'_'+calClassId+'_'+date];
+      return`<div class="member-row"><span class="badge ${done?'badge-green':'badge-indigo'}" style="min-width:76px;justify-content:center">${fmtDate(date)}</span><div class="member-info"><div class="member-name">${esc(l.title)}</div>${l.desc?`<div class="member-email">${esc(l.desc.substring(0,60))}${l.desc.length>60?'…':''}</div>`:''}</div><span class="badge badge-gold">🪙${l.coins||10}</span></div>`;
+    }).join('')+'</div>';
+}
+function openLessonModal(date){
+  editingLessonKey=null;
+  document.getElementById('lesson-modal-title').textContent='Add Lesson';
+  document.getElementById('lesson-date').value=date||today();
+  document.getElementById('lesson-title').value='';
+  document.getElementById('lesson-desc').value='';
+  document.getElementById('lesson-coins').value='10';
+  document.getElementById('lesson-err').textContent='';
+  openModal('modal-lesson');
+}
+function openEditLesson(ds){
+  const l=DB.lessons[calClassId+'_'+ds];if(!l)return;
+  editingLessonKey=calClassId+'_'+ds;
+  document.getElementById('lesson-modal-title').textContent='Edit Lesson';
+  document.getElementById('lesson-date').value=l.date;
+  document.getElementById('lesson-title').value=l.title;
+  document.getElementById('lesson-desc').value=l.desc||'';
+  document.getElementById('lesson-coins').value=l.coins||10;
+  document.getElementById('lesson-err').textContent='';
+  openModal('modal-lesson');
+}
+async function saveLesson(){
+  const date=document.getElementById('lesson-date').value;
+  const title=document.getElementById('lesson-title').value.trim();
+  const desc=document.getElementById('lesson-desc').value.trim();
+  const coins=parseInt(document.getElementById('lesson-coins').value)||10;
+  if(!date||!title){document.getElementById('lesson-err').textContent='Date and title required.';return;}
+  const key=calClassId+'_'+date;
+  if(editingLessonKey&&editingLessonKey!==key){
+    delete DB.lessons[editingLessonKey];
+    await window._firebase.deleteLesson(editingLessonKey);
+  }
+  DB.lessons[key]={date,title,desc,coins,classId:calClassId};
+  await window._firebase.saveLesson(key,DB.lessons[key]);
+  closeModal('modal-lesson');renderCal();
+}
+async function deleteLesson(ds){
+  const key=calClassId+'_'+ds;
+  delete DB.lessons[key];
+  await window._firebase.deleteLesson(key);
+  document.getElementById('cal-detail').innerHTML='';renderCal();
+}
+
+// ═══════ MESSAGES (Firebase real-time) ═══════
+let _liveMessages = []; // cache of messages pushed by the Firestore listener
+
+function renderMsgPanel(){
+  if(noClasses()){
+    if(window._firebase)window._firebase.stopListening();
+    document.getElementById('msg-tabs').innerHTML='';
+    document.getElementById('msg-body').innerHTML=_noClassHTML();
+    return;
+  }
+  const classes=getMyClasses();
+  document.getElementById('msg-tabs').innerHTML=classes.map(([id,c])=>`<button class="tab-btn ${msgClassId===id?'active':''}" onclick="selectMsgClass('${id}')">${c.name}</button>`).join('');
+  if(!msgClassId||!classes.length){
+    if(window._firebase)window._firebase.stopListening();
+    document.getElementById('msg-body').innerHTML=`<div class="select-prompt"><div class="empty-icon">💬</div><div style="font-size:14px">Select a class above</div></div>`;
+    return;
+  }
+  // Render the shell (chat box + input bar) immediately
+  _renderMsgShell();
+  // Subscribe to live messages for this class
+  if(window._firebase){
+    window._firebase.listenMessages(msgClassId, msgs => {
+      _liveMessages = msgs;
+      _renderMsgList(msgs);
+    });
+  } else {
+    const list=document.getElementById('msg-list');
+    if(list) list.innerHTML=`<div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto;padding:1rem">⚠️ Firebase not configured — messages won't sync across devices.</div>`;
+  }
+}
+
+function _renderMsgShell(){
+  document.getElementById('msg-body').innerHTML=`<div class="card">
+    <div class="msg-area" id="msg-list">
+      <div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto">Loading messages…</div>
+    </div>
+    <div class="msg-input-bar">
+      <input class="msg-input" id="msg-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="btn btn-primary btn-sm btn-pill" style="padding:10px 20px" onclick="sendMsg()">Send</button>
+    </div>
+  </div>`;
+}
+
+function _renderMsgList(msgs){
+  const list=document.getElementById('msg-list');
+  if(!list)return;
+  const isT=currentUser.role==='teacher';
+  const wasAtBottom=list.scrollHeight-list.scrollTop<=list.clientHeight+40;
+  list.innerHTML=msgs.length?msgs.map((m)=>{
+    const own=m.email===currentUser.email;
+    const fmtTime=m.timestamp?.toDate
+      ? m.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
+      : (m.time||'');
+    return`<div class="msg-row ${own?'own':''}" data-id="${m.id}">
+      <div class="avatar ${avCol(m.name)}" style="width:28px;height:28px;font-size:10px;align-self:flex-end">${initials(m.name)}</div>
+      <div class="msg-bubble">
+        ${!own?`<div class="msg-author">${esc(m.name)}</div>`:''}
+        <div class="msg-text">${esc(m.text)}${m.edited?' <span style="font-size:10px;opacity:.6">(edited)</span>':''}</div>
+        <div class="msg-time">${fmtTime}</div>
+        <div class="msg-actions">
+          ${own?`<button class="btn btn-xs btn-ghost" onclick="openEditMsg('${m.id}','${esc(m.text).replace(/'/g,'\\\'') }')">Edit</button>`:''}
+          ${(own||isT)?`<button class="btn btn-xs btn-danger" onclick="deleteMsg('${m.id}')">Delete</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join(''):`<div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto">No messages yet — say hello! 👋</div>`;
+  if(wasAtBottom) list.scrollTop=list.scrollHeight;
+}
+
+function selectMsgClass(id){
+  msgClassId=id;
+  if(window._firebase)window._firebase.stopListening();
+  renderMsgPanel();
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('msg-input');
+  const text=inp.value.trim();if(!text)return;
+  inp.value='';
+  if(window._firebase){
+    try{
+      await window._firebase.sendMessage(msgClassId,currentUser,text);
+    }catch(e){
+      showToast('⚠️ Message failed to send. Check your connection.');
+      inp.value=text; // restore on failure
+    }
+  } else {
+    // localStorage fallback
+    if(!DB.messages[msgClassId])DB.messages[msgClassId]=[];
+    DB.messages[msgClassId].push({email:currentUser.email,name:currentUser.name,text,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),edited:false});
+    saveDB();
+  }
+}
+
+function openEditMsg(msgId, currentText){
+  editMsgClassId=msgClassId;
+  editMsgIdx=msgId; // now stores the Firestore document ID
+  document.getElementById('edit-msg-input').value=currentText;
+  openModal('modal-edit-msg');
+}
+
+async function doEditMsg(){
+  const text=document.getElementById('edit-msg-input').value.trim();
+  if(!text)return;
+  closeModal('modal-edit-msg');
+  if(window._firebase){
+    try{
+      await window._firebase.editMessage(editMsgClassId,editMsgIdx,text);
+    }catch(e){showToast('⚠️ Edit failed.');}
+  }
+}
+
+async function deleteMsg(msgId){
+  if(window._firebase){
+    try{
+      await window._firebase.deleteMessage(msgClassId,msgId);
+    }catch(e){showToast('⚠️ Delete failed.');}
+  }
+}
+
+// ═══════ TICKETS ═══════
+function renderTickets(){
+  if(noClasses()){document.getElementById('tickets-body').innerHTML=_noClassHTML();return;}
+  const isT=currentUser.role==='teacher';
+  const myIds=getMyClasses().map(([id])=>id);
+  const tickets=DB.tickets.filter(t=>isT?myIds.includes(t.classId):t.userEmail===currentUser.email);
+  const body=document.getElementById('tickets-body');
+  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-title">No tickets yet</div><div class="empty-desc">Submit a ticket if you need help.</div></div>`;return;}
+  const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};
+  const sc={open:'badge-orange',resolved:'badge-green'};
+  body.innerHTML=[...tickets].reverse().map((t)=>{
+    const cn=DB.classes[t.classId]?.name||'Unknown';
+    return`<div class="ticket-card">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:80px">
+        <span class="badge ${pc[t.priority]||'badge-blue'}">${t.priority}</span>
+        <span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-title">${esc(t.title)}</div>
+        <div class="ticket-desc">${esc(t.desc)}</div>
+        <div class="ticket-meta"><span>👤 ${esc(t.userName)}</span><span>📚 ${esc(cn)}</span><span>📅 ${t.date}</span></div>
+      </div>
+      ${isT&&(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" style="white-space:nowrap;align-self:center" onclick="resolveTicket('${t._id}')">✓ Resolve</button>`:''}
+    </div>`;
+  }).join('');
+}
+function openTicketModal(){
+  const classes=getMyClasses();
+  if(!classes.length){alert('You must be in a class to submit a ticket.');return;}
+  document.getElementById('ticket-class').innerHTML=classes.map(([id,c])=>`<option value="${id}">${c.name}</option>`).join('');
+  document.getElementById('ticket-title').value='';document.getElementById('ticket-desc').value='';
+  openModal('modal-ticket');
+}
+async function submitTicket(){
+  const classId=document.getElementById('ticket-class').value;
+  const title=document.getElementById('ticket-title').value.trim();
+  const desc=document.getElementById('ticket-desc').value.trim();
+  const priority=document.getElementById('ticket-priority').value;
+  if(!title||!desc){alert('Please fill in all fields.');return;}
+  const ticket={classId,title,desc,priority,userEmail:currentUser.email,userName:currentUser.name,date:new Date().toLocaleDateString(),status:'open'};
+  const id = await window._firebase.addTicket(ticket);
+  DB.tickets.push({_id:id,...ticket});
+  closeModal('modal-ticket');renderTickets();
+}
+async function resolveTicket(ticketId){
+  const t=DB.tickets.find(t=>t._id===ticketId);
+  if(t){t.status='resolved';await window._firebase.resolveTicket(ticketId);renderTickets();}
+}
+
+// ═══════ PROGRESS ═══════
+function renderProgress(){
+  const body=document.getElementById('progress-body');
+  if(noClasses()){body.innerHTML=_noClassHTML();return;}
+  const isT=currentUser.role==='teacher';
+  const classes=getMyClasses();
+
+  if(isT){
+    // Teacher: see all students' progress per class
+    body.innerHTML=classes.map(([cid,c])=>{
+      const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+      const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));
+      return`<div class="card" style="margin-bottom:1rem">
+        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:1rem">${c.name}</div>
+        ${students.length?students.map(u=>{
+          const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+          const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
+          return`<div class="member-row">
+            <div class="avatar ${avCol(u.name)}">${initials(u.name)}</div>
+            <div class="member-info">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${u.name}</span><span style="font-size:12px;color:var(--muted)">${done}/${allLessons.length} lessons · ${pct}%</span></div>
+              <div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
+            </div>
+            <span class="badge badge-gold">🪙 ${u.coins||0}</span>
+          </div>`;
+        }).join(''):`<div style="font-size:13px;color:var(--muted)">No students yet.</div>`}
+      </div>`;
+    }).join('');
+  } else {
+    // Student: see own progress
+    body.innerHTML=classes.map(([cid,c])=>{
+      const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));
+      const done=allLessons.filter(([k])=>DB.completedLessons[currentUser.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+      const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
+      return`<div class="card" style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <div style="font-size:15px;font-weight:700;color:var(--navy)">${c.name}</div>
+          <span class="badge badge-indigo">${pct}% complete</span>
+        </div>
+        <div style="margin-bottom:1rem"><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div>
+        <div style="font-size:13px;color:var(--muted)">${done} of ${allLessons.length} lessons completed</div>
+        ${allLessons.length?`<div style="margin-top:1rem">
+          ${allLessons.sort(([a],[b])=>a.localeCompare(b)).map(([k,l])=>{
+            const dk=currentUser.email+'_'+k.replace(/^[^_]+_/,'');
+            const isDone=DB.completedLessons[dk];
+            return`<div class="member-row" style="padding:8px 0">
+              <span style="font-size:16px">${isDone?'✅':'⬜'}</span>
+              <div class="member-info"><div class="member-name" style="font-size:13px">${esc(l.title)}</div><div class="member-email">${fmtDate(l.date)}</div></div>
+              <span class="badge badge-gold">🪙${l.coins||10}</span>
+            </div>`;
+          }).join('')}
+        </div>`:''}
+      </div>`;
+    }).join('');
+  }
+}
+
+// ═══════ SHOP ═══════
+async function renderShop(){
+  if(noClasses()){document.getElementById('shop-body').innerHTML=_noClassHTML();return;}
+  // Always refresh user from Firestore so coins/inventory are current
+  const fresh = await window._firebase.getUser(currentUser.email);
+  if(fresh){ currentUser.coins=fresh.coins||0; currentUser.inventory=fresh.inventory||[]; DB.users[currentUser.email]=fresh; }
+  updateCoinDisplay();
+  const body=document.getElementById('shop-body');
+  const inventory=currentUser.inventory||[];
+  const coins=currentUser.coins||0;
+  body.innerHTML=`<div class="shop-grid">${SHOP_ITEMS.map(item=>{
+    const owned=inventory.includes(item.id);
+    const canAfford=coins>=item.price;
+    return`<div class="shop-item">
+      <span class="shop-item-icon">${item.icon}</span>
+      <div class="shop-item-name">${item.name}</div>
+      <div class="shop-item-desc">${item.desc}</div>
+      <div class="shop-item-price">🪙 ${item.price} VCoins</div>
+      ${owned
+        ?`<span class="badge badge-green" style="justify-content:center;width:100%">✓ Owned</span>`
+        :`<button class="btn btn-sm ${canAfford?'btn-primary':'btn-ghost'}" style="width:100%;justify-content:center;margin-top:4px" ${canAfford?'':"disabled style='width:100%;justify-content:center;margin-top:4px;opacity:.5;cursor:not-allowed'"} onclick="buyItem('${item.id}','${item.name}',${item.price})">${canAfford?'Buy Now':'Not enough VCoins'}</button>`
+      }
+    </div>`;
+  }).join('')}</div>`;
+}
+async function buyItem(id,name,price){
+  if((currentUser.coins||0)<price){showToast('Not enough VCoins!');return;}
+  currentUser.coins-=price;
+  if(!currentUser.inventory)currentUser.inventory=[];
+  currentUser.inventory.push(id);
+  DB.users[currentUser.email].coins=currentUser.coins;
+  DB.users[currentUser.email].inventory=currentUser.inventory;
+  await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins,inventory:currentUser.inventory});
+  updateCoinDisplay();renderShop();
+  showToast(`🎉 You unlocked: ${name}!`);
+}
+
+// ═══════ MANAGE ═══════
+function renderManage(){
+  const classes=getMyClasses();
+  const body=document.getElementById('manage-body');
+  if(!classes.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">🏫</div><div class="empty-title">No classes yet</div><div class="empty-desc">Create your first class.</div></div>`;return;}
+  body.innerHTML=classes.map(([id,c])=>{
+    const members=c.members||[];
+    return`<div class="card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1rem">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="font-size:15px;font-weight:700;color:var(--navy)">${c.name}</div>
+            <button class="btn btn-xs btn-ghost" onclick="openRenameClass('${id}')">✏️ Rename</button>
+          </div>
+          <div style="font-size:13px;color:var(--muted);margin-top:2px">${c.season||''}${c.room?' · '+c.room:''}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="badge badge-indigo">${members.length} members</span>
+          <button class="btn btn-ghost btn-sm" onclick="openAddMember('${id}')">+ Add Member</button>
+          <button class="btn btn-gold btn-sm" onclick="openGiveCoins('${id}')">🪙 Give Coins</button>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:.75rem">
+        ${members.length?members.map(email=>{
+          const u=DB.users[email];
+          return u?`<div class="member-row">
+            <div class="avatar ${avCol(u.name)}">${initials(u.name)}</div>
+            <div class="member-info">
+              <div class="member-name">${u.name} <span class="badge ${u.role==='teacher'?'badge-indigo':'badge-gray'}" style="font-size:10px;padding:2px 7px">${u.role}</span></div>
+              <div class="member-email">${email}</div>
+            </div>
+            ${u.role==='student'?`<span class="badge badge-gold">🪙 ${u.coins||0}</span>`:''}
+            <button class="btn btn-danger btn-sm" onclick="removeMember('${id}','${email}')">Remove</button>
+          </div>`:'';
+        }).join(''):'<div style="font-size:13px;color:var(--muted)">No members yet.</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+function openCreateClassModal(){document.getElementById('cc-name').value='';document.getElementById('cc-season').value='';document.getElementById('cc-room').value='';openModal('modal-create-class');}
+async function createClass(){
+  const name=document.getElementById('cc-name').value.trim();
+  if(!name){alert('Class name required.');return;}
+  const id='cls_'+Date.now();
+  const classData={id,name,season:document.getElementById('cc-season').value.trim(),room:document.getElementById('cc-room').value.trim(),teacherEmail:currentUser.email,members:[]};
+  DB.classes[id]=classData;
+  await window._firebase.saveClass(id,classData);
+  closeModal('modal-create-class');renderManage();renderSidebarClasses();renderHome();_updateNavLockState();
+}
+function openRenameClass(id){
+  renamingClassId=id;
+  document.getElementById('rename-class-input').value=DB.classes[id].name;
+  openModal('modal-rename-class');
+}
+async function doRenameClass(){
+  const name=document.getElementById('rename-class-input').value.trim();
+  if(!name){alert('Name required.');return;}
+  DB.classes[renamingClassId].name=name;
+  await window._firebase.saveClass(renamingClassId,DB.classes[renamingClassId]);
+  closeModal('modal-rename-class');renderManage();renderSidebarClasses();renderHome();
+}
+function openAddMember(classId){addMemberClassId=classId;document.getElementById('as-email').value='';document.getElementById('as-err').textContent='';openModal('modal-add-member');}
+async function addMember(){
+  const email=document.getElementById('as-email').value.trim().toLowerCase();
+  const errEl=document.getElementById('as-err');
+  errEl.textContent='Looking up account…';
+  // Always fetch fresh from Firestore so teacher sees students registered on other devices
+  const u = await window._firebase.getUser(email);
+  if(!u){errEl.textContent='No account found with that email.';return;}
+  DB.users[email]=u;
+  const c=DB.classes[addMemberClassId];
+  if(!c.members)c.members=[];
+  if(c.members.includes(email)){errEl.textContent='Already in this class.';return;}
+  if(email===c.teacherEmail){errEl.textContent='That is the class teacher.';return;}
+  c.members.push(email);
+  await window._firebase.saveClass(addMemberClassId,c);
+  errEl.textContent='';
+  closeModal('modal-add-member');renderManage();renderSidebarClasses();
+}
+async function removeMember(classId,email){
+  DB.classes[classId].members=(DB.classes[classId].members||[]).filter(e=>e!==email);
+  await window._firebase.saveClass(classId,DB.classes[classId]);
+  renderManage();renderSidebarClasses();
+}
+function openGiveCoins(classId){
+  giveCoinClassId=classId;
+  const students=(DB.classes[classId].members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+  if(!students.length){alert('No students in this class.');return;}
+  document.getElementById('gc-student').innerHTML=students.map(u=>`<option value="${u.email}">${u.name}</option>`).join('');
+  document.getElementById('gc-amount').value='10';
+  document.getElementById('gc-reason').value='';
+  openModal('modal-give-coins');
+}
+async function doGiveCoins(){
+  const email=document.getElementById('gc-student').value;
+  const amount=parseInt(document.getElementById('gc-amount').value)||0;
+  if(amount<=0){alert('Enter a valid amount.');return;}
+  DB.users[email].coins=(DB.users[email].coins||0)+amount;
+  if(currentUser.email===email)currentUser.coins=DB.users[email].coins;
+  await window._firebase.updateUser(email,{coins:DB.users[email].coins});
+  closeModal('modal-give-coins');renderManage();
+  showToast(`🪙 ${amount} VCoins given to ${DB.users[email].name}!`);
+}
+
+// ═══════ CHATBOT REMOVED ═══════
+
+// ═══════ TOAST ═══════
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1d3b;color:#fff;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .3s';
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},2500);
+}
+
+// ═══════ MODAL HELPERS ═══════
+function openModal(id){document.getElementById(id).classList.remove('hidden');}
+function closeModal(id){document.getElementById(id).classList.add('hidden');}
+document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
+</script>
+</body>
+</html>
+
