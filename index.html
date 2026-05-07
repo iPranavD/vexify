@@ -99,6 +99,49 @@
       return snap.docs.map(d => ({ _id: d.id, ...d.data() }));
     },
 
+    // ── SHOP ITEMS (teacher-created) ───────────────────────────────────────
+    async saveShopItem(item) {
+      await setDoc(doc(db, 'shopItems', item.id), item);
+    },
+    async deleteShopItem(id) {
+      await deleteDoc(doc(db, 'shopItems', id));
+    },
+    async getAllShopItems() {
+      const snap = await getDocs(collection(db, 'shopItems'));
+      return snap.docs.map(d => ({ ...d.data() }));
+    },
+
+    // ── CURRICULUM LESSONS (teacher-created) ──────────────────────────────
+    async saveCustomLesson(lesson) {
+      await setDoc(doc(db, 'customLessons', lesson.id), lesson);
+    },
+    async deleteCustomLesson(id) {
+      await deleteDoc(doc(db, 'customLessons', id));
+    },
+    async getAllCustomLessons() {
+      const snap = await getDocs(collection(db, 'customLessons'));
+      return snap.docs.map(d => ({ ...d.data() }));
+    },
+
+    // ── TEACHER INVITES ───────────────────────────────────────────────────
+    async createInvite(email) {
+      await setDoc(doc(db, 'invites', email.toLowerCase()), { email: email.toLowerCase(), used: false, createdAt: serverTimestamp() });
+    },
+    async getInvite(email) {
+      const snap = await getDoc(doc(db, 'invites', email.toLowerCase()));
+      return snap.exists() ? snap.data() : null;
+    },
+    async markInviteUsed(email) {
+      await updateDoc(doc(db, 'invites', email.toLowerCase()), { used: true });
+    },
+    async getAllInvites() {
+      const snap = await getDocs(collection(db, 'invites'));
+      return snap.docs.map(d => ({ ...d.data() }));
+    },
+    async deleteInvite(email) {
+      await deleteDoc(doc(db, 'invites', email.toLowerCase()));
+    },
+
     // ── MESSAGES ───────────────────────────────────────────────────────────
     async sendMessage(classId, user, text) {
       await addDoc(collection(db, 'messages', classId, 'msgs'), {
@@ -124,7 +167,11 @@
     }
   };
 
-  // Seed demo accounts if they don't exist yet
+  // Seed accounts if they don't exist yet
+  const adminUser = await window._firebase.getUser('admin@vexify.com');
+  if (!adminUser) {
+    await window._firebase.createUser({name:'Vexify Admin',email:'admin@vexify.com',password:'vexify-admin-2024',role:'admin',coins:0,inventory:[]});
+  }
   const teacher = await window._firebase.getUser('teacher@demo.com');
   if (!teacher) {
     await window._firebase.createUser({name:'Ms. Rivera',email:'teacher@demo.com',password:'demo',role:'teacher',coins:0,inventory:[]});
@@ -165,12 +212,15 @@
   --shadow-lg:0 8px 40px rgba(0,0,0,.10);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;min-height:100vh;-webkit-font-smoothing:antialiased;transition:background-color .3s ease, color .2s ease;}
 button{font-family:'Inter',sans-serif;cursor:pointer;border:none;outline:none;}
 input,textarea,select{font-family:'Inter',sans-serif;outline:none;}
 a{cursor:pointer;}
 .hidden{display:none!important;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#d8d5cc;border-radius:4px;}
+.feat-icon{margin-bottom:.875rem;display:flex;color:var(--text-2);}
+.feat-icon svg{width:20px;height:20px;}
+.theme-btn svg{flex-shrink:0;}
 
 /* ── NAV ── */
 #nav{
@@ -558,11 +608,187 @@ a{cursor:pointer;}
 .lc-tip{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r);padding:.8rem 1rem;font-size:12px;color:#78350f;line-height:1.65;margin-bottom:.5rem;}
 .lc-tip strong{color:var(--amber);}
 .lc-done-banner{margin-top:1rem;padding:.625rem 1rem;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);font-size:12px;font-weight:600;color:var(--green);}
-.inline-edit-input{background:var(--white);border:1px solid var(--border-focus);border-radius:var(--r);padding:5px 9px;font-size:13px;color:var(--text);width:100%;}
+/* ── THEME TOGGLE BUTTONS ── */
+.theme-toggles{display:flex;align-items:center;gap:4px;margin-right:4px;}
+.theme-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:500;cursor:pointer;
+  background:var(--white);border:1px solid var(--border);
+  color:var(--text-3);transition:all .15s;
+  box-shadow:var(--shadow-xs);white-space:nowrap;
+}
+.theme-btn:hover{color:var(--text);border-color:#aaa;}
+.theme-btn.active{background:var(--text);color:#fff;border-color:var(--text);}
+.theme-btn .tb-icon{font-size:13px;}
+
+/* ── DARK MODE ── */
+body.dark{
+  --bg:#111111;
+  --white:#1a1a1a;
+  --border:#2a2a2a;
+  --border-focus:#fff;
+  --text:#f0f0f0;
+  --text-2:#a0a0a0;
+  --text-3:#606060;
+  --accent:#4f8aff;
+  --accent-light:rgba(79,138,255,.1);
+  --accent-border:rgba(79,138,255,.25);
+  --green:#22c55e;--green-bg:rgba(34,197,94,.1);--green-border:rgba(34,197,94,.25);
+  --red:#f87171;--red-bg:rgba(248,113,113,.1);--red-border:rgba(248,113,113,.25);
+  --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);--amber-border:rgba(251,191,36,.25);
+}
+/* ── SMOOTH ANIMATIONS ── */
+:root{
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+  --ease-in-out:cubic-bezier(0.65,0,0.35,1);
+  --dur-fast:120ms;
+  --dur-base:200ms;
+  --dur-slow:320ms;
+}
+
+/* Base theme transitions — only color/shadow, not layout */
+*{
+  transition:
+    background-color var(--dur-base) var(--ease-in-out),
+    border-color var(--dur-base) var(--ease-in-out),
+    color var(--dur-fast) var(--ease-in-out),
+    box-shadow var(--dur-base) var(--ease-in-out),
+    opacity var(--dur-fast) var(--ease-in-out);
+}
+
+/* Interactive elements get layout transitions too */
+.btn{
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out) !important;
+}
+.btn:hover{transform:translateY(-1px);}
+.btn:active{transform:scale(0.97) translateY(0);transition-duration:60ms !important;}
+
+.class-card{
+  transition:
+    border-color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out) !important;
+}
+.class-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1) !important;}
+
+.unit-block:hover{box-shadow:0 4px 16px rgba(0,0,0,.07) !important;}
+.shop-item{transition:background-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out) !important;}
+.shop-item:hover{transform:translateY(-1px);}
+.feat-card{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+.track-tab{transition:background-color var(--dur-fast) var(--ease-out),color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out) !important;}
+.track-tab:hover:not(.active){transform:translateY(-1px);}
+.theme-btn{transition:all var(--dur-fast) var(--ease-out) !important;}
+.theme-btn:hover{transform:translateY(-1px);}
+.app-nav-item{transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out) !important;}
+.tab-btn{transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out) !important;}
+
+/* Lesson check spring pop */
+.lesson-check{transition:background-color var(--dur-base) var(--ease-out),border-color var(--dur-base) var(--ease-out),transform var(--dur-slow) var(--ease-spring) !important;}
+.lesson-check.done{transform:scale(1.15);}
+
+/* Chevron rotation */
+.unit-chevron{transition:transform var(--dur-base) var(--ease-in-out) !important;}
+.lesson-expand-chevron{transition:transform var(--dur-base) var(--ease-in-out) !important;}
+
+/* Progress bars */
+.progress-bar-fill,.unit-progress-fill{transition:width 600ms var(--ease-out) !important;}
+
+/* Modal entrance */
+.modal-overlay:not(.hidden) .modal{animation:modalIn var(--dur-slow) var(--ease-spring) forwards;}
+@keyframes modalIn{
+  from{opacity:0;transform:scale(0.94) translateY(10px);}
+  to{opacity:1;transform:scale(1) translateY(0);}
+}
+
+/* Panel fade-up on switch */
+.panel:not(.hidden){animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
+@keyframes panelIn{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Lesson content slide down */
+.lesson-content-panel{animation:slideDown var(--dur-base) var(--ease-out) forwards;}
+@keyframes slideDown{
+  from{opacity:0;transform:translateY(-6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* Toast spring up */
+.toast{animation:toastUp 280ms var(--ease-spring) forwards;}
+@keyframes toastUp{
+  from{opacity:0;transform:translateX(-50%) translateY(14px) scale(0.92);}
+  to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
+}
+
+/* Auth card entrance */
+#page-auth.active .auth-card{animation:panelIn 260ms var(--ease-out) forwards;}
+
+/* Stat card number count-up feel */
+.stat-val{transition:color var(--dur-base) var(--ease-out) !important;}
+
+/* Nav coins badge pulse when coins change */
+@keyframes coinPulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.18);}
+  100%{transform:scale(1);}
+}
+.nav-coins.pulse{animation:coinPulse 400ms var(--ease-spring);}
+
+/* Hover rows */
+.lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+.unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+.member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+
+/* ── DARK MODE BUTTON FIXES ── */
+body.dark .btn-primary{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-primary:hover{background:#fff;border-color:#fff;box-shadow:0 2px 12px rgba(255,255,255,.15);}
+body.dark .btn-dark{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-dark:hover{background:#fff;border-color:#fff;}
+body.dark .btn-ghost{background:#1e1e1e;color:#d0d0d0;border-color:#333;}
+body.dark .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
+body.dark .btn-danger{background:transparent;color:#f87171;border-color:rgba(248,113,113,.3);}
+body.dark .btn-danger:hover{background:rgba(248,113,113,.1);}
+body.dark #nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
+body.dark .app-nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
+body.dark .nav-signin-btn,body.dark #nav-signin-btn{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .lesson-complete-btn{background:#f0f0f0;color:#000;}
+body.dark .lesson-complete-btn:hover{background:#fff;}
+body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .auth-tabs{background:#0d0d0d;border-color:#2a2a2a;}
+body.dark .auth-tab-btn.active{background:#2a2a2a;color:#f0f0f0;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+body.dark .modal-close{background:#222;border-color:#333;color:#888;}
+body.dark .modal-close:hover{background:#333;}
+body.dark select option{background:#1a1a1a;color:#f0f0f0;}
+body.dark .app-nav{background:rgba(17,17,17,.85);}
+body.dark .modal-overlay{background:rgba(0,0,0,.7);}
+body.dark .auth-card{background:var(--white);}
+body.dark .feat-card{background:var(--white);}
+body.dark .feat-card:hover{background:#222;}
+body.dark .shop-item{background:var(--white);}
+body.dark .shop-item:hover{background:#222;}
+body.dark .lc-code{background:#080808;border-color:#1a1a1a;}
+body.dark .lc-code pre{color:#c9c9d4;}
+body.dark .field input,body.dark .field select,
+body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{background:#111;color:var(--text);}
+body.dark .theme-btn{background:#222;border-color:#333;color:#888;}
+body.dark .theme-btn:hover{color:#ddd;border-color:#555;}
+body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .msg-input{background:#111;color:var(--text);}
+body.dark #page-info{background:#0d0d0d;}
+body.dark .landing-cta{background:#111;}
+body.dark .hero h1{color:#f0f0f0;}
 </style>
 </head>
 <body>
-
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-logo" onclick="goHome()">
@@ -572,6 +798,11 @@ a{cursor:pointer;}
     <span class="logo-text">Vexify</span>
   </div>
   <div id="nav-right">
+    <div class="theme-toggles">
+      <button class="theme-btn" id="btn-dark" onclick="toggleDark()" title="Toggle dark mode">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark
+      </button>
+    </div>
     <div id="nav-user" class="hidden" style="display:flex;align-items:center;gap:8px">
       <div class="nav-coins hidden" id="nav-coins">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -605,32 +836,32 @@ a{cursor:pointer;}
     <div class="features-grid-label">Features</div>
     <div class="features-grid">
       <div class="feat-card">
-        <span class="feat-icon">📖</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
         <div class="feat-title">Structured Lessons</div>
         <div class="feat-desc">30 lessons across Foundations, Design & CAD, and Programming. Read, learn, then mark complete to earn VCoins.</div>
       </div>
       <div class="feat-card">
-        <span class="feat-icon">📅</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
         <div class="feat-title">Class Calendar</div>
         <div class="feat-desc">Teachers schedule lessons by date. Students see what's coming and track what they've completed.</div>
       </div>
       <div class="feat-card">
-        <span class="feat-icon">💬</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
         <div class="feat-title">Real-time Messaging</div>
         <div class="feat-desc">Each class has a live chat channel powered by Firebase. Everyone stays in sync.</div>
       </div>
       <div class="feat-card">
-        <span class="feat-icon">🎫</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
         <div class="feat-title">Help Tickets</div>
         <div class="feat-desc">Students submit support tickets. Teachers track, prioritize, and resolve them in one place.</div>
       </div>
       <div class="feat-card">
-        <span class="feat-icon">🪙</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v8M9 18h6"/></svg></span>
         <div class="feat-title">VCoins & Shop</div>
         <div class="feat-desc">Earn coins by completing lessons and class work. Spend them in the shop on badges and rewards.</div>
       </div>
       <div class="feat-card">
-        <span class="feat-icon">📈</span>
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
         <div class="feat-title">Progress Tracking</div>
         <div class="feat-desc">Teachers see every student's lesson completion rate and VCoins earned at a glance.</div>
       </div>
@@ -699,6 +930,9 @@ a{cursor:pointer;}
     <div class="app-nav-item hidden" data-panel="manage" id="sidebar-manage" onclick="showPanel('manage')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage
     </div>
+    <div class="app-nav-item hidden" data-panel="admin" id="nav-admin" onclick="showPanel('admin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin
+    </div>
   </nav>
   <div class="main-content">
     <!-- HOME -->
@@ -719,9 +953,9 @@ a{cursor:pointer;}
         <div><div class="panel-title">Lessons</div><div class="panel-sub">Structured VEX Robotics curriculum — work through tracks at your own pace</div></div>
       </div>
       <div class="track-tabs">
-        <div class="track-tab active" data-track="foundations" onclick="switchTrack('foundations')"><span>🔧</span> Foundations</div>
-        <div class="track-tab" data-track="cad" onclick="switchTrack('cad')"><span>📐</span> Design & CAD</div>
-        <div class="track-tab" data-track="programming" onclick="switchTrack('programming')"><span>💻</span> Programming</div>
+        <div class="track-tab active" data-track="foundations" onclick="switchTrack('foundations')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Foundations</div>
+        <div class="track-tab" data-track="cad" onclick="switchTrack('cad')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> Design & CAD</div>
+        <div class="track-tab" data-track="programming" onclick="switchTrack('programming')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg> Programming</div>
       </div>
       <div id="track-summary"></div>
       <div id="track-units"></div>
@@ -733,13 +967,13 @@ a{cursor:pointer;}
         <button class="btn btn-primary btn-sm hidden" id="add-lesson-btn" onclick="openLessonModal()">+ Add Lesson</button>
       </div>
       <div class="tab-row" id="cal-tabs"></div>
-      <div id="cal-body"><div class="select-prompt"><div class="empty-icon">📅</div><div style="font-size:14px">Select a class above</div></div></div>
+      <div id="cal-body"><div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div style="font-size:14px">Select a class above</div></div></div>
     </div>
     <!-- MESSAGES -->
     <div id="panel-messages" class="panel hidden">
       <div class="panel-header"><div><div class="panel-title">Messages</div><div class="panel-sub">Chat with your class</div></div></div>
       <div class="tab-row" id="msg-tabs"></div>
-      <div id="msg-body"><div class="select-prompt"><div class="empty-icon">💬</div><div style="font-size:14px">Select a class above</div></div></div>
+      <div id="msg-body"><div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div style="font-size:14px">Select a class above</div></div></div>
     </div>
     <!-- TICKETS -->
     <div id="panel-tickets" class="panel hidden">
@@ -773,12 +1007,91 @@ a{cursor:pointer;}
       </div>
       <div id="manage-body"></div>
     </div>
+    <!-- TEACHER SHOP MANAGER -->
+    <div id="panel-teacher-shop" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Shop Manager</div><div class="panel-sub">Add custom reward items students can buy with VCoins</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddShopItemModal()">+ Add Item</button>
+      </div>
+      <div id="teacher-shop-body"></div>
+    </div>
+    <!-- TEACHER LESSON BUILDER -->
+    <div id="panel-teacher-lessons" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Lesson Builder</div><div class="panel-sub">Create custom lessons that appear in the student Lessons tab</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
+      </div>
+      <div id="teacher-lessons-body"></div>
+    </div>
+    <!-- ADMIN PANEL -->
+    <div id="panel-admin" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Admin Dashboard</div><div class="panel-sub">Manage teacher invites and all platform users</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+        <div class="card" id="admin-stats-users"></div>
+        <div class="card" id="admin-stats-invites"></div>
+      </div>
+      <div class="card" style="margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;">Teacher Invites</div>
+          <button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button>
+        </div>
+        <div id="admin-invites-body"></div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:1rem;">All Users</div>
+        <div id="admin-users-body"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- CHATBOT REMOVED -->
 
 <!-- MODALS -->
+<!-- Admin: Invite Teacher -->
+<div class="modal-overlay hidden" id="modal-admin-invite">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Invite a Teacher</div><button class="modal-close" onclick="closeModal('modal-admin-invite')">✕</button></div>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:1rem;line-height:1.6">Enter the teacher's email. They'll be able to register with that email address — teachers cannot sign up without a valid invite.</p>
+    <div class="form-group"><label>Teacher Email</label><input type="email" id="invite-email" placeholder="teacher@school.com"></div>
+    <div class="auth-err" id="invite-err"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-admin-invite')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAdminInvite()">Send Invite</button></div>
+  </div>
+</div>
+<!-- Teacher: Add Shop Item -->
+<div class="modal-overlay hidden" id="modal-add-shop-item">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Shop Item</div><button class="modal-close" onclick="closeModal('modal-add-shop-item')">✕</button></div>
+    <div class="form-group"><label>Item Name</label><input type="text" id="si-name" placeholder="e.g. Extra Homework Pass"></div>
+    <div class="form-group"><label>Description</label><input type="text" id="si-desc" placeholder="What does this reward give the student?"></div>
+    <div class="form-group"><label>Icon (single emoji)</label><input type="text" id="si-icon" placeholder="🎁" maxlength="4" style="width:80px;text-align:center;font-size:20px;"></div>
+    <div class="form-group"><label>Price (VCoins)</label><input type="number" id="si-price" placeholder="50" min="1" max="9999"></div>
+    <div class="auth-err" id="si-err"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-shop-item')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAddShopItem()">Add to Shop</button></div>
+  </div>
+</div>
+<!-- Teacher: Add Custom Lesson -->
+<div class="modal-overlay hidden" id="modal-add-custom-lesson">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="cl-modal-title">New Lesson</div><button class="modal-close" onclick="closeModal('modal-add-custom-lesson')">✕</button></div>
+    <div class="form-group"><label>Lesson Title</label><input type="text" id="cl-title" placeholder="e.g. Competition Scouting Strategy"></div>
+    <div class="form-group"><label>Track</label>
+      <select id="cl-track">
+        <option value="foundations">Foundations</option>
+        <option value="cad">Design & CAD</option>
+        <option value="programming">Programming</option>
+        <option value="custom">Custom Track</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Short Description</label><input type="text" id="cl-desc" placeholder="One-line summary shown in the lesson list"></div>
+    <div class="form-group"><label>Lesson Content</label><textarea id="cl-content" placeholder="Write the full lesson content here. Students will read this before marking complete." style="min-height:140px;"></textarea></div>
+    <div class="form-group"><label>VCoins Reward</label><input type="number" id="cl-coins" value="15" min="1" max="500"></div>
+    <div class="auth-err" id="cl-err"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-custom-lesson')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doSaveCustomLesson()">Save Lesson</button></div>
+  </div>
+</div>
 <div class="modal-overlay hidden" id="modal-create-class">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Create New Class</div><button class="modal-close" onclick="closeModal('modal-create-class')">✕</button></div>
@@ -832,7 +1145,7 @@ a{cursor:pointer;}
     <div class="form-group"><label>Student</label><select id="gc-student" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
     <div class="form-group"><label>Amount of VCoins</label><input type="number" id="gc-amount" min="1" max="999" value="10" placeholder="How many coins?"></div>
     <div class="form-group"><label>Reason (optional)</label><input type="text" id="gc-reason" placeholder="e.g. Great work today!"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-give-coins')">Cancel</button><button class="btn btn-gold btn-sm" onclick="doGiveCoins()">🪙 Give Coins</button></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-give-coins')">Cancel</button><button class="btn btn-gold btn-sm" onclick="doGiveCoins()">Give Coins</button></div>
   </div>
 </div>
 <div class="modal-overlay hidden" id="modal-edit-msg">
@@ -1055,7 +1368,7 @@ function switchTrack(trackId){
     <div class="track-summary">
       <div class="track-summary-stat"><div class="track-summary-val">${doneCount}/${allLessons.length}</div><div class="track-summary-lbl">Lessons Done</div></div>
       <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
-      <div class="track-summary-stat"><div class="track-summary-val">🪙 ${earnedCoins}</div><div class="track-summary-lbl">VCoins Earned</div></div>
+      <div class="track-summary-stat"><div class="track-summary-val">${earnedCoins}</div><div class="track-summary-lbl">VCoins Earned</div></div>
       <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
       <div class="track-summary-stat"><div class="track-summary-val">${totalCoins-earnedCoins}</div><div class="track-summary-lbl">Still Available</div></div>
       <div style="flex:1;margin-left:16px">
@@ -1084,13 +1397,13 @@ function switchTrack(trackId){
             <div class="lesson-row" onclick="toggleLesson('${lesson.id}')">
               <div class="lesson-check ${done?'done':''}">${done?'✓':li+1}</div>
               <div class="lesson-info"><div class="lesson-title">${lesson.title}</div><div class="lesson-desc">${lesson.desc}</div></div>
-              <div class="lesson-coins-badge">🪙 ${lesson.coins}</div>
+              <div class="lesson-coins-badge"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 1"/></svg> ${lesson.coins}</div>
               ${done?`<span class="badge badge-green" style="white-space:nowrap;margin-left:8px">✓ Done</span>`:''}
               <span class="lesson-expand-chevron" id="lchev-${lesson.id}">›</span>
             </div>
             <div class="lesson-content-panel" id="lcontent-${lesson.id}" style="display:none">
               ${lesson.content}
-              ${isStudent&&!done?`<button class="lesson-complete-btn" onclick="completeCurriculumLesson('${lesson.id}',${lesson.coins},event)">✓ Mark as Complete — Earn 🪙 ${lesson.coins} VCoins</button>`:''}
+              ${isStudent&&!done?`<button class="lesson-complete-btn" onclick="completeCurriculumLesson('${lesson.id}',${lesson.coins},event)">✓ Mark as Complete — Earn ${lesson.coins} VCoins</button>`:''}
               ${done?`<div class="lc-done-banner">✅ You completed this lesson and earned 🪙 ${lesson.coins} VCoins!</div>`:''}
             </div>
           </div>`;
@@ -1135,7 +1448,7 @@ async function completeCurriculumLesson(lessonId,coins,event){
   await window._firebase.markLessonComplete(key);
   await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins});
   updateCoinDisplay();
-  showToast(`🪙 +${coins} VCoins earned!`);
+  showToast(`+ ${coins} VCoins earned!`);
   openLesson=null;
   switchTrack(activeTrack);
 }
@@ -1163,6 +1476,17 @@ if(window._firebaseReady){ boot(); }
 else { document.addEventListener('firebase-ready', boot); }
 
 // ═══════ ROUTING ═══════
+// ═══════ THEME TOGGLES ═══════
+function toggleDark(){
+  document.body.classList.toggle('dark');
+  document.getElementById('btn-dark').classList.toggle('active',document.body.classList.contains('dark'));
+  localStorage.setItem('vexify_dark',document.body.classList.contains('dark')?'1':'');
+}
+(function(){
+  if(localStorage.getItem('vexify_dark')==='1'){document.body.classList.add('dark');document.getElementById('btn-dark')?.classList.add('active');}
+
+})();
+
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   document.getElementById('page-'+p).classList.add('active');
@@ -1175,7 +1499,7 @@ function noClasses(){ return getMyClasses().length === 0; }
 function _noClassHTML(){
   const isT = currentUser.role === 'teacher';
   return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center;gap:1rem;">
-    <div style="width:72px;height:72px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:32px">🔒</div>
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:32px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
     <div style="font-size:1.2rem;font-weight:800;color:var(--navy)">You need a class first</div>
     <div style="font-size:14px;color:var(--muted);max-width:340px;line-height:1.7">${isT
       ? 'Create a class to unlock Calendar, Messages, Progress, Tickets, and the Shop.'
@@ -1234,11 +1558,22 @@ async function doRegister(){
   const role=document.getElementById('reg-role').value;
   const errEl=document.getElementById('reg-err');
   if(!name||!email||!pw){errEl.textContent='All fields required.';return;}
-  if(pw.length<6){errEl.textContent='Password must be 6+ chars.';return;}
-  const existing = await window._firebase.getUser(email);
+  if(pw.length<6){errEl.textContent='Password must be 6+ characters.';return;}
+  const existing=await window._firebase.getUser(email);
   if(existing){errEl.textContent='Email already registered.';return;}
   errEl.textContent='Creating account…';
-  const userData={name,email,password:pw,role,coins:0,inventory:[]};
+  // Teachers must have a valid invite from admin
+  let finalRole=role;
+  if(role==='teacher'){
+    const invite=await window._firebase.getInvite(email);
+    if(!invite||invite.used){
+      errEl.textContent='No invite found for this email. Ask your admin to invite you first.';
+      return;
+    }
+    await window._firebase.markInviteUsed(email);
+    finalRole='teacher'; // confirmed
+  }
+  const userData={name,email,password:pw,role:finalRole,coins:0,inventory:[]};
   await window._firebase.createUser(userData);
   DB.users[email]=userData;
   errEl.textContent='';
@@ -1253,8 +1588,19 @@ function login(u){
   document.getElementById('nav-signin-btn').classList.add('hidden');
   const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
   document.getElementById('nav-name').textContent=u.name;
-  document.getElementById('nav-role-label').textContent=u.role==='teacher'?'Teacher':'Student';
+  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval'};
+  document.getElementById('nav-role-label').textContent=roleLabels[u.role]||u.role;
   if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
+  if(u.role==='teacher_pending'){
+    showPage('dashboard');
+    document.querySelector('.main-content').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1rem;text-align:center;padding:2rem;">
+      <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div style="font-size:15px;font-weight:600;color:var(--text)">Account Pending Approval</div>
+      <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval. You'll be able to access the platform once an admin activates your account.</div>
+      <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
+    </div>`;
+    return;
+  }
   showPage('dashboard');
 }
 function signOut(){
@@ -1269,6 +1615,8 @@ function updateCoinDisplay(){
   const c=currentUser.coins||0;
   document.getElementById('nav-coins-val').textContent=c;
   const sv=document.getElementById('shop-coins-val');if(sv)sv.textContent=c;
+  const badge=document.getElementById('nav-coins');
+  if(badge){badge.classList.remove('pulse');void badge.offsetWidth;badge.classList.add('pulse');}
 }
 
 // ═══════ HELPERS ═══════
@@ -1285,11 +1633,30 @@ function today(){const n=new Date();return`${n.getFullYear()}-${String(n.getMont
 // ═══════ DASHBOARD ═══════
 function renderDashboard(){
   const isT=currentUser.role==='teacher';
+  const isA=currentUser.role==='admin';
   document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
+  document.getElementById('nav-admin').classList.toggle('hidden',!isA);
   _updateNavLockState();
   renderHome();
 }
-function renderSidebarClasses(){} // no-op — no sidebar in new layout
+function renderSidebarClasses(){}
+
+function showPanel(p){
+  document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.app-nav-item[data-panel="${p}"]`)?.classList.add('active');
+  document.querySelectorAll('.main-content > .panel').forEach(el=>el.classList.add('hidden'));
+  const panel=document.getElementById('panel-'+p);
+  if(panel) panel.classList.remove('hidden');
+  const renders={
+    calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,
+    progress:renderProgress,shop:renderShop,manage:renderManage,
+    home:renderHome,lessons:renderLessonsPanel,
+    'teacher-shop':renderTeacherShop,'teacher-lessons':renderTeacherLessons,
+    admin:renderAdminPanel
+  };
+  if(renders[p]) renders[p]();
+  _updateNavLockState();
+}
 
 // ═══════ HOME ═══════
 function renderHome(){
@@ -1326,8 +1693,8 @@ function renderHome(){
         <div class="class-card-name">${esc(c.name)}</div>
         <div class="class-card-meta">${c.season||''}${c.room?' · '+c.room:''}</div>
       </div>
-      <span class="badge badge-gray" style="margin-right:6px">👥 ${mc} student${mc!==1?'s':''}</span>
-      <span class="badge badge-indigo" style="margin-right:10px">📖 ${lc} lesson${lc!==1?'s':''}</span>
+      <span class="badge badge-gray" style="margin-right:6px">${mc} student${mc!==1?'s':''}</span>
+      <span class="badge badge-indigo" style="margin-right:10px">${lc} lesson${lc!==1?'s':''}</span>
       <span class="class-card-arrow">›</span>
     </div>`;
   }).join('');
@@ -1339,7 +1706,7 @@ function renderCalPanel(){
   const classes=getMyClasses();const isT=currentUser.role==='teacher';
   document.getElementById('cal-tabs').innerHTML=classes.map(([id,c])=>`<button class="tab-btn ${calClassId===id?'active':''}" onclick="selectCalClass('${id}')">${c.name}</button>`).join('');
   document.getElementById('add-lesson-btn').classList.toggle('hidden',!isT||!calClassId);
-  if(!calClassId||!classes.length){document.getElementById('cal-body').innerHTML=`<div class="select-prompt"><div class="empty-icon">📅</div><div style="font-size:14px">Select a class above</div></div>`;return;}
+  if(!calClassId||!classes.length){document.getElementById('cal-body').innerHTML=`<div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div style="font-size:14px">Select a class above</div></div>`;return;}
   renderCal();
 }
 function selectCalClass(id){calClassId=id;renderCalPanel();}
@@ -1389,11 +1756,11 @@ function handleCalClick(ds){
       <div class="lesson-detail-title">${esc(l.title)}</div>
       <div class="lesson-detail-body">${esc(l.desc)||'No description provided.'}</div>
       <div style="margin-top:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span class="badge badge-gold">🪙 ${l.coins||10} VCoins reward</span>
+        <span class="badge badge-gold">${l.coins||10} VCoins</span>
         ${completed?`<span class="badge badge-green">✓ Completed</span>`:''}
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        ${!isT&&!completed?`<button class="btn btn-green btn-sm" style="background:var(--green-light);color:var(--green);border:1px solid rgba(16,185,129,.3)" onclick="completeLesson('${ds}')">✓ Mark Complete (+${l.coins||10} VCoins)</button>`:''}
+        ${!isT&&!completed?`<button class="btn btn-green btn-sm" style="background:var(--green-light);color:var(--green);border:1px solid rgba(16,185,129,.3)" onclick="completeLesson('${ds}')">Mark Complete (+${l.coins||10} VCoins)</button>`:''}
         ${isT?`<button class="btn btn-ghost btn-sm" onclick="openEditLesson('${ds}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteLesson('${ds}')">Delete</button>`:''}
       </div>
     </div>`;
@@ -1415,7 +1782,7 @@ async function completeLesson(ds){
   await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins});
   updateCoinDisplay();
   handleCalClick(ds);renderCal();
-  showToast(`🪙 +${reward} VCoins earned!`);
+  showToast(`+${reward} VCoins earned!`);
 }
 function renderLessonList(lbd){
   const el=document.getElementById('cal-lesson-list');if(!el)return;
@@ -1424,7 +1791,7 @@ function renderLessonList(lbd){
   el.innerHTML=`<div class="card"><div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1rem">Lessons This Month</div>`+
     sorted.map(([date,l])=>{
       const done=DB.completedLessons[currentUser.email+'_'+calClassId+'_'+date];
-      return`<div class="member-row"><span class="badge ${done?'badge-green':'badge-indigo'}" style="min-width:76px;justify-content:center">${fmtDate(date)}</span><div class="member-info"><div class="member-name">${esc(l.title)}</div>${l.desc?`<div class="member-email">${esc(l.desc.substring(0,60))}${l.desc.length>60?'…':''}</div>`:''}</div><span class="badge badge-gold">🪙${l.coins||10}</span></div>`;
+      return`<div class="member-row"><span class="badge ${done?'badge-green':'badge-indigo'}" style="min-width:76px;justify-content:center">${fmtDate(date)}</span><div class="member-info"><div class="member-name">${esc(l.title)}</div>${l.desc?`<div class="member-email">${esc(l.desc.substring(0,60))}${l.desc.length>60?'…':''}</div>`:''}</div><span class="badge badge-gold">${l.coins||10}</span></div>`;
     }).join('')+'</div>';
 }
 function openLessonModal(date){
@@ -1484,7 +1851,7 @@ function renderMsgPanel(){
   document.getElementById('msg-tabs').innerHTML=classes.map(([id,c])=>`<button class="tab-btn ${msgClassId===id?'active':''}" onclick="selectMsgClass('${id}')">${c.name}</button>`).join('');
   if(!msgClassId||!classes.length){
     if(window._firebase)window._firebase.stopListening();
-    document.getElementById('msg-body').innerHTML=`<div class="select-prompt"><div class="empty-icon">💬</div><div style="font-size:14px">Select a class above</div></div>`;
+    document.getElementById('msg-body').innerHTML=`<div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div style="font-size:14px">Select a class above</div></div>`;
     return;
   }
   // Render the shell (chat box + input bar) immediately
@@ -1597,7 +1964,7 @@ function renderTickets(){
   const myIds=getMyClasses().map(([id])=>id);
   const tickets=DB.tickets.filter(t=>isT?myIds.includes(t.classId):t.userEmail===currentUser.email);
   const body=document.getElementById('tickets-body');
-  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon">🎫</div><div class="empty-title">No tickets yet</div><div class="empty-desc">Submit a ticket if you need help.</div></div>`;return;}
+  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"/></svg></div><div class="empty-title">No tickets yet</div><div class="empty-desc">Submit a ticket if you need help.</div></div>`;return;}
   const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};
   const sc={open:'badge-orange',resolved:'badge-green'};
   body.innerHTML=[...tickets].reverse().map((t)=>{
@@ -1610,7 +1977,7 @@ function renderTickets(){
       <div class="ticket-body">
         <div class="ticket-title">${esc(t.title)}</div>
         <div class="ticket-desc">${esc(t.desc)}</div>
-        <div class="ticket-meta"><span>👤 ${esc(t.userName)}</span><span>📚 ${esc(cn)}</span><span>📅 ${t.date}</span></div>
+        <div class="ticket-meta"><span>${esc(t.userName)}</span><span>${esc(cn)}</span><span>${t.date}</span></div>
       </div>
       ${isT&&(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" style="white-space:nowrap;align-self:center" onclick="resolveTicket('${t._id}')">✓ Resolve</button>`:''}
     </div>`;
@@ -1662,7 +2029,7 @@ function renderProgress(){
               <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${u.name}</span><span style="font-size:12px;color:var(--muted)">${done}/${allLessons.length} lessons · ${pct}%</span></div>
               <div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
             </div>
-            <span class="badge badge-gold">🪙 ${u.coins||0}</span>
+            <span class="badge badge-gold">${u.coins||0}</span>
           </div>`;
         }).join(''):`<div style="font-size:13px;color:var(--muted)">No students yet.</div>`}
       </div>`;
@@ -1685,9 +2052,9 @@ function renderProgress(){
             const dk=currentUser.email+'_'+k.replace(/^[^_]+_/,'');
             const isDone=DB.completedLessons[dk];
             return`<div class="member-row" style="padding:8px 0">
-              <span style="font-size:16px">${isDone?'✅':'⬜'}</span>
+              <span style="font-size:16px">${isDone?'✓':''}</span>
               <div class="member-info"><div class="member-name" style="font-size:13px">${esc(l.title)}</div><div class="member-email">${fmtDate(l.date)}</div></div>
-              <span class="badge badge-gold">🪙${l.coins||10}</span>
+              <span class="badge badge-gold">${l.coins||10}</span>
             </div>`;
           }).join('')}
         </div>`:''}
@@ -1713,7 +2080,7 @@ async function renderShop(){
       <span class="shop-item-icon">${item.icon}</span>
       <div class="shop-item-name">${item.name}</div>
       <div class="shop-item-desc">${item.desc}</div>
-      <div class="shop-item-price">🪙 ${item.price} VCoins</div>
+      <div class="shop-item-price">${item.price} VCoins</div>
       ${owned
         ?`<span class="badge badge-green" style="justify-content:center;width:100%">✓ Owned</span>`
         :`<button class="btn btn-sm ${canAfford?'btn-primary':'btn-ghost'}" style="width:100%;justify-content:center;margin-top:4px" ${canAfford?'':"disabled style='width:100%;justify-content:center;margin-top:4px;opacity:.5;cursor:not-allowed'"} onclick="buyItem('${item.id}','${item.name}',${item.price})">${canAfford?'Buy Now':'Not enough VCoins'}</button>`
@@ -1752,7 +2119,7 @@ function renderManage(){
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
           <span class="badge badge-indigo">${members.length} members</span>
           <button class="btn btn-ghost btn-sm" onclick="openAddMember('${id}')">+ Add Member</button>
-          <button class="btn btn-gold btn-sm" onclick="openGiveCoins('${id}')">🪙 Give Coins</button>
+          <button class="btn btn-gold btn-sm" onclick="openGiveCoins('${id}')">Give Coins</button>
         </div>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:.75rem">
@@ -1764,7 +2131,7 @@ function renderManage(){
               <div class="member-name">${u.name} <span class="badge ${u.role==='teacher'?'badge-indigo':'badge-gray'}" style="font-size:10px;padding:2px 7px">${u.role}</span></div>
               <div class="member-email">${email}</div>
             </div>
-            ${u.role==='student'?`<span class="badge badge-gold">🪙 ${u.coins||0}</span>`:''}
+            ${u.role==='student'?`<span class="badge badge-gold">${u.coins||0}</span>`:''}
             <button class="btn btn-danger btn-sm" onclick="removeMember('${id}','${email}')">Remove</button>
           </div>`:'';
         }).join(''):'<div style="font-size:13px;color:var(--muted)">No members yet.</div>'}
@@ -1834,7 +2201,7 @@ async function doGiveCoins(){
   if(currentUser.email===email)currentUser.coins=DB.users[email].coins;
   await window._firebase.updateUser(email,{coins:DB.users[email].coins});
   closeModal('modal-give-coins');renderManage();
-  showToast(`🪙 ${amount} VCoins given to ${DB.users[email].name}!`);
+  showToast(`${amount} VCoins given to ${DB.users[email].name}!`);
 }
 
 // ═══════ CHATBOT REMOVED ═══════
@@ -1842,9 +2209,25 @@ async function doGiveCoins(){
 // ═══════ TOAST ═══════
 function showToast(msg){
   const t=document.createElement('div');
-  t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1d3b;color:#fff;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:opacity .3s';
-  t.textContent=msg;document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},2500);
+  const isDark=document.body.classList.contains('dark');
+  
+  let bg='#0d0d0d',color='#f0f0f0',border='rgba(255,255,255,.1)';
+  if(isDark){bg='#f0f0f0';color='#000';border='rgba(0,0,0,.1)';}
+  
+  
+  t.style.cssText=`position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(0);
+    background:${bg};color:${color};padding:9px 20px;border-radius:999px;
+    font-size:13px;font-weight:500;z-index:9999;
+    border:1px solid ${border};
+    box-shadow:0 8px 32px rgba(0,0,0,.18);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    opacity:1;transition:opacity .3s ease,transform .3s ease;
+    white-space:nowrap;letter-spacing:-.01em;`;
+  t.className='toast';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(6px)';setTimeout(()=>t.remove(),300);},2500);
 }
 
 // ═══════ MODAL HELPERS ═══════
