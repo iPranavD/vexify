@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Vexify</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d0d0d'/><path d='M6 10L11 22L16 14L21 22L26 10' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
+<!-- New V-circuit logo favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d0d0d'/><circle cx='8' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='3.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='1.2' fill='white'/><circle cx='24' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><line x1='10.2' y1='12.4' x2='14.2' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/><line x1='21.8' y1='12.4' x2='17.8' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase SDK -->
 <script type="module">
@@ -13,6 +14,9 @@
     getFirestore, collection, addDoc, onSnapshot, query, orderBy,
     doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
   const firebaseConfig = {
     apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
@@ -25,10 +29,18 @@
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
 
   let activeListener = null;
 
   window._firebase = {
+
+    // ── GOOGLE SIGN IN ──────────────────────────────────────────────────────
+    async signInWithGoogle() {
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    },
 
     // ── USERS ──────────────────────────────────────────────────────────────
     async getUser(email) {
@@ -233,7 +245,7 @@ a{cursor:pointer;}
   position:sticky;top:0;z-index:200;
 }
 .nav-logo{display:flex;align-items:center;gap:9px;cursor:pointer;}
-.logo-icon{width:24px;height:24px;}
+.logo-icon{width:26px;height:26px;}
 .logo-text{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.3px;}
 #nav-right{display:flex;align-items:center;gap:8px;}
 .nav-coins{
@@ -267,6 +279,25 @@ a{cursor:pointer;}
 .btn-xs{padding:3px 8px;font-size:11px;}
 .btn-pill{border-radius:999px;}
 .btn-pill-lg{border-radius:999px;padding:11px 28px;font-size:14px;font-weight:600;}
+
+/* ── GOOGLE SIGN IN BUTTON ── */
+.btn-google{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:var(--r);
+  font-size:13px;font-weight:500;
+  background:#fff;color:#3c4043;
+  border:1px solid #dadce0;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  cursor:pointer;width:100%;justify-content:center;
+  transition:box-shadow .12s,border-color .12s;
+}
+.btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
+.btn-google svg{width:18px;height:18px;flex-shrink:0;}
+.auth-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:1rem 0;color:var(--text-3);font-size:11px;font-weight:500;
+}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ── PAGES ── */
 .page{display:none;min-height:calc(100vh - 56px);}
@@ -609,6 +640,7 @@ a{cursor:pointer;}
 .lc-tip{background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r);padding:.8rem 1rem;font-size:12px;color:#78350f;line-height:1.65;margin-bottom:.5rem;}
 .lc-tip strong{color:var(--amber);}
 .lc-done-banner{margin-top:1rem;padding:.625rem 1rem;background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r);font-size:12px;font-weight:600;color:var(--green);}
+
 /* ── THEME TOGGLE BUTTONS ── */
 .theme-toggles{display:flex;align-items:center;gap:4px;margin-right:4px;}
 .theme-btn{
@@ -639,6 +671,62 @@ body.dark{
   --red:#f87171;--red-bg:rgba(248,113,113,.1);--red-border:rgba(248,113,113,.25);
   --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);--amber-border:rgba(251,191,36,.25);
 }
+
+/* ── DARK MODE NAV FIX — force nav text/icons to always be readable ── */
+body.dark #nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
+body.dark .logo-text{color:#f0f0f0;}
+body.dark #nav-name{color:#f0f0f0 !important;}
+body.dark #nav-role-label{color:#888 !important;}
+
+/* Dark mode button fixes */
+body.dark .btn-primary{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-primary:hover{background:#fff;border-color:#fff;box-shadow:0 2px 12px rgba(255,255,255,.15);}
+body.dark .btn-dark{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-dark:hover{background:#fff;border-color:#fff;}
+body.dark .btn-ghost{background:#1e1e1e;color:#d0d0d0;border-color:#333;}
+body.dark .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
+body.dark .btn-danger{background:transparent;color:#f87171;border-color:rgba(248,113,113,.3);}
+body.dark .btn-danger:hover{background:rgba(248,113,113,.1);}
+
+/* Dark mode theme toggle — stays visually consistent */
+body.dark .theme-btn{background:#222;border-color:#333;color:#aaa;}
+body.dark .theme-btn:hover{color:#f0f0f0;border-color:#555;}
+body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+
+/* Nav sign-in button */
+body.dark #nav-signin-btn{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark #nav-signin-btn:hover{background:#fff;}
+
+/* Sign-out button in dark mode */
+body.dark #nav .btn-ghost{background:#222;color:#d0d0d0;border-color:#333;}
+body.dark #nav .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
+
+body.dark .app-nav{background:rgba(17,17,17,.85);border-bottom:1px solid #222;}
+body.dark .lesson-complete-btn{background:#f0f0f0;color:#000;}
+body.dark .lesson-complete-btn:hover{background:#fff;}
+body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .auth-tabs{background:#0d0d0d;border-color:#2a2a2a;}
+body.dark .auth-tab-btn.active{background:#2a2a2a;color:#f0f0f0;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+body.dark .modal-close{background:#222;border-color:#333;color:#888;}
+body.dark .modal-close:hover{background:#333;}
+body.dark select option{background:#1a1a1a;color:#f0f0f0;}
+body.dark .modal-overlay{background:rgba(0,0,0,.7);}
+body.dark .auth-card{background:var(--white);}
+body.dark .feat-card{background:var(--white);}
+body.dark .feat-card:hover{background:#222;}
+body.dark .shop-item{background:var(--white);}
+body.dark .shop-item:hover{background:#222;}
+body.dark .lc-code{background:#080808;border-color:#1a1a1a;}
+body.dark .lc-code pre{color:#c9c9d4;}
+body.dark .field input,body.dark .field select,
+body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{background:#111;color:var(--text);}
+body.dark .msg-input{background:#111;color:var(--text);}
+body.dark #page-info{background:#0d0d0d;}
+body.dark .landing-cta{background:#111;}
+body.dark .hero h1{color:#f0f0f0;}
+body.dark .btn-google{background:#2a2a2a;color:#e0e0e0;border-color:#3a3a3a;}
+body.dark .btn-google:hover{background:#333;border-color:#555;}
+
 /* ── SMOOTH ANIMATIONS ── */
 :root{
   --ease-out:cubic-bezier(0.16,1,0.3,1);
@@ -649,7 +737,6 @@ body.dark{
   --dur-slow:320ms;
 }
 
-/* Base theme transitions — only color/shadow, not layout */
 *{
   transition:
     background-color var(--dur-base) var(--ease-in-out),
@@ -659,7 +746,6 @@ body.dark{
     opacity var(--dur-fast) var(--ease-in-out);
 }
 
-/* Interactive elements get layout transitions too */
 .btn{
   transition:
     background-color var(--dur-fast) var(--ease-out),
@@ -690,52 +776,42 @@ body.dark{
 .app-nav-item{transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out) !important;}
 .tab-btn{transition:color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out) !important;}
 
-/* Lesson check spring pop */
 .lesson-check{transition:background-color var(--dur-base) var(--ease-out),border-color var(--dur-base) var(--ease-out),transform var(--dur-slow) var(--ease-spring) !important;}
 .lesson-check.done{transform:scale(1.15);}
 
-/* Chevron rotation */
 .unit-chevron{transition:transform var(--dur-base) var(--ease-in-out) !important;}
 .lesson-expand-chevron{transition:transform var(--dur-base) var(--ease-in-out) !important;}
 
-/* Progress bars */
 .progress-bar-fill,.unit-progress-fill{transition:width 600ms var(--ease-out) !important;}
 
-/* Modal entrance */
 .modal-overlay:not(.hidden) .modal{animation:modalIn var(--dur-slow) var(--ease-spring) forwards;}
 @keyframes modalIn{
   from{opacity:0;transform:scale(0.94) translateY(10px);}
   to{opacity:1;transform:scale(1) translateY(0);}
 }
 
-/* Panel fade-up on switch */
 .panel:not(.hidden){animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
 @keyframes panelIn{
   from{opacity:0;transform:translateY(8px);}
   to{opacity:1;transform:translateY(0);}
 }
 
-/* Lesson content slide down */
 .lesson-content-panel{animation:slideDown var(--dur-base) var(--ease-out) forwards;}
 @keyframes slideDown{
   from{opacity:0;transform:translateY(-6px);}
   to{opacity:1;transform:translateY(0);}
 }
 
-/* Toast spring up */
 .toast{animation:toastUp 280ms var(--ease-spring) forwards;}
 @keyframes toastUp{
   from{opacity:0;transform:translateX(-50%) translateY(14px) scale(0.92);}
   to{opacity:1;transform:translateX(-50%) translateY(0) scale(1);}
 }
 
-/* Auth card entrance */
 #page-auth.active .auth-card{animation:panelIn 260ms var(--ease-out) forwards;}
 
-/* Stat card number count-up feel */
 .stat-val{transition:color var(--dur-base) var(--ease-out) !important;}
 
-/* Nav coins badge pulse when coins change */
 @keyframes coinPulse{
   0%{transform:scale(1);}
   50%{transform:scale(1.18);}
@@ -743,58 +819,28 @@ body.dark{
 }
 .nav-coins.pulse{animation:coinPulse 400ms var(--ease-spring);}
 
-/* Hover rows */
 .lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
-
-/* ── DARK MODE BUTTON FIXES ── */
-body.dark .btn-primary{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .btn-primary:hover{background:#fff;border-color:#fff;box-shadow:0 2px 12px rgba(255,255,255,.15);}
-body.dark .btn-dark{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .btn-dark:hover{background:#fff;border-color:#fff;}
-body.dark .btn-ghost{background:#1e1e1e;color:#d0d0d0;border-color:#333;}
-body.dark .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
-body.dark .btn-danger{background:transparent;color:#f87171;border-color:rgba(248,113,113,.3);}
-body.dark .btn-danger:hover{background:rgba(248,113,113,.1);}
-body.dark #nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
-body.dark .app-nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
-body.dark .nav-signin-btn,body.dark #nav-signin-btn{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .lesson-complete-btn{background:#f0f0f0;color:#000;}
-body.dark .lesson-complete-btn:hover{background:#fff;}
-body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .auth-tabs{background:#0d0d0d;border-color:#2a2a2a;}
-body.dark .auth-tab-btn.active{background:#2a2a2a;color:#f0f0f0;box-shadow:0 1px 3px rgba(0,0,0,.4);}
-body.dark .modal-close{background:#222;border-color:#333;color:#888;}
-body.dark .modal-close:hover{background:#333;}
-body.dark select option{background:#1a1a1a;color:#f0f0f0;}
-body.dark .app-nav{background:rgba(17,17,17,.85);}
-body.dark .modal-overlay{background:rgba(0,0,0,.7);}
-body.dark .auth-card{background:var(--white);}
-body.dark .feat-card{background:var(--white);}
-body.dark .feat-card:hover{background:#222;}
-body.dark .shop-item{background:var(--white);}
-body.dark .shop-item:hover{background:#222;}
-body.dark .lc-code{background:#080808;border-color:#1a1a1a;}
-body.dark .lc-code pre{color:#c9c9d4;}
-body.dark .field input,body.dark .field select,
-body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{background:#111;color:var(--text);}
-body.dark .theme-btn{background:#222;border-color:#333;color:#888;}
-body.dark .theme-btn:hover{color:#ddd;border-color:#555;}
-body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-body.dark .msg-input{background:#111;color:var(--text);}
-body.dark #page-info{background:#0d0d0d;}
-body.dark .landing-cta{background:#111;}
-body.dark .hero h1{color:#f0f0f0;}
 </style>
 </head>
 <body>
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-logo" onclick="goHome()">
-    <svg class="logo-icon" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M4 7L8 15L11 10L14 15L18 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- V-circuit logo: node-based V shape, monotone, matches reference style -->
+    <svg class="logo-icon" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Left node (small circle) -->
+      <circle cx="4" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+      <!-- Right node (small circle) -->
+      <circle cx="22" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+      <!-- Bottom center node (larger, with inner dot like reference) -->
+      <circle cx="13" cy="20" r="3.8" stroke="currentColor" stroke-width="1.8" fill="none"/>
+      <circle cx="13" cy="20" r="1.4" fill="currentColor"/>
+      <!-- Left arm: line from left node down to center bottom node -->
+      <line x1="6.6" y1="9.7" x2="10.7" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <!-- Right arm: line from right node down to center bottom node -->
+      <line x1="19.4" y1="9.7" x2="15.3" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <span class="logo-text">Vexify</span>
   </div>
@@ -810,7 +856,7 @@ body.dark .hero h1{color:#f0f0f0;}
         <span id="nav-coins-val">0</span> VCoins
       </div>
       <div style="text-align:right;line-height:1.3">
-        <div style="font-size:13px;font-weight:500;color:#000" id="nav-name"></div>
+        <div style="font-size:13px;font-weight:500" id="nav-name"></div>
         <div style="font-size:11px;color:#888" id="nav-role-label"></div>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="signOut()" title="Sign out" style="padding:5px 8px">
@@ -881,6 +927,15 @@ body.dark .hero h1{color:#f0f0f0;}
     <div class="auth-wordmark">Vexify</div>
     <div class="auth-title" id="auth-heading">Welcome back</div>
     <div class="auth-sub" id="auth-subhead">Sign in to your account to continue</div>
+
+    <!-- Google Sign In -->
+    <button class="btn-google" onclick="doGoogleSignIn()">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="auth-divider">or</div>
+
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tab-login" onclick="authSwitch('login')">Sign in</button>
       <button class="auth-tab-btn" id="tab-register" onclick="authSwitch('register')">Register</button>
@@ -907,7 +962,6 @@ body.dark .hero h1{color:#f0f0f0;}
 
 <!-- DASHBOARD -->
 <div id="page-dashboard" class="page">
-  <!-- App-level top nav (shown when logged in) -->
   <nav class="app-nav" id="app-nav">
     <div class="app-nav-item active" data-panel="home" onclick="showPanel('home')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard
@@ -1048,8 +1102,6 @@ body.dark .hero h1{color:#f0f0f0;}
   </div>
 </div>
 
-<!-- CHATBOT REMOVED -->
-
 <!-- Join with Code Modal -->
 <div class="modal-overlay hidden" id="modal-join-code">
   <div class="modal">
@@ -1071,7 +1123,6 @@ body.dark .hero h1{color:#f0f0f0;}
     </div>
   </div>
 </div>
-<!-- MODALS -->
 <!-- Admin: Invite Teacher -->
 <div class="modal-overlay hidden" id="modal-admin-invite">
   <div class="modal">
@@ -1178,6 +1229,25 @@ body.dark .hero h1{color:#f0f0f0;}
   </div>
 </div>
 
+<!-- Google Role Selection Modal -->
+<div class="modal-overlay hidden" id="modal-google-role">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">One more thing</div></div>
+    <p style="font-size:13px;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6">Welcome! How will you be using Vexify?</p>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('student')">
+        <span style="font-size:20px">🎓</span>
+        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Student</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I'm here to learn and complete lessons</div></div>
+      </button>
+      <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('teacher')">
+        <span style="font-size:20px">👩‍🏫</span>
+        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Teacher / Coach</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I manage classes and students</div></div>
+      </button>
+    </div>
+    <p style="font-size:11px;color:var(--text-3);margin-top:1rem;line-height:1.5">Teachers require an admin invite to register. If you're a teacher without an invite, select Student and contact your admin.</p>
+  </div>
+</div>
+
 <script>
 // ═══════ STATE ═══════
 let DB={users:{},classes:{},messages:{},tickets:[],lessons:{},completedLessons:{},purchases:{}};
@@ -1185,6 +1255,7 @@ let currentUser=null,calClassId=null,msgClassId=null;
 let calYear=new Date().getFullYear(),calMonth=new Date().getMonth();
 let editingLessonKey=null,addMemberClassId=null,renamingClassId=null;
 let editMsgClassId=null,editMsgIdx=null,giveCoinClassId=null;
+let _pendingGoogleUser=null; // holds Firebase Auth user during role selection
 
 const SHOP_ITEMS=[
   {id:'badge_gold',name:'Gold Badge',icon:'🥇',desc:'Display a gold badge on your profile',price:50},
@@ -1196,7 +1267,6 @@ const SHOP_ITEMS=[
 ];
 
 // ═══════ CURRICULUM ═══════
-// Helper to build lesson content HTML
 function _lc(intro, concepts, tip, code=null){
   return `<p class="lc-intro">${intro}</p>
     <div class="lc-section"><div class="lc-section-title">📌 Key Concepts</div><ul class="lc-list">${concepts.map(c=>`<li>${c}</li>`).join('')}</ul></div>
@@ -1208,164 +1278,49 @@ const CURRICULUM={
   foundations:{label:'Foundations',icon:'🔧',units:[
     {id:'f1',title:'VEX Parts & Hardware',lessons:[
       {id:'f1l1',title:'Introduction to VEX Robotics',desc:'Competition formats, the V5 system, and how a VRC season works.',coins:10,content:_lc('VEX Robotics Competition (VRC) is one of the largest robotics programs in the world, with over 20,000 teams competing annually. The V5 system is the primary platform for high school teams, while VEX IQ is designed for middle school. Every year in late April, a new game is revealed — teams spend the full season designing, building, and competing with a robot built for that game.',['VRC uses the V5 system (high school). VEX IQ uses a simpler snap-together system (middle school).','A new game is revealed every April and played through the following April at World Championship.','Competitions: scrimmage → qualifier → state/regional → World Championship.','Each match is 2 min: 15 sec autonomous, then 1:45 of driver control.','Robots are inspected before every event — must meet 18"×18"×18" size, weight, and rules requirements.'],'Watch the game reveal video the day it drops. Understanding the game deeply is half the battle — teams that win usually master the strategy before they master their robot.')},
-      {id:'f1l2',title:'Structural Parts',desc:'C-channels, beams, plates, standoffs, and the 0.5" hole grid system.',coins:10,content:_lc('VEX V5 uses aluminum structural parts with holes spaced exactly 0.5 inches apart. This consistent spacing means almost everything lines up perfectly — a massive advantage when iterating quickly. The five parts you\'ll use most are C-channels, beams, plates, angles, and standoffs.',['C-channels are the backbone of most robots — strong in bending and torsion. The most-used structural part in VRC.','Beams are flat bars great for spanning gaps or connecting C-channels.','Plates are large flat sheets — ideal for mounting electronics or building walls.','Standoffs are threaded cylinders that create exact spacing between layers of metal.','All holes are spaced 0.5" apart — this grid system makes alignment predictable and planning straightforward.'],'Always plan hole alignment on paper or in CAD before building. Misaligned holes cost time and create weak connections that fail at competition.')},
-      {id:'f1l3',title:'Motors & the V5 Brain',desc:'Smart ports, V5 motors, the brain, and how power flows through your robot.',coins:15,content:_lc('The VEX V5 system is built around the V5 Brain — a powerful computer with 11 smart ports connecting motors, sensors, and devices using one cable type. V5 motors are "smart" — they have built-in encoders tracking position, velocity, and torque without separate hardware.',['The V5 Brain has 11 smart ports — all motors and sensors share the same port and cable type.','V5 motors include built-in encoders measuring rotation in degrees — no separate encoder hardware needed.','Motor power is 0–100%. You can also set a torque limit in code to protect mechanisms.','The V5 Battery connects to the brain and powers everything — always fully charge it before competition.','The brain runs two programs: autonomous() for 15 sec, and usercontrol() for driver control.'],'Label all motor ports in both the brain\'s Device screen and your code comments. At competition, when something breaks under pressure, labeled ports save critical time.')},
-      {id:'f1l4',title:'Sensors Overview',desc:'Inertial, rotation, distance, and optical sensors — what each measures and when to use it.',coins:15,content:_lc('Sensors give your robot information about the world. While V5 motors have built-in encoders, additional sensors let your robot perceive its environment — detecting objects, measuring heading, tracking distance, and identifying colors.',['Inertial Sensor: measures heading (direction you\'re facing) and acceleration. Essential for autonomous.','Rotation Sensor: higher-precision position tracking than motor encoders — great for mechanisms and odometry.','Distance Sensor: uses ultrasound to measure object distance. Range: 20mm–2,000mm.','Optical Sensor: detects color (hue/saturation) and proximity — identifies and sorts game objects.','Vision Sensor: a camera that tracks colored objects in its FOV — complex but powerful for targeting.'],'Mount your Inertial Sensor as close to the robot\'s center of gravity as possible, and perfectly level. A tilted or off-center sensor gives noisy heading data that will break your autonomous routines.')},
-      {id:'f1l5',title:'Connectors & Cables',desc:'Smart cables, power cables, and best practices for reliable competition wiring.',coins:10,content:_lc('A robot that breaks mechanically can usually be fixed in the pits. A robot with wiring problems is much harder to diagnose under time pressure. Clean, intentional wiring prevents failures, speeds up repairs, and impresses judges during inspection.',['Smart cables carry both power and data — one cable type fits all V5 smart devices.','Power cables (red/black) only connect battery to brain. Do not confuse them with smart cables.','Route cables away from all moving parts — a cable caught in a gear will disable your robot mid-match.','Use cable anchors or zip ties every 3–4 inches to firmly secure cables to the frame.','Use the shortest cable that reaches comfortably with a small amount of slack — excess length adds weight.'],'Label both ends of every cable with tape and a marker. When you\'re unplugging 6 motors in the pits at 11pm, labeled cables are the difference between a 5-minute fix and a 30-minute disaster.')},
+      {id:'f1l2',title:'Structural Parts',desc:'C-channels, beams, plates, standoffs, and the 0.5" hole grid system.',coins:10,content:_lc('VEX V5 uses aluminum structural parts with holes spaced exactly 0.5 inches apart. This consistent spacing means almost everything lines up perfectly — a massive advantage when iterating quickly.',['C-channels are the backbone of most robots — strong in bending and torsion.','Beams are flat bars great for spanning gaps or connecting C-channels.','Plates are large flat sheets — ideal for mounting electronics or building walls.','Standoffs are threaded cylinders that create exact spacing between layers of metal.','All holes are spaced 0.5" apart — this grid system makes alignment predictable.'],'Always plan hole alignment on paper or in CAD before building.')},
+      {id:'f1l3',title:'Motors & the V5 Brain',desc:'Smart ports, V5 motors, the brain, and how power flows through your robot.',coins:15,content:_lc('The VEX V5 system is built around the V5 Brain — a powerful computer with 11 smart ports connecting motors, sensors, and devices using one cable type.',['The V5 Brain has 11 smart ports — all motors and sensors share the same port and cable type.','V5 motors include built-in encoders measuring rotation in degrees.','Motor power is 0–100%. You can also set a torque limit in code to protect mechanisms.','The V5 Battery connects to the brain and powers everything.','The brain runs two programs: autonomous() for 15 sec, and usercontrol() for driver control.'],'Label all motor ports in both the brain\'s Device screen and your code comments.')},
+      {id:'f1l4',title:'Sensors Overview',desc:'Inertial, rotation, distance, and optical sensors.',coins:15,content:_lc('Sensors give your robot information about the world.',['Inertial Sensor: measures heading and acceleration. Essential for autonomous.','Rotation Sensor: higher-precision position tracking — great for mechanisms.','Distance Sensor: uses ultrasound to measure object distance. Range: 20mm–2,000mm.','Optical Sensor: detects color and proximity — identifies and sorts game objects.','Vision Sensor: a camera that tracks colored objects — complex but powerful.'],'Mount your Inertial Sensor as close to the robot\'s center of gravity as possible, and perfectly level.')},
+      {id:'f1l5',title:'Connectors & Cables',desc:'Smart cables, power cables, and best practices for reliable wiring.',coins:10,content:_lc('A robot with wiring problems is much harder to diagnose under time pressure.',['Smart cables carry both power and data — one cable type fits all V5 smart devices.','Power cables (red/black) only connect battery to brain.','Route cables away from all moving parts.','Use cable anchors or zip ties every 3–4 inches to firmly secure cables.','Use the shortest cable that reaches comfortably with a small amount of slack.'],'Label both ends of every cable with tape and a marker.')},
     ]},
     {id:'f2',title:'Building Techniques',lessons:[
-      {id:'f2l1',title:'Chassis & Drivetrains',desc:'Tank drive, X-drive, and mecanum — trade-offs, use cases, and how to choose.',coins:15,content:_lc('The drivetrain is the most critical subsystem on your robot. A reliable, fast drivetrain wins more matches than any other single design decision. There are three main types used in VRC, each with distinct trade-offs.',['Tank Drive (4 or 6 wheels): Most reliable, highest torque, easy to program. Used by most competitive robots.','X-Drive (4 omni wheels at 45°): Moves in any direction (holonomic). Faster but lower torque — complex to build.','Mecanum Drive: Also holonomic, can strafe sideways. Complex to build and program; traction on competition tiles is inconsistent.','6-wheel tank with dropped center wheel: Reduces turning resistance significantly — very popular for high-traction environments.','Gear ratio matters as much as drive type — most competitive robots run a 3:5 speed ratio on a tank drive.'],'For your first serious competition robot, build a reliable 4-motor tank drive. Master the fundamentals before experimenting with holonomic drives. A well-tuned tank drive outperforms a wobbly X-drive in almost every real match.')},
-      {id:'f2l2',title:'Gear Ratios & Torque',desc:'How gears trade speed for torque, calculating ratios, and choosing the right gearing.',coins:20,content:_lc('Gears let you trade speed for torque. Understanding ratios is essential for drivetrains, lifts, and any mechanism needing a specific speed or force. Core principle: large gear driving small gear = speed up. Small driving large = torque up.',['Gear ratio = driven gear teeth ÷ driving gear teeth.','Ratio > 1: more torque (slower). Ratio < 1: more speed (less torque).','Example: 12-tooth driving 60-tooth = 5:1 — 5× more torque, 5× slower rotation.','VEX sprockets and chain follow the same principle for transmitting motion over distance.','Motor cartridges have built-in ratios: 100 RPM (torque/red), 200 RPM (standard/green), 600 RPM (speed/blue).'],'Use the VEX Gear Ratio Calculator on the VEX website before building — it calculates final RPM and torque multiplier automatically. Always verify your math before cutting metal.')},
-      {id:'f2l3',title:'Bracing & Structural Stability',desc:'Triangulation, cross-bracing, and building robots that stay rigid under competition stress.',coins:15,content:_lc('Nothing is more frustrating than a robot that worked in practice but shakes apart at competition. Structural stability is the difference between a robot that runs all day and one that needs constant repairs. The golden rule: triangles are the strongest shape.',['Triangles cannot deform without changing side lengths — they are inherently rigid.','Cross-brace long unsupported spans diagonally to eliminate flex and torsional twisting.','Use screw-through-bearing joints rather than standoffs alone for connections that experience repeated stress.','Standoffs are good for static spacing but weak under lateral force — reinforce with angle brackets at stress points.','Test rigidity by grabbing the top of your robot and attempting to twist it. You should feel almost no flex.'],'After every build session, shake your robot firmly in all directions. If anything rattles or flexes — fix it before competition. A loose screw mid-match can cascade into a complete mechanism failure at the worst possible moment.')},
-      {id:'f2l4',title:'Lifts & Mechanisms',desc:'4-bar linkages, DR4B, and linear slides — choosing the right lift for your game.',coins:20,content:_lc('Most VEX games require picking up or scoring objects at height — which means your robot needs a lift. The right choice depends on how high you need to reach, how much weight you\'re lifting, and speed requirements.',['4-bar linkage: Maintains end-effector angle throughout range of motion. Simple, reliable, moderate height.','DR4B (Double Reverse 4-bar): Two stacked 4-bars for very high reach while keeping the attachment level. Complex but powerful.','Linear Slide: Moves straight up and down — smooth but needs careful alignment and tensioning.','Scissor Lift: Compact folded, extends high. Heavy and complex — rarely competitive in modern VRC.','All lifts need counterbalancing — rubber bands or surgical tubing offset mechanism weight and prevent brownouts.'],'Always counterbalance your lift with rubber bands. A properly rubber-banded lift requires far less motor effort, extends motor life, and prevents voltage brownouts that can reset your V5 Brain mid-match.')},
-      {id:'f2l5',title:'Intakes & Game Object Handling',desc:'Roller intakes, flex wheels, and building reliable, consistent game object pickup.',coins:20,content:_lc('Your intake determines how your robot interacts with game objects. An unreliable intake loses matches even when everything else is perfect. The best intakes are fast, consistent, and forgiving of imperfect driver alignment.',['Roller intakes using flex wheels or rubber flaps are most common — fast, consistent, relatively simple.','Flex wheels (a VEX part) deform slightly to grip objects of varying sizes, dramatically improving consistency.','Intake speed matters: too slow misses objects, too fast bounces them out. Tune with real testing.','Passive indexers (bumps or walls in the path) align game objects automatically without sensor-based indexing.','Always test your intake with 10+ game objects in a row — one successful pickup doesn\'t validate a design.'],'Test your intake at multiple battery levels (100%, 75%, 50%). Motor speed drops as battery drains, so an intake that works at full charge may fail late in a match or long tournament day.')},
+      {id:'f2l1',title:'Chassis & Drivetrains',desc:'Tank drive, X-drive, and mecanum — trade-offs and how to choose.',coins:15,content:_lc('The drivetrain is the most critical subsystem on your robot.',['Tank Drive: Most reliable, highest torque, easy to program.','X-Drive: Moves in any direction (holonomic). Faster but lower torque.','Mecanum Drive: Also holonomic, can strafe sideways. Complex build.','6-wheel tank with dropped center wheel: Reduces turning resistance.','Gear ratio matters as much as drive type.'],'For your first competition robot, build a reliable 4-motor tank drive.')},
+      {id:'f2l2',title:'Gear Ratios & Torque',desc:'How gears trade speed for torque and calculating ratios.',coins:20,content:_lc('Gears let you trade speed for torque.',['Gear ratio = driven gear teeth ÷ driving gear teeth.','Ratio > 1: more torque (slower). Ratio < 1: more speed (less torque).','Example: 12-tooth driving 60-tooth = 5:1 — 5× more torque, 5× slower.','VEX sprockets and chain follow the same principle.','Motor cartridges: 100 RPM (red), 200 RPM (green), 600 RPM (blue).'],'Use the VEX Gear Ratio Calculator before building.')},
+      {id:'f2l3',title:'Bracing & Structural Stability',desc:'Triangulation, cross-bracing, and building robots that stay rigid.',coins:15,content:_lc('Structural stability is the difference between a robot that runs all day and one needing constant repairs.',['Triangles cannot deform without changing side lengths — they are inherently rigid.','Cross-brace long unsupported spans diagonally.','Use screw-through-bearing joints for connections under repeated stress.','Standoffs are good for static spacing but weak under lateral force.','Test rigidity by grabbing the top of your robot and attempting to twist it.'],'After every build session, shake your robot firmly in all directions.')},
+      {id:'f2l4',title:'Lifts & Mechanisms',desc:'4-bar linkages, DR4B, and linear slides.',coins:20,content:_lc('Most VEX games require picking up or scoring objects at height.',['4-bar linkage: Maintains end-effector angle throughout range of motion.','DR4B: Two stacked 4-bars for very high reach. Complex but powerful.','Linear Slide: Moves straight up and down — smooth but needs careful alignment.','Scissor Lift: Compact folded, extends high. Heavy and complex.','All lifts need counterbalancing — rubber bands offset mechanism weight.'],'Always counterbalance your lift with rubber bands.')},
+      {id:'f2l5',title:'Intakes & Game Object Handling',desc:'Roller intakes, flex wheels, and reliable pickup.',coins:20,content:_lc('Your intake determines how your robot interacts with game objects.',['Roller intakes using flex wheels or rubber flaps are most common.','Flex wheels deform slightly to grip objects of varying sizes.','Intake speed matters: too slow misses objects, too fast bounces them out.','Passive indexers align game objects automatically.','Always test your intake with 10+ game objects in a row.'],'Test your intake at multiple battery levels.')},
     ]},
   ]},
   cad:{label:'Design & CAD',icon:'📐',units:[
     {id:'c1',title:'CAD Fundamentals',lessons:[
-      {id:'c1l1',title:'What is CAD & Why It Matters',desc:'Introduction to computer-aided design and its role in competitive VRC.',coins:10,content:_lc('CAD (Computer-Aided Design) software lets you design your robot digitally before cutting any metal. Teams that CAD before building save enormous time — problems found in software take seconds to fix, while the same problems discovered mid-build cost hours and materials.',['CAD creates precise 3D models of parts and full assemblies that can be measured, checked for fit, and simulated.','VEX provides a free official library of every V5 part in CAD format for Fusion 360, Inventor, and SolidWorks.','CAD lets you verify hole alignment, mechanism range of motion, and part interference before turning a single screw.','Excellence Award judges strongly reward teams that show CAD models and design iterations in their engineering notebooks.','Common CAD tools for VRC: Autodesk Fusion 360 (most popular, free for students), Inventor, SolidWorks.'],'Fusion 360 is free for students and the VEX community uses it most widely. Start here — there are far more tutorials, YouTube videos, and community part libraries for Fusion 360 than any other tool.')},
-      {id:'c1l2',title:'Getting Started with Fusion 360',desc:'Installing Fusion 360, navigating the interface, and loading the VEX parts library.',coins:15,content:_lc('Fusion 360 is a cloud-based CAD tool from Autodesk — free for students. It combines 3D modeling, assemblies, rendering, and simulation in one program. The VEX community has built an extensive parts library containing every V5 component, saving you from modeling parts from scratch.',['Download Fusion 360 free at autodesk.com/education. Use your school email for student license.','The BLRS or TJ2 VEX parts library (on GitHub) has pre-made models of every VEX part — download it first.','Key areas: Browser (left panel), Canvas (3D viewport), Toolbar (top), Timeline (bottom edit history).','Navigation: middle-click + drag to orbit, scroll to zoom, Shift+middle-click to pan.','Fusion saves to Autodesk cloud — accessible from any computer, automatically version-controlled.'],'Join the VRC Discord or r/VEX and search "Fusion 360 parts library" — the community maintains up-to-date downloads. Don\'t start from zero; use what the community has already built.')},
-      {id:'c1l3',title:'Basic Sketching & Constraints',desc:'Creating 2D sketches, applying constraints and dimensions, and extruding to 3D.',coins:15,content:_lc('Everything in Fusion 360 starts with a 2D sketch drawn on a flat plane. You then extrude the sketch into a 3D solid. The key to clean, predictable CAD is applying constraints — rules that lock how sketch elements relate to each other geometrically.',['Sketches are drawn on a flat plane (XY, XZ, or YZ) or any flat face of an existing body.','Constraints: Horizontal, Vertical, Coincident, Parallel, Perpendicular, Equal, Tangent.','Dimensions (shortcut D): define exact sizes for any line, arc, radius, or angle.','Fully constrained sketch = all lines black. Blue lines mean geometry still has undefined degrees of freedom.','Extrude (shortcut E): pushes a closed sketch into a 3D solid. Can also cut through existing bodies.'],'Always fully constrain your sketches before extruding. Under-constrained sketches create hard-to-debug problems when changing dimensions later. Fully constrained = all lines black = completely locked.')},
-      {id:'c1l4',title:'Assemblies & Motion Joints',desc:'Assembling VEX parts, applying joints, and simulating mechanism movement in CAD.',coins:20,content:_lc('An assembly in Fusion 360 is where individual parts come together into a complete robot. You bring in components and use joints to define how they connect and move. For VEX robots this means rigid joints for structures and revolute joints for mechanisms.',['Use "Insert Component" to bring parts into an assembly — insert the same part multiple times (bolts, wheels, etc.).','Rigid joints: hold two parts in a completely fixed relationship — used for all structural connections.','Revolute joints: define a rotating connection — used for arms, wheels, and any pivoting mechanism.','Slider joints: define linear motion — used for linear slides and elevator mechanisms.','As-Built Joint positions parts at their current locations; Joint snaps geometry to precise alignment.'],'Build your assembly section by section — drivetrain first, then lift, then intake. Trying to assemble everything at once is overwhelming. Section-by-section assembly also makes modules reusable across different robot iterations.')},
-      {id:'c1l5',title:'Exporting & Sharing Designs',desc:'Generating drawings, exporting files, and sharing your model with teammates and judges.',coins:15,content:_lc('Your CAD model is only useful if you can communicate it clearly to teammates, mentors, and competition judges. Fusion 360 has several professional tools for sharing and exporting your design work.',['The Drawing workspace creates 2D technical drawings with dimensions from your 3D model.','Export to STEP or F3D format to share with someone using different CAD software.','The "Share Public Link" feature generates a URL to view your model in any browser — no install needed.','BOM (Bill of Materials) lists every component and quantity — useful for ordering parts and verifying your build.','Screenshots and embedded 3D views from CAD are strong additions to an engineering notebook.'],'Use the "Share Public Link" and embed a live 3D view in your engineering notebook. Judges can spin the model and examine every mechanism — it\'s a detail very few teams include and makes a strong impression.')},
+      {id:'c1l1',title:'What is CAD & Why It Matters',desc:'Introduction to computer-aided design and its role in competitive VRC.',coins:10,content:_lc('CAD lets you design your robot digitally before cutting any metal.',['CAD creates precise 3D models that can be measured and checked for fit.','VEX provides a free official library of every V5 part for Fusion 360, Inventor, and SolidWorks.','CAD lets you verify hole alignment, range of motion, and part interference before building.','Excellence Award judges strongly reward teams that show CAD models.','Common CAD tools: Autodesk Fusion 360 (most popular, free for students), Inventor, SolidWorks.'],'Fusion 360 is free for students and most widely used in the VEX community.')},
+      {id:'c1l2',title:'Getting Started with Fusion 360',desc:'Installing Fusion 360, navigating the interface, and loading the VEX parts library.',coins:15,content:_lc('Fusion 360 is a cloud-based CAD tool from Autodesk — free for students.',['Download Fusion 360 free at autodesk.com/education.','The BLRS or TJ2 VEX parts library has pre-made models of every VEX part.','Key areas: Browser (left panel), Canvas (3D viewport), Toolbar (top), Timeline (bottom).','Navigation: middle-click + drag to orbit, scroll to zoom, Shift+middle-click to pan.','Fusion saves to Autodesk cloud — accessible from any computer.'],'Join the VRC Discord and search "Fusion 360 parts library" — the community maintains up-to-date downloads.')},
+      {id:'c1l3',title:'Basic Sketching & Constraints',desc:'Creating 2D sketches, applying constraints and dimensions, extruding to 3D.',coins:15,content:_lc('Everything in Fusion 360 starts with a 2D sketch drawn on a flat plane.',['Sketches are drawn on a flat plane or any flat face of an existing body.','Constraints: Horizontal, Vertical, Coincident, Parallel, Perpendicular, Equal, Tangent.','Dimensions (shortcut D): define exact sizes for any line, arc, or angle.','Fully constrained sketch = all lines black. Blue lines = undefined degrees of freedom.','Extrude (shortcut E): pushes a closed sketch into a 3D solid.'],'Always fully constrain your sketches before extruding.')},
+      {id:'c1l4',title:'Assemblies & Motion Joints',desc:'Assembling VEX parts, applying joints, and simulating mechanism movement.',coins:20,content:_lc('An assembly is where individual parts come together into a complete robot.',['Use "Insert Component" to bring parts into an assembly.','Rigid joints: hold two parts in a completely fixed relationship.','Revolute joints: define a rotating connection — used for arms and wheels.','Slider joints: define linear motion — used for linear slides.','As-Built Joint positions parts at their current locations.'],'Build your assembly section by section — drivetrain first, then lift, then intake.')},
+      {id:'c1l5',title:'Exporting & Sharing Designs',desc:'Generating drawings, exporting files, and sharing your model.',coins:15,content:_lc('Your CAD model is only useful if you can communicate it clearly.',['The Drawing workspace creates 2D technical drawings with dimensions from your 3D model.','Export to STEP or F3D format to share with different CAD software.','The "Share Public Link" feature generates a URL to view your model in any browser.','BOM lists every component and quantity — useful for ordering parts.','Screenshots and embedded 3D views are strong notebook additions.'],'Use the "Share Public Link" and embed a live 3D view in your engineering notebook.')},
     ]},
     {id:'c2',title:'Robot Design Process',lessons:[
-      {id:'c2l1',title:'Game Analysis',desc:'Reading the game manual, identifying scoring priorities, and setting design goals.',coins:15,content:_lc('Before touching metal or opening CAD, you need to deeply understand the game. The VRC game manual is the rulebook — every team gets the same one, but teams that read it most carefully find the best strategies. Game analysis is how you decide what robot to build.',['Download the game manual from vex.com the day of the game reveal. Read it cover to cover.','Identify all scoring methods: what objects score, where they score, and exact point values.','Calculate the theoretical maximum score — this defines what a "perfect robot" looks like.','Identify highest-value scoring per time spent — these should be your primary design goals.','Read all robot rules carefully: size/weight limits, legal starting positions, prohibited interactions.'],'After reading the manual, watch top teams from the previous World Championship analyze the new game. Elite teams often figure out optimal strategies within days of the reveal — studying their early robots reveals a great deal about the season\'s meta.')},
-      {id:'c2l2',title:'Brainstorming & Concept Sketches',desc:'Generating robot ideas, rough sketches, and evaluating concepts before committing.',coins:15,content:_lc('Great robots start with bad sketches. Brainstorming is about quantity before quality — generate as many ideas as possible before evaluating any of them. Teams that skip this step tend to build the first idea they had, not the best one.',['Set a 20-minute timer and sketch as many different robot concepts as you can — aim for 10+ distinct concepts.','Do not self-censor during brainstorming — even "bad" ideas can spark unexpectedly good ones.','For each concept, note its biggest advantage and biggest risk or challenge.','After brainstorming, evaluate concepts on: scoring potential, reliability, buildability, programmability.','Narrow to 2–3 strongest concepts, then build quick prototypes of the riskiest mechanisms to validate.'],'Brainstorm individually before discussing as a group. Research shows individual ideation before group discussion produces more diverse, creative ideas — group brainstorming alone tends to let dominant voices narrow thinking too early.')},
-      {id:'c2l3',title:'Prototyping',desc:'Building quick physical prototypes to validate design ideas before committing to metal.',coins:20,content:_lc('A prototype is a quick, rough version of a mechanism built to answer one question: "Will this actually work?" Good prototyping is fast and cheap — use cardboard, zip ties, rubber bands, and scrap VEX metal. The goal is learning whether an idea is worth building fully.',['Build prototypes with cheapest, fastest materials: cardboard, tape, zip ties, scrap metal.','Define one specific question before each prototype: "Can this roller intake pick up the game object reliably?"','Test prototypes with real game objects — objects are often heavier or differently shaped than they appear in reveal videos.','Prototype the riskiest parts of your design first. If the risky part fails, you\'ve saved yourself a complete rebuild.','Photograph every prototype, even failed ones — failures are documented lessons for this season and next.'],'Give yourself a strict time limit — 30–60 minutes maximum per prototype. If you can\'t demonstrate the core concept in that time, either simplify the prototype or reconsider the design. Open-ended prototyping sessions often become premature full builds.')},
-      {id:'c2l4',title:'Iterating on Your Design',desc:'Making systematic, documented design improvements based on testing data.',coins:20,content:_lc('No robot design survives first contact with competition intact. The best teams treat each iteration as an experiment — form a hypothesis ("if we change X, Y will improve"), make the change, test it, and document the result. Systematic iteration is what separates teams that improve steadily from teams that rebuild randomly.',['Iteration means deliberate, documented changes — not random tinkering.','Change one variable at a time. If you change three things and performance improves, you don\'t know which change helped.','After each change, quantify the result: count cycles per minute, measure consistency rate, time your autonomous.','Keep a log of every iteration: what changed, why, and what actually happened. This IS your engineering notebook.','Plan iterations based on competition data — fix what actually failed, not what looked aesthetically unpleasant.'],'Score yourself in practice with a stopwatch. Track cycles per minute, autonomous success rate over 10 attempts, and driver control scores over multiple runs. Data-driven iteration is dramatically more effective than intuition-based iteration.')},
-      {id:'c2l5',title:'Engineering Notebook',desc:'What judges evaluate, how to document your process, and tips for a winning notebook.',coins:25,content:_lc('The engineering notebook is required for VRC awards including Excellence (highest award), Design, and Think. A great notebook tells the story of your team\'s engineering process, demonstrating systematic thinking. Judges spend 2–5 minutes reading — clarity and organization are critical.',['Document every meeting: date, attendees, decisions made, and the reasoning behind them.','Include problem statements, alternatives considered, test results with data, and post-competition reflections.','Use photos liberally — an annotated photo of a mechanism communicates more than a paragraph of text.','Show you considered and rejected alternative designs — this demonstrates real engineering thinking.','Maintain consistent format: dated entries, labeled photos, organized sections throughout the season.'],'Don\'t write your notebook the night before competition. Judges can always tell. The best notebooks are updated at every meeting throughout the entire season. Set up a shared Google Doc and write entries immediately after each session while details are fresh.')},
+      {id:'c2l1',title:'Game Analysis',desc:'Reading the game manual, identifying scoring priorities, and setting design goals.',coins:15,content:_lc('Before touching metal, you need to deeply understand the game.',['Download the game manual from vex.com the day of the game reveal. Read it cover to cover.','Identify all scoring methods: what objects score, where they score, and exact point values.','Calculate the theoretical maximum score — this defines what a "perfect robot" looks like.','Identify highest-value scoring per time spent — these should be your primary design goals.','Read all robot rules carefully: size/weight limits, legal starting positions.'],'After reading the manual, watch top teams from the previous World Championship analyze the new game.')},
+      {id:'c2l2',title:'Brainstorming & Concept Sketches',desc:'Generating robot ideas and evaluating concepts before committing.',coins:15,content:_lc('Great robots start with bad sketches. Brainstorming is about quantity before quality.',['Set a 20-minute timer and sketch as many different robot concepts as you can.','Do not self-censor during brainstorming — even "bad" ideas can spark good ones.','For each concept, note its biggest advantage and biggest risk.','After brainstorming, evaluate on: scoring potential, reliability, buildability, programmability.','Narrow to 2–3 strongest concepts, then build quick prototypes of the riskiest mechanisms.'],'Brainstorm individually before discussing as a group.')},
+      {id:'c2l3',title:'Prototyping',desc:'Building quick physical prototypes to validate design ideas.',coins:20,content:_lc('A prototype is a quick, rough version of a mechanism built to answer one question: "Will this work?"',['Build prototypes with cheapest, fastest materials: cardboard, tape, zip ties, scrap metal.','Define one specific question before each prototype.','Test prototypes with real game objects.','Prototype the riskiest parts of your design first.','Photograph every prototype, even failed ones.'],'Give yourself a strict 30–60 minute time limit per prototype.')},
+      {id:'c2l4',title:'Iterating on Your Design',desc:'Making systematic, documented design improvements based on testing data.',coins:20,content:_lc('The best teams treat each iteration as an experiment.',['Iteration means deliberate, documented changes — not random tinkering.','Change one variable at a time.','After each change, quantify the result: count cycles per minute, measure consistency rate.','Keep a log of every iteration: what changed, why, and what actually happened.','Plan iterations based on competition data.'],'Score yourself in practice with a stopwatch.')},
+      {id:'c2l5',title:'Engineering Notebook',desc:'What judges evaluate, how to document your process, and tips for a winning notebook.',coins:25,content:_lc('The engineering notebook is required for VRC awards including Excellence.',['Document every meeting: date, attendees, decisions made, and the reasoning.','Include problem statements, alternatives considered, test results with data.','Use photos liberally — an annotated photo communicates more than a paragraph.','Show you considered and rejected alternative designs.','Maintain consistent format: dated entries, labeled photos, organized sections.'],'Don\'t write your notebook the night before competition. Judges can always tell.')},
     ]},
   ]},
   programming:{label:'Programming',icon:'💻',units:[
     {id:'p1',title:'VEXcode Basics',lessons:[
-      {id:'p1l1',title:'Introduction to VEXcode V5',desc:'Setting up VEXcode, configuring devices, and uploading your first program.',coins:10,content:_lc('VEXcode V5 is the official programming environment for VEX V5 robots, using C++ — a professional language used in games, systems software, and robotics worldwide. VEXcode handles the low-level hardware details so you can focus entirely on your robot\'s behavior.',['Download VEXcode V5 free from vex.com. Available on Windows, Mac, Chromebook, and iPad.','Configure devices: open the Devices screen in VEXcode to assign what\'s plugged into each brain port.','The V5 runs two user functions: autonomous() for the 15-sec period, and usercontrol() for the 1:45 driver period.','The brain\'s home screen shows connection status, battery percentage, program list, and port health.','Upload via USB cable (most reliable) or wirelessly via the controller\'s built-in radio.'],'Name your projects clearly from day one: "DriverControl_v1", "Auton_skills_v3". Use multiple brain program slots. Never overwrite a working program without saving a copy — always keep your last known-good version.')},
-      {id:'p1l2',title:'Variables & Data Types',desc:'Integers, floats, booleans, and using variables to control your robot.',coins:15,content:_lc('Variables are named containers that store data. In VEXcode (C++), every variable has a type defining what kind of data it holds. Choosing the right data type affects precision, memory, and what operations you can perform.',['int: whole numbers. Use for speeds (0–100), port numbers, counters.','double: decimal numbers with high precision. Use for sensor readings, distances, PID values.','bool: only true or false. Use for flags: isIntakeRunning, hasGameObject, autonComplete.','Declare with type and name: int speed = 50;   double heading = 0.0;   bool intakeOn = false;','Use descriptive names always: "leftMotorSpeed" not "x". Code is read more often than it is written.'],'Avoid magic numbers — never write Motor.spin(forward, 75, pct) with a raw 75. Declare: const int DRIVE_SPEED = 75; and use the name. When you need to change it, you change it in exactly one place.',`// Good variable naming and constants
-const int DRIVE_SPEED = 75;
-const int INTAKE_SPEED = 100;
-const double WHEEL_CIRC = 12.57; // inches
-
-int leftSpeed = DRIVE_SPEED;
-double currentHeading = 0.0;
-bool intakeActive = false;`)},
-      {id:'p1l3',title:'Motor Control',desc:'Spinning motors, setting velocities, and using encoders to drive precise distances.',coins:15,content:_lc('Motor control is the foundation of everything your robot does. In VEXcode, motors are objects configured in the Devices screen and controlled using built-in methods. You can spin continuously, for a time, to a position, or stop with different brake behaviors.',['Continuous: LeftMotor.spin(forward, 60, percent); — runs until stop() is called.','Timed: LeftMotor.spinFor(2.0, seconds, 80, percent); — runs for given duration then stops.','Position: LeftMotor.spinToPosition(360, degrees); — rotates to specific encoder count.','Stop modes: brake (holds position), coast (free spin), hold (actively holds with power).','Read encoder: LeftMotor.position(degrees) — resets with LeftMotor.resetPosition();'],'Use spinFor() with async=false on the first motor so both motors start near-simultaneously. Example: Left.spinFor(400,deg,70,pct,false); Right.spinFor(400,deg,70,pct); — the false means "don\'t wait" on left, so right starts immediately.',`// Drive forward then stop
-LeftMotors.spinFor(2.0, seconds, 70, percent, false);
-RightMotors.spinFor(2.0, seconds, 70, percent);
-
-LeftMotors.stop(brake);
-RightMotors.stop(brake);
-
-// Read encoder position
-double pos = LeftMotors.position(degrees);`)},
-      {id:'p1l4',title:'Conditional Logic (if / else)',desc:'Decision-making with if/else — the foundation of adaptive autonomous behavior.',coins:15,content:_lc('Conditional logic lets your robot make decisions. With if/else statements, your program checks a condition and takes different actions based on whether it\'s true or false. This is the core of autonomous behavior — instead of a blind fixed sequence, your robot adapts to what it senses.',['if(condition){} — runs only when condition is true.','else{} — runs only when the preceding if was false.','else if(condition2){} — chains multiple conditions in sequence.','Comparison operators: == != > < >= <=','Logical: && (AND — both true), || (OR — either true), ! (NOT — flips true↔false).'],'Keep conditions readable. Extract complex conditions into a named bool: bool wallNearby=(WallSensor.objectDistance(mm)<150); then write if(wallNearby). Self-documenting code is far easier to debug under competition pressure.',`double dist = WallSensor.objectDistance(mm);
-
-if(dist < 150) {
-  LeftMotors.stop(brake);
-  RightMotors.stop(brake);
-} else if(dist < 400) {
-  LeftMotors.spin(forward, 30, percent);
-  RightMotors.spin(forward, 30, percent);
-} else {
-  LeftMotors.spin(forward, 70, percent);
-  RightMotors.spin(forward, 70, percent);
-}`)},
-      {id:'p1l5',title:'Loops',desc:'Using while and for loops to repeat actions and build control sequences.',coins:15,content:_lc('Loops repeat a block of code multiple times. In robot code, loops are everywhere — your entire driver control period runs inside an infinite while loop, continuously reading controller input and updating motor speeds every 20 milliseconds.',['while(condition){} — repeats as long as condition is true. while(true){} loops forever.','for(int i=0; i<n; i++){} — repeats exactly n times. Use when you know the count.','break; — immediately exits the loop. Used to stop when a target is reached.','continue; — skips the rest of the current iteration, jumps to the next.','Always have an exit condition for non-infinite loops, or your program will freeze.'],'Always add wait(20, msec) at the end of your main control loop. Without it, the loop runs thousands of times per second, overloading the V5 Brain CPU and causing unpredictable behavior. 20ms is the standard loop delay in VRC.',`void usercontrol(void) {
-  while(true) {
-    int leftY  = Controller.Axis3.position();
-    int rightY = Controller.Axis2.position();
-
-    LeftMotors.spin(forward, leftY,  percent);
-    RightMotors.spin(forward, rightY, percent);
-
-    wait(20, msec); // ALWAYS include this
-  }
-}`)},
+      {id:'p1l1',title:'Introduction to VEXcode V5',desc:'Setting up VEXcode, configuring devices, and uploading your first program.',coins:10,content:_lc('VEXcode V5 is the official programming environment for VEX V5 robots, using C++.',['Download VEXcode V5 free from vex.com. Available on Windows, Mac, Chromebook, and iPad.','Configure devices: open the Devices screen in VEXcode to assign what\'s plugged into each brain port.','The V5 runs two user functions: autonomous() for 15 sec, and usercontrol() for 1:45 driver period.','The brain\'s home screen shows connection status, battery percentage, program list, and port health.','Upload via USB cable (most reliable) or wirelessly via the controller radio.'],'Name your projects clearly from day one.')},
+      {id:'p1l2',title:'Variables & Data Types',desc:'Integers, floats, booleans, and using variables to control your robot.',coins:15,content:_lc('Variables are named containers that store data.',['int: whole numbers. Use for speeds (0–100), port numbers, counters.','double: decimal numbers with high precision. Use for sensor readings, distances, PID values.','bool: only true or false. Use for flags: isIntakeRunning, hasGameObject.','Declare with type and name: int speed = 50;   double heading = 0.0;','Use descriptive names always: "leftMotorSpeed" not "x".'],'Avoid magic numbers — declare named constants instead.',`const int DRIVE_SPEED = 75;\nconst int INTAKE_SPEED = 100;\n\nint leftSpeed = DRIVE_SPEED;\nbool intakeActive = false;`)},
+      {id:'p1l3',title:'Motor Control',desc:'Spinning motors, setting velocities, and using encoders.',coins:15,content:_lc('Motor control is the foundation of everything your robot does.',['Continuous: LeftMotor.spin(forward, 60, percent);','Timed: LeftMotor.spinFor(2.0, seconds, 80, percent);','Position: LeftMotor.spinToPosition(360, degrees);','Stop modes: brake (holds position), coast (free spin), hold (actively holds with power).','Read encoder: LeftMotor.position(degrees)'],'Use spinFor() with async=false on the first motor so both motors start simultaneously.',`LeftMotors.spinFor(2.0, seconds, 70, percent, false);\nRightMotors.spinFor(2.0, seconds, 70, percent);\n\nLeftMotors.stop(brake);\nRightMotors.stop(brake);`)},
+      {id:'p1l4',title:'Conditional Logic (if / else)',desc:'Decision-making with if/else — the foundation of adaptive autonomous behavior.',coins:15,content:_lc('Conditional logic lets your robot make decisions.',['if(condition){} — runs only when condition is true.','else{} — runs only when the preceding if was false.','else if(condition2){} — chains multiple conditions in sequence.','Comparison operators: == != > < >= <=','Logical: && (AND), || (OR), ! (NOT).'],'Keep conditions readable. Extract complex conditions into a named bool.',`double dist = WallSensor.objectDistance(mm);\n\nif(dist < 150) {\n  LeftMotors.stop(brake);\n} else if(dist < 400) {\n  LeftMotors.spin(forward, 30, percent);\n} else {\n  LeftMotors.spin(forward, 70, percent);\n}`)},
+      {id:'p1l5',title:'Loops',desc:'Using while and for loops to repeat actions.',coins:15,content:_lc('Loops repeat a block of code multiple times.',['while(condition){} — repeats as long as condition is true. while(true){} loops forever.','for(int i=0; i<n; i++){} — repeats exactly n times.','break; — immediately exits the loop.','continue; — skips the rest of the current iteration.','Always have an exit condition for non-infinite loops.'],'Always add wait(20, msec) at the end of your main control loop.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n\n    LeftMotors.spin(forward, leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    wait(20, msec); // ALWAYS include this\n  }\n}`)},
     ]},
     {id:'p2',title:'Driver Control & Autonomous',lessons:[
-      {id:'p2l1',title:'Reading Controller Input',desc:'Joystick axes, button states, and mapping inputs to robot actions.',coins:15,content:_lc('The V5 Controller connects wirelessly to the brain and gives your drivers two joysticks and 12 buttons. You read the controller\'s state every loop iteration and map inputs to motor commands.',['Axes return −100 to +100: Axis3 (left vertical), Axis4 (left horizontal), Axis2 (right vertical), Axis1 (right horizontal).','pressing() — returns true the entire time button is held. Best for continuous actions like running an intake.','pressed() — fires exactly once per button press. Best for toggling something on/off.','Controller.ButtonR1.pressing() — read any button by name.','Read values every loop: int speed = Controller.Axis3.position();'],'Print controller values to the brain screen while testing: Brain.Screen.printAt(1,1,"L:%d R:%d",leftY,rightY); — verify actual values before trusting them to control motors, and catch deadzone/drift issues early.',`void usercontrol(void) {
-  while(true) {
-    int leftY  = Controller.Axis3.position();
-    int rightY = Controller.Axis2.position();
-    bool intakeBtn = Controller.ButtonR1.pressing();
-    bool reverseBtn = Controller.ButtonR2.pressing();
-
-    LeftMotors.spin(forward,  leftY,  percent);
-    RightMotors.spin(forward, rightY, percent);
-
-    if(intakeBtn)       Intake.spin(forward, 100, percent);
-    else if(reverseBtn) Intake.spin(reverse, 100, percent);
-    else                Intake.stop(coast);
-
-    wait(20, msec);
-  }
-}`)},
-      {id:'p2l2',title:'Tank Drive & Arcade Drive',desc:'The two most common drive schemes — how they work and how to code them.',coins:20,content:_lc('Tank drive uses one stick per side. Arcade drive uses one stick for forward/backward plus turning simultaneously. Most experienced drivers prefer arcade; most beginners start on tank. Let your driver try both before committing.',['Tank Drive: left stick → left motors, right stick → right motors. Intuitive but requires two-handed coordination.','Arcade Drive: Y axis = forward/backward, X axis = turning. One stick drives the whole robot.','Arcade formula: leftSpeed = Y + X,   rightSpeed = Y − X','Apply a deadband: ignore inputs smaller than ±5 to prevent drift from imperfect joystick centering.','Scale max speed (e.g. ×0.8) for finer control during precision tasks inside the field.'],'Run 3+ practice sessions with your driver using both styles before committing. Some drivers are dramatically faster with arcade, others with tank. Driver speed and consistency wins more matches than almost any other variable.',`// Arcade Drive with deadband
-void usercontrol(void) {
-  while(true) {
-    int Y = Controller.Axis3.position(); // forward/back
-    int X = Controller.Axis1.position(); // turning
-
-    if(abs(Y) < 5) Y = 0;  // deadband
-    if(abs(X) < 5) X = 0;
-
-    LeftMotors.spin(forward,  Y + X, percent);
-    RightMotors.spin(forward, Y - X, percent);
-
-    wait(20, msec);
-  }
-}`)},
-      {id:'p2l3',title:'Basic Timed Autonomous',desc:'Writing autonomous routines with spinFor() — the fastest way to get started.',coins:20,content:_lc('A timed autonomous uses spinFor() with specific durations to move through a sequence of actions. It\'s the simplest approach — quick to write, easy to understand, and reasonably reliable. A well-tuned timed routine is competitive and the right place to start.',['spinFor(time, seconds, speed, percent) — runs motor for a fixed duration then stops.','Chain multiple spinFor() calls in sequence to create a multi-step routine.','Run paired motors in parallel: use false (async) on first motor so second starts immediately.','Test on the same surface type always — timed routines depend on traction, carpet vs tiles differ.','Start simple: drive forward, score one element, park. Add complexity only after basic version is consistent.'],'Film your autonomous on video and watch frame by frame. Small variations invisible to the eye show clearly on video. Video analysis is the fastest way to identify drift and inconsistency.',`void autonomous(void) {
-  // Drive forward 1.5 seconds
-  LeftMotors.spinFor(1.5, seconds, 80, percent, false);
-  RightMotors.spinFor(1.5, seconds, 80, percent);
-
-  // Run intake 0.5 seconds
-  Intake.spinFor(0.5, seconds, 100, percent);
-
-  // Turn ~90 degrees (tune this value!)
-  LeftMotors.spinFor(0.65, seconds,  60, percent, false);
-  RightMotors.spinFor(0.65, seconds, -60, percent);
-}`)},
-      {id:'p2l4',title:'Sensor-Based Autonomous',desc:'Using encoders and the inertial sensor for accurate, repeatable autonomous routines.',coins:25,content:_lc('Sensor-based autonomous measures exactly how far the robot has traveled and how much it has turned — rather than trusting time. This makes routines dramatically more repeatable. At the competitive level, nearly all winning programs use sensor-based autonomous.',['Encoders: reset with motor.resetPosition() at the start. Read with motor.position(degrees).','Inertial Sensor: calibrate at start with Inertial.calibrate(); wait(2, seconds); — robot must be completely still.','Drive a specific distance: (target_inches / wheel_circumference_inches) × 360 = encoder degrees.','Turn to a heading: spin motors opposite directions, check Inertial.heading() until target is reached.','Test 5–10 times in a row and measure variance — consistency, not best-case, is what wins.'],'Calibrate your inertial sensor while the robot is completely still at the very start of autonomous. Skipping calibration or calibrating while moving gives inaccurate heading data throughout the entire routine.',`void autonomous(void) {
-  Inertial.calibrate();
-  wait(2.0, seconds);
-
-  // Drive 24 inches (4" wheel ~452 encoder degrees)
-  LeftMotors.spinFor(452, degrees, 70, percent, false);
-  RightMotors.spinFor(452, degrees, 70, percent);
-
-  // Turn to 90 degree heading
-  while(Inertial.heading() < 88.0) {
-    LeftMotors.spin(forward,  40, percent);
-    RightMotors.spin(reverse, 40, percent);
-    wait(10, msec);
-  }
-  LeftMotors.stop(brake);
-  RightMotors.stop(brake);
-}`)},
-      {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID (Proportional-Integral-Derivative) control adjusts motor speed in real time based on how far the motor is from its target — instead of running at a fixed speed. It\'s the single biggest step up in autonomous accuracy and is used in nearly every competitive robot.',['P (Proportional): speed = kP × error. Farther from target = faster. Simple but can overshoot.','I (Integral): accumulates past error over time to correct persistent offsets P alone can\'t fix.','D (Derivative): reacts to rate-of-change of error — predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first (increase until oscillates, back off), then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible. A robot tuned on carpet behaves differently on field tiles due to different traction. Always re-tune or verify on competition tiles when you arrive at the event.',`void driveDistance(double targetDeg) {
-  const double kP = 0.5;
-  const double kD = 0.02;
-  double prevError = 0;
-  LeftMotors.resetPosition();
-
-  while(true) {
-    double error = targetDeg - LeftMotors.position(degrees);
-    double deriv = error - prevError;
-    double speed = (kP * error) + (kD * deriv);
-
-    speed = fmax(-100, fmin(100, speed));
-
-    LeftMotors.spin(forward,  speed, percent);
-    RightMotors.spin(forward, speed, percent);
-
-    if(fabs(error) < 3.0) break;
-    prevError = error;
-    wait(20, msec);
-  }
-  LeftMotors.stop(hold);
-  RightMotors.stop(hold);
-}`)},
+      {id:'p2l1',title:'Reading Controller Input',desc:'Joystick axes, button states, and mapping inputs to robot actions.',coins:15,content:_lc('The V5 Controller connects wirelessly to the brain and gives your drivers two joysticks and 12 buttons.',['Axes return −100 to +100: Axis3 (left vertical), Axis4 (left horizontal), Axis2 (right vertical), Axis1 (right horizontal).','pressing() — returns true the entire time button is held.','pressed() — fires exactly once per button press.','Controller.ButtonR1.pressing() — read any button by name.','Read values every loop: int speed = Controller.Axis3.position();'],'Print controller values to the brain screen while testing.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n    bool intakeBtn = Controller.ButtonR1.pressing();\n\n    LeftMotors.spin(forward,  leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    if(intakeBtn) Intake.spin(forward, 100, percent);\n    else          Intake.stop(coast);\n\n    wait(20, msec);\n  }\n}`)},
+      {id:'p2l2',title:'Tank Drive & Arcade Drive',desc:'The two most common drive schemes — how they work and how to code them.',coins:20,content:_lc('Tank drive uses one stick per side. Arcade drive uses one stick for forward/backward plus turning.',['Tank Drive: left stick → left motors, right stick → right motors.','Arcade Drive: Y axis = forward/backward, X axis = turning. One stick drives the whole robot.','Arcade formula: leftSpeed = Y + X,   rightSpeed = Y − X','Apply a deadband: ignore inputs smaller than ±5 to prevent drift.','Scale max speed (e.g. ×0.8) for finer control during precision tasks.'],'Run 3+ practice sessions with your driver using both styles before committing.',`void usercontrol(void) {\n  while(true) {\n    int Y = Controller.Axis3.position();\n    int X = Controller.Axis1.position();\n\n    if(abs(Y) < 5) Y = 0;  // deadband\n    if(abs(X) < 5) X = 0;\n\n    LeftMotors.spin(forward,  Y + X, percent);\n    RightMotors.spin(forward, Y - X, percent);\n\n    wait(20, msec);\n  }\n}`)},
+      {id:'p2l3',title:'Basic Timed Autonomous',desc:'Writing autonomous routines with spinFor().',coins:20,content:_lc('A timed autonomous uses spinFor() with specific durations to move through a sequence of actions.',['spinFor(time, seconds, speed, percent) — runs motor for a fixed duration then stops.','Chain multiple spinFor() calls in sequence to create a multi-step routine.','Run paired motors in parallel: use false (async) on first motor so second starts immediately.','Test on the same surface type always — timed routines depend on traction.','Start simple: drive forward, score one element, park.'],'Film your autonomous on video and watch frame by frame.',`void autonomous(void) {\n  // Drive forward 1.5 seconds\n  LeftMotors.spinFor(1.5, seconds, 80, percent, false);\n  RightMotors.spinFor(1.5, seconds, 80, percent);\n\n  // Run intake 0.5 seconds\n  Intake.spinFor(0.5, seconds, 100, percent);\n}`)},
+      {id:'p2l4',title:'Sensor-Based Autonomous',desc:'Using encoders and the inertial sensor for accurate, repeatable autonomous routines.',coins:25,content:_lc('Sensor-based autonomous measures exactly how far the robot has traveled and how much it has turned.',['Encoders: reset with motor.resetPosition() at the start.','Inertial Sensor: calibrate at start with Inertial.calibrate(); wait(2, seconds);','Drive a specific distance: (target_inches / wheel_circumference_inches) × 360 = encoder degrees.','Turn to a heading: spin motors opposite directions, check Inertial.heading() until target.','Test 5–10 times in a row and measure variance — consistency wins.'],'Calibrate your inertial sensor while the robot is completely still at the very start of autonomous.',`void autonomous(void) {\n  Inertial.calibrate();\n  wait(2.0, seconds);\n\n  // Drive 24 inches (~452 encoder degrees for 4" wheel)\n  LeftMotors.spinFor(452, degrees, 70, percent, false);\n  RightMotors.spinFor(452, degrees, 70, percent);\n}`)},
+      {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID adjusts motor speed in real time based on how far the motor is from its target.',['P (Proportional): speed = kP × error. Farther from target = faster.','I (Integral): accumulates past error over time to correct persistent offsets.','D (Derivative): reacts to rate-of-change of error — predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first, then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible.',`void driveDistance(double targetDeg) {\n  const double kP = 0.5;\n  const double kD = 0.02;\n  double prevError = 0;\n  LeftMotors.resetPosition();\n\n  while(true) {\n    double error = targetDeg - LeftMotors.position(degrees);\n    double deriv = error - prevError;\n    double speed = (kP * error) + (kD * deriv);\n\n    speed = fmax(-100, fmin(100, speed));\n    LeftMotors.spin(forward, speed, percent);\n    RightMotors.spin(forward, speed, percent);\n\n    if(fabs(error) < 3.0) break;\n    prevError = error;\n    wait(20, msec);\n  }\n  LeftMotors.stop(hold);\n}`)},
     ]},
   ]},
 };
@@ -1394,7 +1349,7 @@ function switchTrack(trackId){
       <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
       <div class="track-summary-stat"><div class="track-summary-val">${totalCoins-earnedCoins}</div><div class="track-summary-lbl">Still Available</div></div>
       <div style="flex:1;margin-left:16px">
-        <div style="font-size:12px;font-weight:600;color:var(--indigo);margin-bottom:6px">${pct}% complete</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:6px">${pct}% complete</div>
         <div class="progress-bar-bg" style="height:10px;border-radius:5px"><div class="progress-bar-fill ${doneCount===allLessons.length?'green':''}" style="width:${pct}%"></div></div>
       </div>
     </div>`;
@@ -1474,7 +1429,7 @@ async function completeCurriculumLesson(lessonId,coins,event){
   openLesson=null;
   switchTrack(activeTrack);
 }
-// DB is still used as an in-memory cache; Firestore is the source of truth.
+
 async function loadDB(){
   if(!window._firebase) return;
   DB.users     = await window._firebase.getAllUsers();
@@ -1482,20 +1437,67 @@ async function loadDB(){
   DB.lessons   = await window._firebase.getAllLessons();
   DB.completedLessons = await window._firebase.getAllCompleted();
   DB.tickets   = await window._firebase.getAllTickets();
-  // ensure fields
   Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
   if(!DB.purchases)DB.purchases={};
 }
-// saveDB is now a no-op — all writes go directly to Firestore via _firebase helpers
 function saveDB(){}
 
-// Boot: wait for Firebase module to signal ready, then load data and show app
 async function boot(){
   await loadDB();
   showPage('info');
 }
 if(window._firebaseReady){ boot(); }
 else { document.addEventListener('firebase-ready', boot); }
+
+// ═══════ GOOGLE SIGN IN ═══════
+async function doGoogleSignIn(){
+  try {
+    const firebaseUser = await window._firebase.signInWithGoogle();
+    const email = firebaseUser.email.toLowerCase();
+    // Check if user already exists in our DB
+    const existing = await window._firebase.getUser(email);
+    if(existing && existing.role && existing.role !== 'removed') {
+      DB.users[email] = existing;
+      login(existing);
+      return;
+    }
+    // New Google user — need to pick a role
+    _pendingGoogleUser = {
+      email,
+      name: firebaseUser.displayName || email.split('@')[0],
+      photoURL: firebaseUser.photoURL || null
+    };
+    openModal('modal-google-role');
+  } catch(e) {
+    if(e.code !== 'auth/popup-closed-by-user') {
+      showToast('Google sign-in failed. Try again.');
+      console.error(e);
+    }
+  }
+}
+
+async function completeGoogleSignIn(role){
+  if(!_pendingGoogleUser) return;
+  closeModal('modal-google-role');
+  const { email, name } = _pendingGoogleUser;
+
+  if(role === 'teacher') {
+    // Check for invite
+    const invite = await window._firebase.getInvite(email);
+    if(!invite || invite.used) {
+      showToast('No teacher invite found for this email. Signing in as student.');
+      role = 'student';
+    } else {
+      await window._firebase.markInviteUsed(email);
+    }
+  }
+
+  const userData = { name, email, role, coins: 0, inventory: [], googleAuth: true };
+  await window._firebase.createUser(userData);
+  DB.users[email] = userData;
+  _pendingGoogleUser = null;
+  login(userData);
+}
 
 // ═══════ ROUTING ═══════
 // ═══════ ADMIN PANEL ═══════
@@ -1510,10 +1512,8 @@ async function doAdminInvite(){
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
   errEl.textContent='Sending invite…';
-  // Check if user already exists
   const existing=await window._firebase.getUser(email);
   if(existing){errEl.textContent='An account with this email already exists.';return;}
-  // Check if invite already sent
   const existing_invite=await window._firebase.getInvite(email);
   if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
   await window._firebase.createInvite(email);
@@ -1523,7 +1523,6 @@ async function doAdminInvite(){
 }
 
 async function renderAdminPanel(){
-  // Stats
   const allUsers=await window._firebase.getAllUsers();
   const allInvites=await window._firebase.getAllInvites();
   const userList=Object.values(allUsers);
@@ -1548,10 +1547,9 @@ async function renderAdminPanel(){
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${allInvites.filter(i=>i.used).length}</div><div style="font-size:11px;color:var(--text-3)">Used</div></div>
     </div>`;
 
-  // Invites list
   const inviteBody=document.getElementById('admin-invites-body');
   if(!allInvites.length){
-    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet. Click "+ Invite Teacher" to get started.</div>`;
+    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet.</div>`;
   } else {
     inviteBody.innerHTML=allInvites.map(inv=>`
       <div class="member-row">
@@ -1568,7 +1566,6 @@ async function renderAdminPanel(){
       </div>`).join('');
   }
 
-  // All users list
   const usersBody=document.getElementById('admin-users-body');
   const displayUsers=userList.filter(u=>u.role!=='admin');
   if(!displayUsers.length){
@@ -1604,7 +1601,6 @@ async function adminRevokeInvite(email){
 
 async function adminDeleteUser(email){
   if(!confirm(`Remove ${email} from Vexify? This cannot be undone.`)) return;
-  // Mark user as removed (we don't delete the Firestore doc, just change role)
   await window._firebase.updateUser(email,{role:'removed'});
   showToast('User removed');
   renderAdminPanel();
@@ -1622,8 +1618,10 @@ function toggleDark(){
   localStorage.setItem('vexify_dark',document.body.classList.contains('dark')?'1':'');
 }
 (function(){
-  if(localStorage.getItem('vexify_dark')==='1'){document.body.classList.add('dark');document.getElementById('btn-dark')?.classList.add('active');}
-
+  if(localStorage.getItem('vexify_dark')==='1'){
+    document.body.classList.add('dark');
+    document.getElementById('btn-dark')?.classList.add('active');
+  }
 })();
 
 function showPage(p){
@@ -1632,17 +1630,19 @@ function showPage(p){
   if(p==='dashboard')renderDashboard();
 }
 function goHome(){currentUser?showPage('dashboard'):showPage('info');}
-// ── Class gate: returns true if user has no classes ──────────────────────────
+
 function noClasses(){ return getMyClasses().length === 0; }
 
 function _noClassHTML(){
   const isT = currentUser.role === 'teacher';
   return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;text-align:center;gap:1rem;">
-    <div style="width:72px;height:72px;border-radius:50%;background:var(--indigo-light);display:flex;align-items:center;justify-content:center;font-size:32px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-    <div style="font-size:1.2rem;font-weight:800;color:var(--navy)">You need a class first</div>
-    <div style="font-size:14px;color:var(--muted);max-width:340px;line-height:1.7">${isT
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:32px">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <div style="font-size:1.2rem;font-weight:800;color:var(--text)">You need a class first</div>
+    <div style="font-size:14px;color:var(--text-3);max-width:340px;line-height:1.7">${isT
       ? 'Create a class to unlock Calendar, Messages, Progress, Tickets, and the Shop.'
-      : 'Ask your teacher to add you to a class. Once you\'re enrolled, all features will unlock automatically.'
+      : 'Ask your teacher to add you to a class. Once enrolled, all features will unlock automatically.'
     }</div>
     ${isT ? `<button class="btn btn-primary btn-pill" style="margin-top:.5rem" onclick="openCreateClassModal()">+ Create Your First Class</button>` : ''}
   </div>`;
@@ -1652,10 +1652,16 @@ function showPanel(p){
   document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('active'));
   document.querySelector(`.app-nav-item[data-panel="${p}"]`)?.classList.add('active');
   document.querySelectorAll('.main-content > .panel').forEach(el=>el.classList.add('hidden'));
-  document.getElementById('panel-'+p).classList.remove('hidden');
-  const renders={calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,progress:renderProgress,shop:renderShop,manage:renderManage,home:renderHome,lessons:renderLessonsPanel};
+  const panel=document.getElementById('panel-'+p);
+  if(panel) panel.classList.remove('hidden');
+  const renders={
+    calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,
+    progress:renderProgress,shop:renderShop,manage:renderManage,
+    home:renderHome,lessons:renderLessonsPanel,
+    'teacher-shop':renderTeacherShop,'teacher-lessons':renderTeacherLessons,
+    admin:renderAdminPanel
+  };
   if(renders[p]) renders[p]();
-  // Dim locked nav items when no classes
   _updateNavLockState();
 }
 
@@ -1701,7 +1707,6 @@ async function doRegister(){
   const existing=await window._firebase.getUser(email);
   if(existing){errEl.textContent='Email already registered.';return;}
   errEl.textContent='Creating account…';
-  // Teachers must have a valid invite from admin
   let finalRole=role;
   if(role==='teacher'){
     const invite=await window._firebase.getInvite(email);
@@ -1710,7 +1715,7 @@ async function doRegister(){
       return;
     }
     await window._firebase.markInviteUsed(email);
-    finalRole='teacher'; // confirmed
+    finalRole='teacher';
   }
   const userData={name,email,password:pw,role:finalRole,coins:0,inventory:[]};
   await window._firebase.createUser(userData);
@@ -1735,7 +1740,7 @@ function login(u){
     document.querySelector('.main-content').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1rem;text-align:center;padding:2rem;">
       <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
       <div style="font-size:15px;font-weight:600;color:var(--text)">Account Pending Approval</div>
-      <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval. You'll be able to access the platform once an admin activates your account.</div>
+      <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval.</div>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
     </div>`;
     return;
@@ -1769,6 +1774,14 @@ function fmtDate(d){if(!d)return'';const[y,m,day]=d.split('-');const mo=['Jan','
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function today(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
 
+// Stub for teacher-only panels (not yet scaffolded)
+function renderTeacherShop(){document.getElementById('teacher-shop-body').innerHTML='<div class="empty-state"><div class="empty-title">Shop Manager</div><div class="empty-desc">Add items for students to buy with VCoins.</div></div>';}
+function renderTeacherLessons(){document.getElementById('teacher-lessons-body').innerHTML='<div class="empty-state"><div class="empty-title">Lesson Builder</div><div class="empty-desc">Create custom lessons here.</div></div>';}
+function openAddShopItemModal(){openModal('modal-add-shop-item');}
+function doAddShopItem(){closeModal('modal-add-shop-item');}
+function openAddCustomLessonModal(){openModal('modal-add-custom-lesson');}
+function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
+
 // ═══════ DASHBOARD ═══════
 function renderDashboard(){
   const isT=currentUser.role==='teacher';
@@ -1780,23 +1793,6 @@ function renderDashboard(){
 }
 function renderSidebarClasses(){}
 
-function showPanel(p){
-  document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('active'));
-  document.querySelector(`.app-nav-item[data-panel="${p}"]`)?.classList.add('active');
-  document.querySelectorAll('.main-content > .panel').forEach(el=>el.classList.add('hidden'));
-  const panel=document.getElementById('panel-'+p);
-  if(panel) panel.classList.remove('hidden');
-  const renders={
-    calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,
-    progress:renderProgress,shop:renderShop,manage:renderManage,
-    home:renderHome,lessons:renderLessonsPanel,
-    'teacher-shop':renderTeacherShop,'teacher-lessons':renderTeacherLessons,
-    admin:renderAdminPanel
-  };
-  if(renders[p]) renders[p]();
-  _updateNavLockState();
-}
-
 // ═══════ HOME ═══════
 function renderHome(){
   const isT=currentUser.role==='teacher';
@@ -1804,7 +1800,6 @@ function renderHome(){
   document.getElementById('home-greeting').textContent='My Classes';
   document.getElementById('home-sub').textContent=isT?'Manage your classes and students':'Your enrolled classes';
   document.getElementById('home-new-class').classList.toggle('hidden',!isT);
-  // Join-with-code button (students only)
   let joinBtn=document.getElementById('home-join-btn');
   if(!joinBtn){
     joinBtn=document.createElement('button');
@@ -1916,14 +1911,14 @@ function handleCalClick(ds){
         ${completed?`<span class="badge badge-green">✓ Completed</span>`:''}
       </div>
       <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-        ${!isT&&!completed?`<button class="btn btn-green btn-sm" style="background:var(--green-light);color:var(--green);border:1px solid rgba(16,185,129,.3)" onclick="completeLesson('${ds}')">Mark Complete (+${l.coins||10} VCoins)</button>`:''}
+        ${!isT&&!completed?`<button class="btn btn-sm" style="background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)" onclick="completeLesson('${ds}')">Mark Complete (+${l.coins||10} VCoins)</button>`:''}
         ${isT?`<button class="btn btn-ghost btn-sm" onclick="openEditLesson('${ds}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteLesson('${ds}')">Delete</button>`:''}
       </div>
     </div>`;
   } else if(isT){
-    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--muted)">No lesson on ${fmtDate(ds)}. <a style="color:var(--indigo);font-weight:600;cursor:pointer" onclick="openLessonModal('${ds}')">Add one?</a></div>`;
+    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--text-3)">No lesson on ${fmtDate(ds)}. <a style="color:var(--accent);font-weight:600;cursor:pointer" onclick="openLessonModal('${ds}')">Add one?</a></div>`;
   } else {
-    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--muted)">No lesson on ${fmtDate(ds)}.</div>`;
+    el.innerHTML=`<div style="padding:.75rem;font-size:13px;color:var(--text-3)">No lesson on ${fmtDate(ds)}.</div>`;
   }
 }
 async function completeLesson(ds){
@@ -1944,7 +1939,7 @@ function renderLessonList(lbd){
   const el=document.getElementById('cal-lesson-list');if(!el)return;
   const sorted=Object.entries(lbd).sort(([a],[b])=>a.localeCompare(b));
   if(!sorted.length){el.innerHTML='';return;}
-  el.innerHTML=`<div class="card"><div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:1rem">Lessons This Month</div>`+
+  el.innerHTML=`<div class="card"><div style="font-size:14px;font-weight:700;margin-bottom:1rem">Lessons This Month</div>`+
     sorted.map(([date,l])=>{
       const done=DB.completedLessons[currentUser.email+'_'+calClassId+'_'+date];
       return`<div class="member-row"><span class="badge ${done?'badge-green':'badge-indigo'}" style="min-width:76px;justify-content:center">${fmtDate(date)}</span><div class="member-info"><div class="member-name">${esc(l.title)}</div>${l.desc?`<div class="member-email">${esc(l.desc.substring(0,60))}${l.desc.length>60?'…':''}</div>`:''}</div><span class="badge badge-gold">${l.coins||10}</span></div>`;
@@ -1993,8 +1988,8 @@ async function deleteLesson(ds){
   document.getElementById('cal-detail').innerHTML='';renderCal();
 }
 
-// ═══════ MESSAGES (Firebase real-time) ═══════
-let _liveMessages = []; // cache of messages pushed by the Firestore listener
+// ═══════ MESSAGES ═══════
+let _liveMessages = [];
 
 function renderMsgPanel(){
   if(noClasses()){
@@ -2010,24 +2005,19 @@ function renderMsgPanel(){
     document.getElementById('msg-body').innerHTML=`<div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div><div style="font-size:14px">Select a class above</div></div>`;
     return;
   }
-  // Render the shell (chat box + input bar) immediately
   _renderMsgShell();
-  // Subscribe to live messages for this class
   if(window._firebase){
     window._firebase.listenMessages(msgClassId, msgs => {
       _liveMessages = msgs;
       _renderMsgList(msgs);
     });
-  } else {
-    const list=document.getElementById('msg-list');
-    if(list) list.innerHTML=`<div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto;padding:1rem">⚠️ Firebase not configured — messages won't sync across devices.</div>`;
   }
 }
 
 function _renderMsgShell(){
   document.getElementById('msg-body').innerHTML=`<div class="card">
     <div class="msg-area" id="msg-list">
-      <div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto">Loading messages…</div>
+      <div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">Loading messages…</div>
     </div>
     <div class="msg-input-bar">
       <input class="msg-input" id="msg-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()">
@@ -2047,7 +2037,7 @@ function _renderMsgList(msgs){
       ? m.timestamp.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})
       : (m.time||'');
     return`<div class="msg-row ${own?'own':''}" data-id="${m.id}">
-      <div class="avatar ${avCol(m.name)}" style="width:28px;height:28px;font-size:10px;align-self:flex-end">${initials(m.name)}</div>
+      <div class="avatar" style="width:28px;height:28px;font-size:10px;align-self:flex-end">${initials(m.name)}</div>
       <div class="msg-bubble">
         ${!own?`<div class="msg-author">${esc(m.name)}</div>`:''}
         <div class="msg-text">${esc(m.text)}${m.edited?' <span style="font-size:10px;opacity:.6">(edited)</span>':''}</div>
@@ -2058,7 +2048,7 @@ function _renderMsgList(msgs){
         </div>
       </div>
     </div>`;
-  }).join(''):`<div style="text-align:center;color:var(--muted2);font-size:13px;margin:auto">No messages yet — say hello! 👋</div>`;
+  }).join(''):`<div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">No messages yet — say hello! 👋</div>`;
   if(wasAtBottom) list.scrollTop=list.scrollHeight;
 }
 
@@ -2073,23 +2063,14 @@ async function sendMsg(){
   const text=inp.value.trim();if(!text)return;
   inp.value='';
   if(window._firebase){
-    try{
-      await window._firebase.sendMessage(msgClassId,currentUser,text);
-    }catch(e){
-      showToast('⚠️ Message failed to send. Check your connection.');
-      inp.value=text; // restore on failure
-    }
-  } else {
-    // localStorage fallback
-    if(!DB.messages[msgClassId])DB.messages[msgClassId]=[];
-    DB.messages[msgClassId].push({email:currentUser.email,name:currentUser.name,text,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),edited:false});
-    saveDB();
+    try{ await window._firebase.sendMessage(msgClassId,currentUser,text); }
+    catch(e){ showToast('⚠️ Message failed to send.'); inp.value=text; }
   }
 }
 
 function openEditMsg(msgId, currentText){
   editMsgClassId=msgClassId;
-  editMsgIdx=msgId; // now stores the Firestore document ID
+  editMsgIdx=msgId;
   document.getElementById('edit-msg-input').value=currentText;
   openModal('modal-edit-msg');
 }
@@ -2099,17 +2080,15 @@ async function doEditMsg(){
   if(!text)return;
   closeModal('modal-edit-msg');
   if(window._firebase){
-    try{
-      await window._firebase.editMessage(editMsgClassId,editMsgIdx,text);
-    }catch(e){showToast('⚠️ Edit failed.');}
+    try{ await window._firebase.editMessage(editMsgClassId,editMsgIdx,text); }
+    catch(e){ showToast('⚠️ Edit failed.'); }
   }
 }
 
 async function deleteMsg(msgId){
   if(window._firebase){
-    try{
-      await window._firebase.deleteMessage(msgClassId,msgId);
-    }catch(e){showToast('⚠️ Delete failed.');}
+    try{ await window._firebase.deleteMessage(msgClassId,msgId); }
+    catch(e){ showToast('⚠️ Delete failed.'); }
   }
 }
 
@@ -2120,7 +2099,7 @@ function renderTickets(){
   const myIds=getMyClasses().map(([id])=>id);
   const tickets=DB.tickets.filter(t=>isT?myIds.includes(t.classId):t.userEmail===currentUser.email);
   const body=document.getElementById('tickets-body');
-  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"12\"/><line x1=\"12\" y1=\"16\" x2=\"12.01\" y2=\"16\"/></svg></div><div class="empty-title">No tickets yet</div><div class="empty-desc">Submit a ticket if you need help.</div></div>`;return;}
+  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-title">No tickets yet</div><div class="empty-desc">Submit a ticket if you need help.</div></div>`;return;}
   const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};
   const sc={open:'badge-orange',resolved:'badge-green'};
   body.innerHTML=[...tickets].reverse().map((t)=>{
@@ -2170,50 +2149,37 @@ function renderProgress(){
   const classes=getMyClasses();
 
   if(isT){
-    // Teacher: see all students' progress per class
     body.innerHTML=classes.map(([cid,c])=>{
       const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
       const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));
       return`<div class="card" style="margin-bottom:1rem">
-        <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:1rem">${c.name}</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:1rem">${c.name}</div>
         ${students.length?students.map(u=>{
           const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
           const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
           return`<div class="member-row">
-            <div class="avatar ${avCol(u.name)}">${initials(u.name)}</div>
+            <div class="avatar">${initials(u.name)}</div>
             <div class="member-info">
-              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${u.name}</span><span style="font-size:12px;color:var(--muted)">${done}/${allLessons.length} lessons · ${pct}%</span></div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${u.name}</span><span style="font-size:12px;color:var(--text-3)">${done}/${allLessons.length} lessons · ${pct}%</span></div>
               <div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div>
             </div>
             <span class="badge badge-gold">${u.coins||0}</span>
           </div>`;
-        }).join(''):`<div style="font-size:13px;color:var(--muted)">No students yet.</div>`}
+        }).join(''):`<div style="font-size:13px;color:var(--text-3)">No students yet.</div>`}
       </div>`;
     }).join('');
   } else {
-    // Student: see own progress
     body.innerHTML=classes.map(([cid,c])=>{
       const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));
       const done=allLessons.filter(([k])=>DB.completedLessons[currentUser.email+'_'+k.replace(/^[^_]+_/,'')]).length;
       const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
       return`<div class="card" style="margin-bottom:1rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-          <div style="font-size:15px;font-weight:700;color:var(--navy)">${c.name}</div>
+          <div style="font-size:15px;font-weight:700">${c.name}</div>
           <span class="badge badge-indigo">${pct}% complete</span>
         </div>
         <div style="margin-bottom:1rem"><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div>
-        <div style="font-size:13px;color:var(--muted)">${done} of ${allLessons.length} lessons completed</div>
-        ${allLessons.length?`<div style="margin-top:1rem">
-          ${allLessons.sort(([a],[b])=>a.localeCompare(b)).map(([k,l])=>{
-            const dk=currentUser.email+'_'+k.replace(/^[^_]+_/,'');
-            const isDone=DB.completedLessons[dk];
-            return`<div class="member-row" style="padding:8px 0">
-              <span style="font-size:16px">${isDone?'✓':''}</span>
-              <div class="member-info"><div class="member-name" style="font-size:13px">${esc(l.title)}</div><div class="member-email">${fmtDate(l.date)}</div></div>
-              <span class="badge badge-gold">${l.coins||10}</span>
-            </div>`;
-          }).join('')}
-        </div>`:''}
+        <div style="font-size:13px;color:var(--text-3)">${done} of ${allLessons.length} lessons completed</div>
       </div>`;
     }).join('');
   }
@@ -2222,7 +2188,6 @@ function renderProgress(){
 // ═══════ SHOP ═══════
 async function renderShop(){
   if(noClasses()){document.getElementById('shop-body').innerHTML=_noClassHTML();return;}
-  // Always refresh user from Firestore so coins/inventory are current
   const fresh = await window._firebase.getUser(currentUser.email);
   if(fresh){ currentUser.coins=fresh.coins||0; currentUser.inventory=fresh.inventory||[]; DB.users[currentUser.email]=fresh; }
   updateCoinDisplay();
@@ -2239,7 +2204,7 @@ async function renderShop(){
       <div class="shop-item-price">${item.price} VCoins</div>
       ${owned
         ?`<span class="badge badge-green" style="justify-content:center;width:100%">✓ Owned</span>`
-        :`<button class="btn btn-sm ${canAfford?'btn-primary':'btn-ghost'}" style="width:100%;justify-content:center;margin-top:4px" ${canAfford?'':"disabled style='width:100%;justify-content:center;margin-top:4px;opacity:.5;cursor:not-allowed'"} onclick="buyItem('${item.id}','${item.name}',${item.price})">${canAfford?'Buy Now':'Not enough VCoins'}</button>`
+        :`<button class="btn btn-sm ${canAfford?'btn-primary':'btn-ghost'}" style="width:100%;justify-content:center;margin-top:4px" ${canAfford?'':'disabled'} onclick="buyItem('${item.id}','${item.name}',${item.price})">${canAfford?'Buy Now':'Not enough VCoins'}</button>`
       }
     </div>`;
   }).join('')}</div>`;
@@ -2261,8 +2226,8 @@ function renderManage(){
   const classes=getMyClasses();
   const body=document.getElementById('manage-body');
   const toolsHtml=`<div style="display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;">
-    <button class="btn btn-ghost btn-sm" onclick="showPanel('teacher-shop')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg> Shop Manager</button>
-    <button class="btn btn-ghost btn-sm" onclick="showPanel('teacher-lessons')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg> Lesson Builder</button>
+    <button class="btn btn-ghost btn-sm" onclick="showPanel('teacher-shop')">Shop Manager</button>
+    <button class="btn btn-ghost btn-sm" onclick="showPanel('teacher-lessons')">Lesson Builder</button>
   </div>`;
   if(!classes.length){body.innerHTML=toolsHtml+`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">No classes yet</div><div class="empty-desc">Create your first class above.</div></div>`;return;}
   body.innerHTML=toolsHtml+classes.map(([id,c])=>{
@@ -2272,16 +2237,14 @@ function renderManage(){
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
         <div>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <div style="font-size:14px;font-weight:700;color:var(--text)">${c.name}</div>
-            <button class="btn btn-xs btn-ghost" onclick="openRenameClass('${id}')">Rename</button>
+            <div style="font-size:14px;font-weight:700">${c.name}</div>
+            <button class="btn btn-xs btn-ghost" onclick="renamingClassId='${id}';openRenameClass('${id}')">Rename</button>
           </div>
           <div style="font-size:11px;color:var(--text-3);margin-top:3px">${c.season||''}${c.room?' · '+c.room:''}</div>
           <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
             <span style="font-size:11px;color:var(--text-3)">Join code:</span>
             <span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.12em;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:2px 9px">${code}</span>
-            <button class="btn btn-xs btn-ghost" onclick="copyClassCode('${code}')">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy
-            </button>
+            <button class="btn btn-xs btn-ghost" onclick="copyClassCode('${code}')">Copy</button>
           </div>
         </div>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
@@ -2294,7 +2257,7 @@ function renderManage(){
         ${members.length?members.map(email=>{
           const u=DB.users[email];
           return u?`<div class="member-row">
-            <div class="avatar ${avCol(u.name)}">${initials(u.name)}</div>
+            <div class="avatar">${initials(u.name)}</div>
             <div class="member-info">
               <div class="member-name">${u.name} <span class="badge badge-gray" style="font-size:10px;padding:2px 6px">${u.role}</span></div>
               <div class="member-email">${email}</div>
@@ -2318,13 +2281,12 @@ async function createClass(){
   await window._firebase.saveClass(id,classData);
   closeModal('modal-create-class');renderManage();renderSidebarClasses();renderHome();_updateNavLockState();
 }
-// ═══════ JOIN WITH CODE ═══════
+
 async function doJoinWithCode(){
   const code=document.getElementById('join-code-input').value.trim().toUpperCase();
   const errEl=document.getElementById('join-code-err');
   if(!code){errEl.textContent='Please enter a code.';return;}
   errEl.textContent='Looking up class…';
-  // Search all classes for matching code
   const allClasses=await window._firebase.getAllClasses();
   const match=Object.values(allClasses).find(c=>c.code===code);
   if(!match){errEl.textContent='No class found with that code. Check with your teacher.';return;}
@@ -2341,11 +2303,10 @@ async function doJoinWithCode(){
 }
 
 function copyClassCode(code){
-  navigator.clipboard.writeText(code).then(()=>showToast('Code copied!')).catch(()=>{
-    prompt('Copy this code:',code);
-  });
+  navigator.clipboard.writeText(code).then(()=>showToast('Code copied!')).catch(()=>{ prompt('Copy this code:',code); });
 }
 function openRenameClass(id){
+  renamingClassId=id;
   document.getElementById('rename-class-input').value=DB.classes[id].name;
   openModal('modal-rename-class');
 }
@@ -2361,7 +2322,6 @@ async function addMember(){
   const email=document.getElementById('as-email').value.trim().toLowerCase();
   const errEl=document.getElementById('as-err');
   errEl.textContent='Looking up account…';
-  // Always fetch fresh from Firestore so teacher sees students registered on other devices
   const u = await window._firebase.getUser(email);
   if(!u){errEl.textContent='No account found with that email.';return;}
   DB.users[email]=u;
@@ -2399,24 +2359,16 @@ async function doGiveCoins(){
   showToast(`${amount} VCoins given to ${DB.users[email].name}!`);
 }
 
-// ═══════ CHATBOT REMOVED ═══════
-
 // ═══════ TOAST ═══════
 function showToast(msg){
   const t=document.createElement('div');
   const isDark=document.body.classList.contains('dark');
-  
   let bg='#0d0d0d',color='#f0f0f0',border='rgba(255,255,255,.1)';
   if(isDark){bg='#f0f0f0';color='#000';border='rgba(0,0,0,.1)';}
-  
-  
   t.style.cssText=`position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(0);
     background:${bg};color:${color};padding:9px 20px;border-radius:999px;
     font-size:13px;font-weight:500;z-index:9999;
-    border:1px solid ${border};
-    box-shadow:0 8px 32px rgba(0,0,0,.18);
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
+    border:1px solid ${border};box-shadow:0 8px 32px rgba(0,0,0,.18);
     opacity:1;transition:opacity .3s ease,transform .3s ease;
     white-space:nowrap;letter-spacing:-.01em;`;
   t.className='toast';
