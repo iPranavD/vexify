@@ -1506,6 +1506,10 @@ async function doGoogleSignIn(){
       login(existing);
       return;
     }
+    if(existing && existing.role === 'removed'){
+      showToast('This account has been removed. Contact your admin.');
+      return;
+    }
     // New Google user — need to pick a role
     _pendingGoogleUser = {
       email,
@@ -1556,9 +1560,12 @@ async function doAdminInvite(){
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
-  errEl.textContent='Sending invite…';
+  errEl.textContent='Checking…';
   const existing=await window._firebase.getUser(email);
-  if(existing){errEl.textContent='An account with this email already exists.';return;}
+  // Block invite only if an active (non-removed) account already exists
+  if(existing && existing.role !== 'removed'){
+    errEl.textContent='An active account with this email already exists.';return;
+  }
   const existing_invite=await window._firebase.getInvite(email);
   if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
   await window._firebase.createInvite(email);
@@ -1574,11 +1581,12 @@ async function renderAdminPanel(){
   const teachers=userList.filter(u=>u.role==='teacher');
   const students=userList.filter(u=>u.role==='student');
   const pending=userList.filter(u=>u.role==='teacher_pending');
+  const removed=userList.filter(u=>u.role==='removed');
 
   document.getElementById('admin-stats-users').innerHTML=`
     <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem">Users</div>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length}</div><div style="font-size:11px;color:var(--text-3)">Total</div></div>
+      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
       ${pending.length?`<div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--amber)">${pending.length}</div><div style="font-size:11px;color:var(--text-3)">Pending</div></div>`:''}
@@ -1594,7 +1602,7 @@ async function renderAdminPanel(){
 
   const inviteBody=document.getElementById('admin-invites-body');
   if(!allInvites.length){
-    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet.</div>`;
+    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet. Click "+ Invite Teacher" to get started.</div>`;
   } else {
     inviteBody.innerHTML=allInvites.map(inv=>`
       <div class="member-row">
@@ -1606,29 +1614,45 @@ async function renderAdminPanel(){
           <div class="member-email">${inv.used?'Used — teacher has registered':'Pending — waiting for teacher to sign up'}</div>
         </div>
         <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
-        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy link</button>`:''}
+        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
         <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}')">Revoke</button>
       </div>`).join('');
   }
 
   const usersBody=document.getElementById('admin-users-body');
+  // Show all non-admin users, including removed ones
   const displayUsers=userList.filter(u=>u.role!=='admin');
   if(!displayUsers.length){
     usersBody.innerHTML=`<div style="font-size:12px;color:var(--text-3)">No users yet.</div>`;
   } else {
-    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber'};
+    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
+    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
     usersBody.innerHTML=displayUsers.map(u=>`
-      <div class="member-row">
+      <div class="member-row" style="${u.role==='removed'?'opacity:.5':''}">
         <div class="avatar">${initials(u.name)}</div>
         <div class="member-info">
           <div class="member-name">${esc(u.name)}</div>
           <div class="member-email">${u.email}</div>
         </div>
-        <span class="badge ${roleColors[u.role]||'badge-gray'}">${u.role==='teacher_pending'?'Pending':u.role}</span>
-        ${u.role==='teacher_pending'?`<button class="btn btn-primary btn-xs" onclick="adminApproveTeacher('${u.email}')">Approve</button>`:''}
-        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
+        <span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span>
+        ${u.role!=='removed'?`
+          <select class="admin-role-select" onchange="adminChangeRole('${u.email}',this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;">
+            <option value="">Change role…</option>
+            <option value="student" ${u.role==='student'?'disabled':''}>→ Student</option>
+            <option value="teacher" ${u.role==='teacher'?'disabled':''}>→ Teacher</option>
+          </select>
+          <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
+        `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}
       </div>`).join('');
   }
+}
+
+async function adminChangeRole(email, newRole){
+  if(!newRole) return;
+  await window._firebase.updateUser(email,{role:newRole});
+  if(DB.users[email]) DB.users[email].role=newRole;
+  showToast(`${email} is now a ${newRole}`);
+  renderAdminPanel();
 }
 
 async function adminApproveTeacher(email){
@@ -1645,9 +1669,17 @@ async function adminRevokeInvite(email){
 }
 
 async function adminDeleteUser(email){
-  if(!confirm(`Remove ${email} from Vexify? This cannot be undone.`)) return;
+  if(!confirm(`Remove ${email}? They won't be able to sign in.`)) return;
   await window._firebase.updateUser(email,{role:'removed'});
+  if(DB.users[email]) DB.users[email].role='removed';
   showToast('User removed');
+  renderAdminPanel();
+}
+
+async function adminRestoreUser(email){
+  await window._firebase.updateUser(email,{role:'student'});
+  if(DB.users[email]) DB.users[email].role='student';
+  showToast(`${email} restored as student`);
   renderAdminPanel();
 }
 
@@ -1737,6 +1769,7 @@ async function doLogin(){
   errEl.textContent='Signing in…';
   const u = await window._firebase.getUser(email);
   if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
+  if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';return;}
   DB.users[email]=u;
   errEl.textContent='';
   login(u);
