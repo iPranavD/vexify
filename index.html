@@ -15,7 +15,7 @@
     doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
   import {
-    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+    getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
   const firebaseConfig = {
@@ -31,6 +31,8 @@
   const db  = getFirestore(app);
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
+  const microsoftProvider = new OAuthProvider('microsoft.com');
+  microsoftProvider.setCustomParameters({ prompt: 'select_account' });
 
   let activeListener = null;
 
@@ -39,6 +41,12 @@
     // ── GOOGLE SIGN IN ──────────────────────────────────────────────────────
     async signInWithGoogle() {
       const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    },
+
+    // ── MICROSOFT SIGN IN ───────────────────────────────────────────────────
+    async signInWithMicrosoft() {
+      const result = await signInWithPopup(auth, microsoftProvider);
       return result.user;
     },
 
@@ -265,12 +273,12 @@ a{cursor:pointer;}
   transition:all .12s;cursor:pointer;line-height:1.4;
   letter-spacing:-.01em;
 }
-.btn-primary{background:var(--text);color:#fff;border:1px solid var(--text);box-shadow:var(--shadow-xs);}
-.btn-primary:hover{background:#1a1a1a;box-shadow:var(--shadow-sm);}
-.btn-dark{background:var(--text);color:#fff;border:1px solid var(--text);box-shadow:var(--shadow-xs);}
+.btn-primary{background:var(--text);color:#fff;border:1px solid var(--text);}
+.btn-primary:hover{background:#1a1a1a;}
+.btn-dark{background:var(--text);color:#fff;border:1px solid var(--text);}
 .btn-dark:hover{background:#1a1a1a;}
-.btn-ghost{background:var(--white);color:var(--text);border:1px solid var(--border);box-shadow:var(--shadow-xs);}
-.btn-ghost:hover{border-color:#bbb;box-shadow:var(--shadow-sm);}
+.btn-ghost{background:var(--white);color:var(--text);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:#bbb;}
 .btn-danger{background:var(--white);color:var(--red);border:1px solid var(--red-border);}
 .btn-danger:hover{background:var(--red-bg);}
 .btn-gold{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
@@ -293,6 +301,17 @@ a{cursor:pointer;}
 }
 .btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
 .btn-google svg{width:18px;height:18px;flex-shrink:0;}
+.btn-microsoft{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:500;
+  background:var(--white);border:1px solid var(--border);color:var(--text);
+  cursor:pointer;margin-bottom:.75rem;box-shadow:var(--shadow-xs);
+  transition:all .12s;
+}
+.btn-microsoft:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
+.btn-microsoft svg{width:18px;height:18px;flex-shrink:0;}
+body.dark .btn-microsoft{background:#252525;color:#e0e0e0;border-color:#3a3a3a;}
+body.dark .btn-microsoft:hover{background:#303030;border-color:#555;}
 .auth-divider{
   display:flex;align-items:center;gap:10px;
   margin:1rem 0;color:var(--text-3);font-size:11px;font-weight:500;
@@ -337,8 +356,8 @@ a{cursor:pointer;}
 .features-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;
-  box-shadow:var(--shadow-sm);
 }
+
 .feat-card{
   padding:1.75rem 1.5rem;
   background:var(--white);
@@ -353,7 +372,6 @@ a{cursor:pointer;}
 .landing-cta{
   padding:5rem 1.5rem;text-align:center;
   border-top:1px solid var(--border);
-  background:var(--bg);
 }
 .landing-cta h2{font-size:1.6rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.75rem;}
 .landing-cta p{font-size:14px;color:var(--text-3);margin-bottom:1.75rem;}
@@ -365,7 +383,6 @@ a{cursor:pointer;}
   background:var(--white);
   border:1px solid var(--border);
   border-radius:var(--rxl);
-  box-shadow:var(--shadow);
 }
 .auth-wordmark{
   font-size:16px;font-weight:800;letter-spacing:-.4px;
@@ -431,19 +448,19 @@ a{cursor:pointer;}
 .app-nav-item.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
 .app-nav-item svg{width:14px;height:14px;flex-shrink:0;stroke-width:1.75;}
 .app-nav-item.hidden{display:none!important;}
-.main-content{flex:1;overflow-y:auto;background:var(--bg);}
+.main-content{flex:1;overflow-y:auto;background:var(--white);}
 .panel{padding:2rem 2.25rem;max-width:900px;margin:0 auto;}
 .panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem;gap:1rem;flex-wrap:wrap;}
 .panel-title{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.03em;}
 .panel-sub{font-size:12px;color:var(--text-3);margin-top:3px;}
 
 /* ── CARDS ── */
-.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;box-shadow:var(--shadow-xs);}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;}
 .stat-cards{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
   gap:0;margin-bottom:1.375rem;
   border:1px solid var(--border);border-radius:var(--rl);
-  overflow:hidden;background:var(--border);box-shadow:var(--shadow-xs);
+  overflow:hidden;background:transparent;
 }
 .stat-card{background:var(--white);padding:1.125rem;border-right:1px solid var(--border);}
 .stat-card:last-child{border-right:none;}
@@ -490,13 +507,13 @@ a{cursor:pointer;}
 
 /* ── CALENDAR ── */
 .cal-nav-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.125rem;}
-.cal-nav-btn{background:var(--white);border:1px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;box-shadow:var(--shadow-xs);}
+.cal-nav-btn{background:var(--white);border:1px solid var(--border);color:var(--text);width:30px;height:30px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;}
 .cal-nav-btn:hover{background:var(--bg);}
 .cal-month-label{font-size:13px;font-weight:700;letter-spacing:-.02em;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .cal-dow{text-align:center;font-size:10px;font-weight:600;color:var(--text-3);padding:4px 0 6px;letter-spacing:.3px;}
 .cal-cell{aspect-ratio:1;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:5px 3px;cursor:pointer;border:1px solid transparent;transition:all .1s;}
-.cal-cell:hover{background:var(--white);border-color:var(--border);box-shadow:var(--shadow-xs);}
+.cal-cell:hover{background:var(--white);border-color:var(--border);}
 .cal-cell.today{border-color:var(--text);background:var(--white);}
 .cal-cell.has-lesson{background:var(--white);border-color:var(--border);}
 .cal-cell.empty,.cal-cell.other-month{cursor:default;opacity:.2;}
@@ -515,7 +532,7 @@ a{cursor:pointer;}
 .msg-area{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1rem;min-height:280px;max-height:380px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:10px;}
 .msg-row{display:flex;gap:9px;align-items:flex-end;}
 .msg-row.own{flex-direction:row-reverse;}
-.msg-bubble{max-width:68%;background:var(--white);border:1px solid var(--border);border-radius:14px 14px 14px 4px;padding:9px 13px;box-shadow:var(--shadow-xs);}
+.msg-bubble{max-width:68%;background:var(--white);border:1px solid var(--border);border-radius:14px 14px 14px 4px;padding:9px 13px;}
 .msg-row.own .msg-bubble{background:var(--text);border-color:var(--text);border-radius:14px 14px 4px 14px;box-shadow:none;}
 .msg-row.own .msg-text{color:#fff;}
 .msg-row.own .msg-time{color:rgba(255,255,255,.4);}
@@ -529,7 +546,7 @@ a{cursor:pointer;}
 .msg-input:focus{border-color:var(--border-focus);outline:none;box-shadow:0 0 0 3px rgba(0,0,0,.06);}
 
 /* ── TICKETS ── */
-.ticket-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.125rem;margin-bottom:8px;display:flex;gap:12px;box-shadow:var(--shadow-xs);}
+.ticket-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.125rem;margin-bottom:8px;display:flex;gap:12px;}
 .ticket-body{flex:1;}
 .ticket-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
 .ticket-desc{font-size:12px;color:var(--text-3);line-height:1.55;margin-bottom:7px;}
@@ -571,7 +588,7 @@ a{cursor:pointer;}
   padding:1.125rem 1.375rem;cursor:pointer;
   transition:border-color .12s, box-shadow .12s;
   display:flex;align-items:center;gap:13px;
-  margin-bottom:8px;box-shadow:var(--shadow-xs);
+  margin-bottom:8px;
 }
 .class-card:hover{border-color:#aaa;box-shadow:var(--shadow-sm);}
 .class-card-av{
@@ -618,7 +635,7 @@ a{cursor:pointer;}
 .lesson-coins-badge{display:flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--amber);background:var(--amber-bg);border:1px solid var(--amber-border);padding:3px 9px;border-radius:999px;white-space:nowrap;}
 .lesson-complete-btn{padding:5px 14px;border-radius:999px;font-size:12px;font-weight:600;background:var(--text);color:#fff;border:none;cursor:pointer;white-space:nowrap;transition:background .12s;box-shadow:var(--shadow-xs);}
 .lesson-complete-btn:hover{background:#2a2a2a;}
-.track-summary{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.375rem;margin-bottom:1.375rem;box-shadow:var(--shadow-xs);}
+.track-summary{display:flex;align-items:center;gap:14px;background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.375rem;margin-bottom:1.375rem;}
 .track-summary-stat{text-align:center;}
 .track-summary-val{font-size:1.2rem;font-weight:800;color:var(--text);letter-spacing:-.04em;}
 .track-summary-lbl{font-size:10px;color:var(--text-3);margin-top:1px;text-transform:uppercase;letter-spacing:.4px;}
@@ -756,7 +773,7 @@ body.dark .tab-btn{color:#555;}
 body.dark .tab-btn.active{color:#ededed;border-bottom-color:#ededed;}
 /* Landing */
 body.dark #page-info{background:#0d0d0d;}
-body.dark .landing-cta{background:#111;border-top-color:#2d2d2d;}
+body.dark .landing-cta{background:#0d0d0d;border-top-color:#2d2d2d;}
 body.dark .hero h1{color:#ededed;}
 body.dark .hero-sub{color:#555;}
 body.dark .hero-eyebrow{background:rgba(91,143,255,.12);border-color:rgba(91,143,255,.25);color:#5b8fff;}
@@ -912,7 +929,6 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 <!-- INFO / LANDING -->
 <div id="page-info" class="page active">
   <div class="hero">
-    <div class="hero-eyebrow">VEX Robotics Education Platform</div>
     <h1>Learn, build, and compete with Vexify</h1>
     <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system — built for VEX teams.</p>
     <div class="hero-btns">
@@ -970,10 +986,14 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
     <div class="auth-title" id="auth-heading">Welcome back</div>
     <div class="auth-sub" id="auth-subhead">Sign in to your account to continue</div>
 
-    <!-- Google Sign In -->
+    <!-- Social Sign In -->
     <button class="btn-google" onclick="doGoogleSignIn()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
       Continue with Google
+    </button>
+    <button class="btn-microsoft" onclick="doMicrosoftSignIn()">
+      <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+      Continue with Microsoft
     </button>
 
     <div class="auth-divider">or</div>
@@ -1141,6 +1161,199 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
         <div id="admin-users-body"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ TEACHER PAGE ══════════════════════════════════════════════════════ -->
+<div id="page-teacher" class="page">
+  <nav class="t-nav">
+    <div class="t-nav-items">
+      <div class="t-nav-item active" data-t="classes" onclick="tShowPanel('classes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Classes
+      </div>
+      <div class="t-nav-item" data-t="t-lessons" onclick="tShowPanel('t-lessons')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Lessons
+      </div>
+      <div class="t-nav-item" data-t="t-shop" onclick="tShowPanel('t-shop')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Shop
+      </div>
+      <div class="t-nav-item" data-t="t-tickets" onclick="tShowPanel('t-tickets')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Tickets
+      </div>
+    </div>
+    <button class="btn btn-primary btn-sm" id="t-new-class-btn" onclick="openCreateClassModal()" style="margin-left:auto">+ New Class</button>
+  </nav>
+  <div class="t-content">
+    <!-- CLASSES LIST -->
+    <div id="t-panel-classes" class="t-panel">
+      <div class="t-panel-header">
+        <div>
+          <div class="t-panel-title">My Classes</div>
+          <div class="t-panel-sub">Click a class to manage it</div>
+        </div>
+      </div>
+      <div id="t-classes-grid"></div>
+    </div>
+    <!-- CLASS DETAIL VIEW -->
+    <div id="t-panel-class-detail" class="t-panel hidden">
+      <div class="t-class-header">
+        <button class="btn btn-ghost btn-sm" onclick="tBackToClasses()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back
+        </button>
+        <div style="flex:1">
+          <div class="t-panel-title" id="t-class-name"></div>
+          <div class="t-panel-sub" id="t-class-meta"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="openAddMember(tActiveClass)" style="gap:5px">+ Add Member</button>
+        <button class="btn btn-gold btn-sm" onclick="openGiveCoins(tActiveClass)">Give Coins</button>
+      </div>
+      <div class="t-class-tabs">
+        <div class="t-class-tab active" data-ct="overview" onclick="tClassTab('overview')">Overview</div>
+        <div class="t-class-tab" data-ct="calendar" onclick="tClassTab('calendar')">Calendar</div>
+        <div class="t-class-tab" data-ct="grades" onclick="tClassTab('grades')">Grades</div>
+        <div class="t-class-tab" data-ct="messages" onclick="tClassTab('messages')">Messages</div>
+        <div class="t-class-tab" data-ct="members" onclick="tClassTab('members')">Members</div>
+      </div>
+      <div id="t-class-content"></div>
+    </div>
+    <!-- LESSONS BUILDER (reuses existing) -->
+    <div id="t-panel-t-lessons" class="t-panel hidden">
+      <div class="t-panel-header">
+        <div><div class="t-panel-title">Lesson Builder</div><div class="t-panel-sub">Create custom lessons for the student Lessons tab</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
+      </div>
+      <div id="t-lessons-body"></div>
+    </div>
+    <!-- SHOP MANAGER -->
+    <div id="t-panel-t-shop" class="t-panel hidden">
+      <div class="t-panel-header">
+        <div><div class="t-panel-title">Shop Manager</div><div class="t-panel-sub">Add custom reward items students can purchase</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddShopItemModal()">+ Add Item</button>
+      </div>
+      <div id="t-shop-body"></div>
+    </div>
+    <!-- TICKETS -->
+    <div id="t-panel-t-tickets" class="t-panel hidden">
+      <div class="t-panel-header">
+        <div><div class="t-panel-title">Help Tickets</div><div class="t-panel-sub">Student support requests across all your classes</div></div>
+      </div>
+      <div id="t-tickets-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN PAGE ═════════════════════════════════════════════════════════ -->
+<div id="page-admin" class="page">
+  <div class="a-layout">
+    <!-- Sidebar -->
+    <div class="a-sidebar">
+      <div class="a-sidebar-logo">
+        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M4 7L8 15L11 10L14 15L18 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Vexify Admin
+      </div>
+      <nav class="a-sidebar-nav">
+        <div class="a-nav-item active" data-a="a-overview" onclick="aShowPanel('a-overview')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Overview
+        </div>
+        <div class="a-nav-item" data-a="a-users" onclick="aShowPanel('a-users')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Users
+        </div>
+        <div class="a-nav-item" data-a="a-teachers" onclick="aShowPanel('a-teachers')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          Teachers
+        </div>
+        <div class="a-nav-item" data-a="a-settings" onclick="aShowPanel('a-settings')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Settings
+        </div>
+      </nav>
+    </div>
+    <!-- Main -->
+    <div class="a-main">
+      <!-- OVERVIEW -->
+      <div id="a-panel-a-overview" class="a-panel">
+        <div class="a-panel-title">Overview</div>
+        <div id="a-overview-body"></div>
+      </div>
+      <!-- USERS -->
+      <div id="a-panel-a-users" class="a-panel hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap">
+          <div class="a-panel-title">Users</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="a-user-search" placeholder="Search by name or email…" oninput="aFilterUsers()" style="padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:220px;">
+            <select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);">
+              <option value="">All roles</option>
+              <option value="student">Students</option>
+              <option value="teacher">Teachers</option>
+              <option value="removed">Removed</option>
+            </select>
+          </div>
+        </div>
+        <div class="a-table-wrap">
+          <table class="a-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Coins</th><th>Actions</th></tr></thead>
+            <tbody id="a-users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- TEACHERS -->
+      <div id="a-panel-a-teachers" class="a-panel hidden">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
+          <div class="a-panel-title">Teachers</div>
+          <button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button>
+        </div>
+        <div class="a-card" style="margin-bottom:1rem">
+          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Pending Invites</div>
+          <div id="a-invites-body"></div>
+        </div>
+        <div class="a-card">
+          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Active Teachers</div>
+          <div id="a-teachers-body"></div>
+        </div>
+      </div>
+      <!-- SETTINGS -->
+      <div id="a-panel-a-settings" class="a-panel hidden">
+        <div class="a-panel-title" style="margin-bottom:1.5rem">Site Settings</div>
+        <div class="a-card" style="margin-bottom:1rem;max-width:520px">
+          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Branding</div>
+          <div class="form-group"><label>App Name</label><input type="text" id="settings-app-name" value="Vexify" placeholder="Vexify"></div>
+          <div class="form-group"><label>Tagline</label><input type="text" id="settings-tagline" value="VEX Robotics Education Platform" placeholder="Short description shown on login"></div>
+          <div class="modal-footer" style="padding-top:.75rem;margin-top:.5rem;border-top:1px solid var(--border);justify-content:flex-start">
+            <button class="btn btn-primary btn-sm" onclick="saveAdminSettings()">Save Changes</button>
+          </div>
+        </div>
+        <div class="a-card" style="max-width:520px">
+          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Registration</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;font-weight:500">Allow student self-registration</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">Students can create accounts without an invite</div></div>
+            <label class="a-toggle"><input type="checkbox" id="settings-student-reg" checked><span class="a-toggle-slider"></span></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0">
+            <div><div style="font-size:13px;font-weight:500">Require teacher invite</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">Teachers must be invited by admin to register</div></div>
+            <label class="a-toggle"><input type="checkbox" id="settings-teacher-invite" checked disabled><span class="a-toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Grade Modal -->
+<div class="modal-overlay hidden" id="modal-add-grade">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Grade</div><button class="modal-close" onclick="closeModal('modal-add-grade')">✕</button></div>
+    <div class="form-group"><label>Student</label>
+      <select id="grade-student" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"></select>
+    </div>
+    <div class="form-group"><label>Assignment</label><input type="text" id="grade-assignment" placeholder="e.g. Build Challenge #1"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Score</label><input type="number" id="grade-score" placeholder="92" min="0" max="999"></div>
+      <div class="form-group"><label>Out of</label><input type="number" id="grade-total" placeholder="100" min="1" max="999" value="100"></div>
+    </div>
+    <div class="form-group"><label>Notes (optional)</label><input type="text" id="grade-notes" placeholder="Great work on the autonomous section"></div>
+    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-grade')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAddGrade()">Save Grade</button></div>
   </div>
 </div>
 
@@ -1498,31 +1711,46 @@ else { document.addEventListener('firebase-ready', boot); }
 async function doGoogleSignIn(){
   try {
     const firebaseUser = await window._firebase.signInWithGoogle();
-    const email = firebaseUser.email.toLowerCase();
-    // Check if user already exists in our DB
-    const existing = await window._firebase.getUser(email);
-    if(existing && existing.role && existing.role !== 'removed') {
-      DB.users[email] = existing;
-      login(existing);
-      return;
-    }
-    if(existing && existing.role === 'removed'){
-      showToast('This account has been removed. Contact your admin.');
-      return;
-    }
-    // New Google user — need to pick a role
-    _pendingGoogleUser = {
-      email,
-      name: firebaseUser.displayName || email.split('@')[0],
-      photoURL: firebaseUser.photoURL || null
-    };
-    openModal('modal-google-role');
+    await _handleSocialSignIn(firebaseUser);
   } catch(e) {
     if(e.code !== 'auth/popup-closed-by-user') {
       showToast('Google sign-in failed. Try again.');
       console.error(e);
     }
   }
+}
+
+async function doMicrosoftSignIn(){
+  try {
+    const firebaseUser = await window._firebase.signInWithMicrosoft();
+    await _handleSocialSignIn(firebaseUser);
+  } catch(e) {
+    if(e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
+      showToast('Microsoft sign-in failed. Try again.');
+      console.error(e);
+    }
+  }
+}
+
+async function _handleSocialSignIn(firebaseUser){
+  const email = firebaseUser.email.toLowerCase();
+  const existing = await window._firebase.getUser(email);
+  if(existing && existing.role && existing.role !== 'removed') {
+    DB.users[email] = existing;
+    login(existing);
+    return;
+  }
+  if(existing && existing.role === 'removed'){
+    showToast('This account has been removed. Contact your admin.');
+    return;
+  }
+  // New user — pick a role
+  _pendingGoogleUser = {
+    email,
+    name: firebaseUser.displayName || email.split('@')[0],
+    photoURL: firebaseUser.photoURL || null
+  };
+  openModal('modal-google-role');
 }
 
 async function completeGoogleSignIn(role){
