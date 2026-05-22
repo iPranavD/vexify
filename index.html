@@ -201,6 +201,10 @@
   if (!student) {
     await window._firebase.createUser({name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]});
   }
+  const personal = await window._firebase.getUser('personal@demo.com');
+  if (!personal) {
+    await window._firebase.createUser({name:'Jordan Lee',email:'personal@demo.com',password:'demo',role:'personal',plan:'personal',coins:30,inventory:[]});
+  }
 
   // Signal to the main script that Firebase is ready
   window._firebaseReady = true;
@@ -881,6 +885,101 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 .lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+
+/* ── ADMIN PAGE ── */
+.a-layout{display:flex;min-height:calc(100vh - 56px);}
+.a-sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--white);border-right:1px solid var(--border);
+  padding:1.25rem 0;
+  display:flex;flex-direction:column;
+  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
+}
+.a-sidebar-logo{
+  font-size:13px;font-weight:700;letter-spacing:-.02em;
+  padding:.5rem 1.25rem 1.25rem;
+  display:flex;align-items:center;gap:8px;
+  color:var(--text);border-bottom:1px solid var(--border);margin-bottom:.75rem;
+}
+.a-sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 .5rem;flex:1;}
+.a-nav-item{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:var(--r);
+  font-size:13px;font-weight:400;color:var(--text-2);
+  cursor:pointer;transition:all .12s;
+}
+.a-nav-item svg{width:14px;height:14px;flex-shrink:0;stroke-width:1.75;}
+.a-nav-item:hover{background:var(--bg);color:var(--text);}
+.a-nav-item.active{background:var(--bg);color:var(--text);font-weight:600;}
+.a-main{flex:1;padding:2rem 2.25rem;max-width:900px;overflow-y:auto;}
+.a-panel{display:block;}
+.a-panel.hidden{display:none!important;}
+.a-panel-title{font-size:17px;font-weight:700;letter-spacing:-.03em;margin-bottom:1.5rem;}
+.a-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.a-table-wrap{overflow-x:auto;}
+.a-table{width:100%;border-collapse:collapse;font-size:13px;}
+.a-table th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);}
+.a-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
+.a-table tr:last-child td{border-bottom:none;}
+.a-toggle{position:relative;display:inline-block;width:38px;height:22px;}
+.a-toggle input{opacity:0;width:0;height:0;}
+.a-toggle-slider{position:absolute;cursor:pointer;inset:0;background:#d1d0cb;border-radius:22px;transition:.2s;}
+.a-toggle-slider:before{position:absolute;content:'';height:16px;width:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;}
+.a-toggle input:checked+.a-toggle-slider{background:var(--accent);}
+.a-toggle input:checked+.a-toggle-slider:before{transform:translateX(16px);}
+body.dark .a-sidebar{background:#1a1a1a;border-color:#2a2a2a;}
+body.dark .a-nav-item:hover,body.dark .a-nav-item.active{background:#252525;}
+body.dark .a-card{background:#1e1e1e;border-color:#2a2a2a;}
+body.dark .a-table th{border-color:#2a2a2a;}
+body.dark .a-table td{border-color:#2a2a2a;}
+
+/* ── PRICING ── */
+.pricing-wrap{padding:5rem 1.5rem;max-width:860px;margin:0 auto;}
+.pricing-label{font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.7px;text-transform:uppercase;margin-bottom:1rem;text-align:center;}
+.pricing-heading{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.04em;color:var(--text);text-align:center;margin-bottom:.75rem;}
+.pricing-sub{font-size:14px;color:var(--text-3);text-align:center;max-width:480px;margin:0 auto 3rem;line-height:1.7;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;align-items:start;}
+.pricing-card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);
+  padding:2rem;position:relative;
+}
+.pricing-card-featured{
+  background:var(--text);color:#fff;border-color:var(--text);
+}
+.pricing-badge{
+  display:inline-flex;align-items:center;
+  background:rgba(255,255,255,.18);color:#fff;
+  font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  border:1px solid rgba(255,255,255,.25);border-radius:999px;
+  padding:3px 10px;margin-bottom:1rem;
+}
+.pricing-plan-name{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:.75rem;}
+.pricing-card-featured .pricing-plan-name{color:#fff;}
+.pricing-price{display:flex;align-items:baseline;gap:4px;margin-bottom:.75rem;}
+.pricing-amount{font-size:2.4rem;font-weight:800;letter-spacing:-.05em;color:var(--text);}
+.pricing-card-featured .pricing-amount{color:#fff;}
+.pricing-period{font-size:13px;color:var(--text-3);}
+.pricing-card-featured .pricing-period{color:rgba(255,255,255,.55);}
+.pricing-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:1.5rem;}
+.pricing-card-featured .pricing-desc{color:rgba(255,255,255,.65);}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:1.75rem;}
+.pricing-features li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);}
+.pricing-card-featured .pricing-features li{color:rgba(255,255,255,.85);}
+.pricing-features li svg{flex-shrink:0;color:var(--green);}
+.pricing-card-featured .pricing-features li svg{color:#86efac;}
+.pricing-feature-muted{opacity:.45;}
+body.dark .pricing-card{background:#1a1a1a;border-color:#2a2a2a;}
+body.dark .pricing-card-featured{background:var(--text);border-color:var(--text);}
+
+/* ── PERSONAL PLAN CHECKOUT MODAL ── */
+#modal-personal-checkout .modal{max-width:440px;}
+.plan-checkout-price{
+  text-align:center;padding:1.5rem;
+  background:var(--bg);border-radius:var(--r);
+  margin-bottom:1.25rem;
+}
+.plan-checkout-price .amount{font-size:2rem;font-weight:800;letter-spacing:-.04em;}
+.plan-checkout-price .period{font-size:13px;color:var(--text-3);}
 </style>
 </head>
 <body>
@@ -972,10 +1071,53 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
       </div>
     </div>
   </div>
+  <!-- PRICING -->
+  <hr class="landing-divider">
+  <div class="pricing-wrap" id="landing-pricing">
+    <div class="pricing-label">Pricing</div>
+    <div class="pricing-heading">Two plans, one platform</div>
+    <div class="pricing-sub">Whether you're learning solo or running a full robotics program, Vexify has you covered.</div>
+    <div class="pricing-grid">
+      <!-- Personal -->
+      <div class="pricing-card">
+        <div class="pricing-plan-name">Personal</div>
+        <div class="pricing-price"><span class="pricing-amount">$120</span><span class="pricing-period">/ year</span></div>
+        <div class="pricing-desc">For individual students and self-learners working through the VEX curriculum on their own schedule.</div>
+        <ul class="pricing-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full lesson library (30+ lessons)</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking & VCoins</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reward shop</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dark mode</li>
+          <li class="pricing-feature-muted"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Class management</li>
+          <li class="pricing-feature-muted"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Team messaging</li>
+        </ul>
+        <button class="btn btn-primary btn-pill" style="width:100%;justify-content:center" onclick="startPersonalSignup()">Get started — $120/yr</button>
+      </div>
+      <!-- School -->
+      <div class="pricing-card pricing-card-featured">
+        <div class="pricing-badge">For teams & schools</div>
+        <div class="pricing-plan-name">School</div>
+        <div class="pricing-price"><span class="pricing-amount" style="font-size:1.5rem;letter-spacing:-.02em">Contact us</span></div>
+        <div class="pricing-desc">For coaches, teachers, and school administrators running structured VEX robotics programs.</div>
+        <ul class="pricing-features">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Personal</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Class & roster management</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Real-time class messaging</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Help ticket system</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Grade tracking</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Admin dashboard & invites</li>
+        </ul>
+        <button class="btn btn-ghost btn-pill" style="width:100%;justify-content:center;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.3);color:#fff" onclick="showPage('auth')">Sign in / Register</button>
+      </div>
+    </div>
+  </div>
   <div class="landing-cta">
     <h2>Ready to get started?</h2>
-    <p>Free to use. No credit card required.</p>
-    <button class="btn btn-primary btn-pill" onclick="showPage('auth')">Create an account</button>
+    <p>Pick the plan that fits your team, or go solo.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary btn-pill" onclick="startPersonalSignup()">Personal — $120/yr</button>
+      <button class="btn btn-ghost btn-pill" onclick="showPage('auth')">School plan sign in</button>
+    </div>
   </div>
 </div>
 
@@ -990,10 +1132,6 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
     <button class="btn-google" onclick="doGoogleSignIn()">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
       Continue with Google
-    </button>
-    <button class="btn-microsoft" onclick="doMicrosoftSignIn()">
-      <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-      Continue with Microsoft
     </button>
 
     <div class="auth-divider">or</div>
@@ -1013,12 +1151,15 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
       <div class="field"><label>Full name</label><div class="input-wrap"><input type="text" id="reg-name" placeholder="Alex Kim" autocomplete="name"></div></div>
       <div class="field"><label>Email address</label><div class="input-wrap"><input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email"></div></div>
       <div class="field"><label>Password</label><div class="input-wrap"><input type="password" id="reg-password" placeholder="Min 6 characters" autocomplete="new-password"></div></div>
-      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="student">Student</option><option value="teacher">Teacher / Coach</option></select></div>
+      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="student">Student (School plan)</option><option value="teacher">Teacher / Coach (School plan)</option></select></div>
+      <div style="background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--accent);margin-bottom:1rem;line-height:1.6">
+        This registers you on a <strong>School plan</strong> — your school's admin must have set up an account. For individual access, <a onclick="closeModal && closeModal('modal-personal-checkout'); startPersonalSignup()" style="font-weight:600;text-decoration:underline;cursor:pointer">get the Personal plan ($120/yr)</a>.
+      </div>
       <div class="auth-err" id="reg-err"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:9px" onclick="doRegister()">Create account</button>
       <div class="auth-footer"><span></span><span>Have an account? <a onclick="authSwitch('login')">Sign in</a></span></div>
     </div>
-    <div class="demo-links">Demo: <a onclick="demoLogin('teacher')">Teacher account</a> · <a onclick="demoLogin('student')">Student account</a></div>
+    <div class="demo-links">Demo: <a onclick="demoLogin('teacher')">Teacher</a> · <a onclick="demoLogin('student')">Student</a> · <a onclick="demoLogin('personal')">Personal</a></div>
   </div>
 </div>
 
@@ -1268,6 +1409,10 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Settings
         </div>
+        <div class="a-nav-item" onclick="signOut()" style="margin-top:auto;color:var(--red)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign out
+        </div>
       </nav>
     </div>
     <!-- Main -->
@@ -1287,6 +1432,7 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
               <option value="">All roles</option>
               <option value="student">Students</option>
               <option value="teacher">Teachers</option>
+              <option value="personal">Personal</option>
               <option value="removed">Removed</option>
             </select>
           </div>
@@ -1503,6 +1649,34 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
       </button>
     </div>
     <p style="font-size:11px;color:var(--text-3);margin-top:1rem;line-height:1.5">If you're a teacher without an invite, select Student and contact your admin to get one.</p>
+  </div>
+</div>
+
+<!-- Personal Plan Checkout Modal -->
+<div class="modal-overlay hidden" id="modal-personal-checkout">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title">Personal Plan</div>
+      <button class="modal-close" onclick="closeModal('modal-personal-checkout')">✕</button>
+    </div>
+    <div class="plan-checkout-price">
+      <div class="amount">$120</div>
+      <div class="period">per year · billed annually</div>
+    </div>
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem;">
+      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full 30-lesson VEX curriculum</li>
+      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking & VCoins</li>
+      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reward shop</li>
+    </ul>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6">Create your account below. Payment details would be collected at checkout.</p>
+    <div class="form-group"><label>Full name</label><input type="text" id="personal-name" placeholder="Alex Kim" autocomplete="name"></div>
+    <div class="form-group"><label>Email address</label><input type="email" id="personal-email" placeholder="you@example.com" autocomplete="email"></div>
+    <div class="form-group"><label>Password</label><input type="password" id="personal-password" placeholder="Min 6 characters" autocomplete="new-password"></div>
+    <div class="auth-err" id="personal-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-personal-checkout')">Cancel</button>
+      <button class="btn btn-primary btn-sm" onclick="doPersonalSignup()">Create account & pay</button>
+    </div>
   </div>
 </div>
 
@@ -1808,6 +1982,7 @@ async function renderAdminPanel(){
   const userList=Object.values(allUsers);
   const teachers=userList.filter(u=>u.role==='teacher');
   const students=userList.filter(u=>u.role==='student');
+  const personal=userList.filter(u=>u.role==='personal');
   const pending=userList.filter(u=>u.role==='teacher_pending');
   const removed=userList.filter(u=>u.role==='removed');
 
@@ -1817,6 +1992,7 @@ async function renderAdminPanel(){
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
+      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--green)">${personal.length}</div><div style="font-size:11px;color:var(--text-3)">Personal</div></div>
       ${pending.length?`<div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--amber)">${pending.length}</div><div style="font-size:11px;color:var(--text-3)">Pending</div></div>`:''}
     </div>`;
 
@@ -1853,8 +2029,8 @@ async function renderAdminPanel(){
   if(!displayUsers.length){
     usersBody.innerHTML=`<div style="font-size:12px;color:var(--text-3)">No users yet.</div>`;
   } else {
-    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
-    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
+    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red',personal:'badge-green'};
+    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed',personal:'Personal'};
     usersBody.innerHTML=displayUsers.map(u=>`
       <div class="member-row" style="${u.role==='removed'?'opacity:.5':''}">
         <div class="avatar">${initials(u.name)}</div>
@@ -1916,6 +2092,101 @@ function copyInviteLink(email){
   navigator.clipboard.writeText(msg).then(()=>showToast('Invite message copied!')).catch(()=>prompt('Copy this invite:',msg));
 }
 
+// ═══════ PAGE-ADMIN FUNCTIONS ═══════
+function aShowPanel(panelId){
+  document.querySelectorAll('.a-panel').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.a-nav-item').forEach(el=>el.classList.remove('active'));
+  const panel=document.getElementById('a-panel-'+panelId);
+  if(panel) panel.classList.remove('hidden');
+  document.querySelector(`.a-nav-item[data-a="${panelId}"]`)?.classList.add('active');
+  if(panelId==='a-overview') aRenderOverview();
+  if(panelId==='a-users') aRenderUsers();
+  if(panelId==='a-teachers') aRenderTeachers();
+}
+async function aRenderOverview(){
+  const allUsers=await window._firebase.getAllUsers();
+  const allInvites=await window._firebase.getAllInvites();
+  const userList=Object.values(allUsers);
+  const teachers=userList.filter(u=>u.role==='teacher');
+  const students=userList.filter(u=>u.role==='student');
+  const personalUsers=userList.filter(u=>u.role==='personal');
+  const removed=userList.filter(u=>u.role==='removed');
+  const body=document.getElementById('a-overview-body');
+  if(!body) return;
+  body.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem">
+      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active Users</div></div>
+      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
+      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
+      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em;color:var(--green)">${personalUsers.length}</div><div style="font-size:11px;color:var(--text-3)">Personal Plan</div></div>
+      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${allInvites.filter(i=>!i.used).length}</div><div style="font-size:11px;color:var(--text-3)">Pending Invites</div></div>
+    </div>`;
+}
+let _aAllUsers=[];
+async function aRenderUsers(){
+  _aAllUsers=Object.values(await window._firebase.getAllUsers()).filter(u=>u.role!=='admin');
+  aFilterUsers();
+}
+function aFilterUsers(){
+  const search=(document.getElementById('a-user-search')?.value||'').toLowerCase();
+  const role=document.getElementById('a-user-role-filter')?.value||'';
+  const tbody=document.getElementById('a-users-tbody');
+  if(!tbody) return;
+  const filtered=_aAllUsers.filter(u=>{
+    const matchRole=!role||u.role===role;
+    const matchSearch=!search||u.name.toLowerCase().includes(search)||u.email.toLowerCase().includes(search);
+    return matchRole&&matchSearch;
+  });
+  const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red',personal:'badge-green'};
+  const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed',personal:'Personal'};
+  tbody.innerHTML=filtered.length?filtered.map(u=>`<tr style="${u.role==='removed'?'opacity:.5':''}">
+    <td style="padding:10px 12px;font-size:13px;font-weight:500">${esc(u.name)}</td>
+    <td style="padding:10px 12px;font-size:12px;color:var(--text-3)">${u.email}</td>
+    <td style="padding:10px 12px"><span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span></td>
+    <td style="padding:10px 12px;font-size:12px">${u.coins||0}</td>
+    <td style="padding:10px 12px">
+      ${u.role!=='removed'?`
+        <select onchange="adminChangeRole('${u.email}',this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;margin-right:4px">
+          <option value="">Change role…</option>
+          <option value="student">→ Student</option>
+          <option value="teacher">→ Teacher</option>
+        </select>
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
+      `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}
+    </td>
+  </tr>`).join(''):`<tr><td colspan="5" style="padding:1.5rem;text-align:center;color:var(--text-3);font-size:12px">No users found.</td></tr>`;
+}
+async function aRenderTeachers(){
+  const allUsers=await window._firebase.getAllUsers();
+  const allInvites=await window._firebase.getAllInvites();
+  const teachers=Object.values(allUsers).filter(u=>u.role==='teacher');
+  const invitesBody=document.getElementById('a-invites-body');
+  const teachersBody=document.getElementById('a-teachers-body');
+  if(invitesBody){
+    invitesBody.innerHTML=allInvites.length?allInvites.map(inv=>`
+      <div class="member-row">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div class="member-info"><div class="member-name">${inv.email}</div><div class="member-email">${inv.used?'Used':'Pending'}</div></div>
+        <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
+        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
+        <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}')">Revoke</button>
+      </div>`).join(''):`<div style="font-size:12px;color:var(--text-3)">No invites yet.</div>`;
+  }
+  if(teachersBody){
+    teachersBody.innerHTML=teachers.length?teachers.map(u=>`
+      <div class="member-row">
+        <div class="avatar">${initials(u.name)}</div>
+        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div>
+        <span class="badge badge-indigo">Teacher</span>
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
+      </div>`).join(''):`<div style="font-size:12px;color:var(--text-3)">No teachers yet.</div>`;
+  }
+}
+function saveAdminSettings(){ showToast('Settings saved!'); }
+function aSignOut(){ signOut(); }
+
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -1971,6 +2242,14 @@ function showPanel(p){
 }
 
 function _updateNavLockState(){
+  if(currentUser.role==='personal'){
+    // Personal plan users are never locked — they don't have classes but their panels are always available
+    ['lessons','progress','shop'].forEach(p=>{
+      const el=document.querySelector(`.app-nav-item[data-panel="${p}"]`);
+      if(el){el.style.opacity='';el.title='';}
+    });
+    return;
+  }
   const locked = noClasses();
   const gatedPanels = ['calendar','messages','progress','tickets','shop'];
   gatedPanels.forEach(p=>{
@@ -2033,12 +2312,36 @@ async function demoLogin(r){
   const u = await window._firebase.getUser(r+'@demo.com');
   if(u){ DB.users[u.email]=u; login(u); }
 }
+function startPersonalSignup(){
+  document.getElementById('personal-name').value='';
+  document.getElementById('personal-email').value='';
+  document.getElementById('personal-password').value='';
+  document.getElementById('personal-err').textContent='';
+  openModal('modal-personal-checkout');
+}
+async function doPersonalSignup(){
+  const name=document.getElementById('personal-name').value.trim();
+  const email=document.getElementById('personal-email').value.trim().toLowerCase();
+  const pw=document.getElementById('personal-password').value;
+  const errEl=document.getElementById('personal-err');
+  if(!name||!email||!pw){errEl.textContent='All fields required.';return;}
+  if(pw.length<6){errEl.textContent='Password must be 6+ characters.';return;}
+  const existing=await window._firebase.getUser(email);
+  if(existing){errEl.textContent='Email already registered.';return;}
+  errEl.textContent='Creating account…';
+  const userData={name,email,password:pw,role:'personal',plan:'personal',coins:0,inventory:[],planSince:new Date().toISOString()};
+  await window._firebase.createUser(userData);
+  DB.users[email]=userData;
+  errEl.textContent='';
+  closeModal('modal-personal-checkout');
+  login(userData);
+}
 function login(u){
   currentUser=u;
   document.getElementById('nav-signin-btn').classList.add('hidden');
   const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
   document.getElementById('nav-name').textContent=u.name;
-  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval'};
+  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval',personal:'Personal Plan'};
   document.getElementById('nav-role-label').textContent=roleLabels[u.role]||u.role;
   if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
   if(u.role==='teacher_pending'){
@@ -2049,6 +2352,11 @@ function login(u){
       <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval.</div>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
     </div>`;
+    return;
+  }
+  if(u.role==='admin'){
+    showPage('admin');
+    aShowPanel('a-overview');
     return;
   }
   showPage('dashboard');
@@ -2092,8 +2400,15 @@ function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
 function renderDashboard(){
   const isT=currentUser.role==='teacher';
   const isA=currentUser.role==='admin';
+  const isP=currentUser.role==='personal';
   document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
   document.getElementById('nav-admin').classList.toggle('hidden',!isA);
+  // Personal plan: hide school-only panels
+  const schoolOnlyPanels=['calendar','messages','tickets','manage'];
+  schoolOnlyPanels.forEach(p=>{
+    const el=document.querySelector(`.app-nav-item[data-panel="${p}"]`);
+    if(el) el.classList.toggle('hidden',isP);
+  });
   _updateNavLockState();
   renderHome();
 }
@@ -2102,6 +2417,47 @@ function renderSidebarClasses(){}
 // ═══════ HOME ═══════
 function renderHome(){
   const isT=currentUser.role==='teacher';
+  const isP=currentUser.role==='personal';
+
+  if(isP){
+    document.getElementById('home-greeting').textContent='My Learning';
+    document.getElementById('home-sub').textContent='Personal plan · Self-paced VEX curriculum';
+    document.getElementById('home-new-class').classList.add('hidden');
+    let joinBtn=document.getElementById('home-join-btn');
+    if(joinBtn) joinBtn.classList.add('hidden');
+    const totalLessons=Object.values(CURRICULUM).flatMap(t=>t.units.flatMap(u=>u.lessons)).length;
+    const completed=Object.keys(DB.completedLessons).length;
+    const pct=totalLessons?Math.round(completed/totalLessons*100):0;
+    document.getElementById('home-stats').innerHTML=`
+      <div class="stat-card"><div class="stat-val">${completed}</div><div class="stat-lbl2">Lessons Done</div></div>
+      <div class="stat-card"><div class="stat-val">${totalLessons-completed}</div><div class="stat-lbl2">Remaining</div></div>
+      <div class="stat-card"><div class="stat-val">${currentUser.coins||0}</div><div class="stat-lbl2">VCoins</div></div>
+      <div class="stat-card"><div class="stat-val">${pct}%</div><div class="stat-lbl2">Complete</div></div>`;
+    document.getElementById('home-classes').innerHTML=`
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--accent)">Personal Plan — Active</div>
+            <div style="font-size:12px;color:var(--text-3);margin-top:2px">Self-paced access to the full VEX curriculum</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="showPanel('lessons')">Continue learning →</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:4px">
+          ${Object.values(CURRICULUM).map(t=>{
+            const all=t.units.flatMap(u=>u.lessons);
+            const done=all.filter(l=>DB.completedLessons['cl_'+l.id]).length;
+            const p=all.length?Math.round(done/all.length*100):0;
+            return`<div class="card" style="cursor:pointer" onclick="showPanel('lessons');switchTrack('${Object.keys(CURRICULUM).find(k=>CURRICULUM[k]===t)}')">
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px">${t.label}</div>
+              <div style="font-size:11px;color:var(--text-3);margin-bottom:8px">${done}/${all.length} lessons</div>
+              <div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--accent);width:${p}%;border-radius:3px;transition:width .4s"></div></div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    return;
+  }
+
   const classes=getMyClasses();
   document.getElementById('home-greeting').textContent='My Classes';
   document.getElementById('home-sub').textContent=isT?'Manage your classes and students':'Your enrolled classes';
