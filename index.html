@@ -15,7 +15,7 @@
     doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
   import {
-    getAuth, GoogleAuthProvider, OAuthProvider, signInWithPopup, onAuthStateChanged
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
   const firebaseConfig = {
@@ -31,8 +31,6 @@
   const db  = getFirestore(app);
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
-  const microsoftProvider = new OAuthProvider('microsoft.com');
-  microsoftProvider.setCustomParameters({ prompt: 'select_account' });
 
   let activeListener = null;
 
@@ -44,11 +42,6 @@
       return result.user;
     },
 
-    // ── MICROSOFT SIGN IN ───────────────────────────────────────────────────
-    async signInWithMicrosoft() {
-      const result = await signInWithPopup(auth, microsoftProvider);
-      return result.user;
-    },
 
     // ── USERS ──────────────────────────────────────────────────────────────
     async getUser(email) {
@@ -201,10 +194,6 @@
   if (!student) {
     await window._firebase.createUser({name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]});
   }
-  const personal = await window._firebase.getUser('personal@demo.com');
-  if (!personal) {
-    await window._firebase.createUser({name:'Jordan Lee',email:'personal@demo.com',password:'demo',role:'personal',plan:'personal',coins:30,inventory:[]});
-  }
 
   // Signal to the main script that Firebase is ready
   window._firebaseReady = true;
@@ -305,17 +294,7 @@ a{cursor:pointer;}
 }
 .btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
 .btn-google svg{width:18px;height:18px;flex-shrink:0;}
-.btn-microsoft{
-  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
-  padding:10px 16px;border-radius:var(--r);font-size:13px;font-weight:500;
-  background:var(--white);border:1px solid var(--border);color:var(--text);
-  cursor:pointer;margin-bottom:.75rem;box-shadow:var(--shadow-xs);
-  transition:all .12s;
-}
-.btn-microsoft:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
-.btn-microsoft svg{width:18px;height:18px;flex-shrink:0;}
-body.dark .btn-microsoft{background:#252525;color:#e0e0e0;border-color:#3a3a3a;}
-body.dark .btn-microsoft:hover{background:#303030;border-color:#555;}
+
 .auth-divider{
   display:flex;align-items:center;gap:10px;
   margin:1rem 0;color:var(--text-3);font-size:11px;font-weight:500;
@@ -790,6 +769,11 @@ body.dark .feat-desc{color:#555;}
 /* auth-divider dark */
 body.dark .auth-divider{color:#444;}
 body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2d;}
+/* Features / Pricing / Cart dark */
+body.dark #page-features{background:#0d0d0d;color:#ededed;}
+body.dark #page-pricing{background:#0d0d0d;color:#ededed;}
+body.dark #page-cart{background:#0d0d0d;color:#ededed;}
+body.dark #page-cart .card{background:#1c1c1c;border-color:#2d2d2d;}
 /* ── SMOOTH ANIMATIONS ── */
 :root{
   --ease-out:cubic-bezier(0.16,1,0.3,1);
@@ -886,191 +870,91 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 
-/* ── ADMIN PAGE ── */
-.a-layout{display:flex;min-height:calc(100vh - 56px);}
-.a-sidebar{
-  width:220px;flex-shrink:0;
-  background:var(--white);border-right:1px solid var(--border);
-  padding:1.25rem 0;
-  display:flex;flex-direction:column;
-  position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;
-}
-.a-sidebar-logo{
-  font-size:13px;font-weight:700;letter-spacing:-.02em;
-  padding:.5rem 1.25rem 1.25rem;
-  display:flex;align-items:center;gap:8px;
-  color:var(--text);border-bottom:1px solid var(--border);margin-bottom:.75rem;
-}
-.a-sidebar-nav{display:flex;flex-direction:column;gap:2px;padding:0 .5rem;flex:1;}
-.a-nav-item{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 12px;border-radius:var(--r);
-  font-size:13px;font-weight:400;color:var(--text-2);
-  cursor:pointer;transition:all .12s;
-}
-.a-nav-item svg{width:14px;height:14px;flex-shrink:0;stroke-width:1.75;}
+/* ══ TEACHER LAYOUT ══════════════════════════════════════════════════════ */
+#page-teacher.active{display:flex;flex-direction:column;background:var(--white);}
+.t-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.75rem;display:flex;align-items:center;gap:0;position:sticky;top:56px;z-index:100;overflow-x:auto;}
+.t-nav-items{display:flex;align-items:center;gap:0;flex:1;}
+.t-nav-item{display:flex;align-items:center;gap:6px;padding:14px 14px;font-size:12px;font-weight:400;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s;}
+.t-nav-item:hover{color:var(--text);}
+.t-nav-item.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
+.t-nav-item svg{width:14px;height:14px;stroke-width:1.75;}
+.t-content{flex:1;overflow-y:auto;background:var(--bg);}
+.t-panel{padding:2rem 2.25rem;max-width:1000px;margin:0 auto;animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
+.t-panel.hidden{display:none!important;}
+.t-panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;}
+.t-panel-title{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.03em;}
+.t-panel-sub{font-size:12px;color:var(--text-3);margin-top:3px;}
+.t-class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+.t-class-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;cursor:pointer;transition:border-color .12s,transform .15s;}
+.t-class-card:hover{border-color:#aaa;transform:translateY(-1px);}
+.t-class-card-top{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.t-class-av{width:42px;height:42px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text-2);flex-shrink:0;}
+.t-class-card-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
+.t-class-card-meta{font-size:11px;color:var(--text-3);margin-top:3px;}
+.t-class-card-stats{display:flex;gap:1rem;padding-top:.875rem;border-top:1px solid var(--border);}
+.t-class-stat-val{font-size:1.1rem;font-weight:700;letter-spacing:-.03em;color:var(--text);}
+.t-class-stat-lbl{font-size:10px;color:var(--text-3);margin-top:1px;}
+.t-class-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:1rem 2.25rem;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:calc(56px + 49px);z-index:90;}
+.t-class-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 2.25rem;background:var(--white);position:sticky;top:calc(56px + 49px + 57px);z-index:89;overflow-x:auto;}
+.t-class-tab{padding:11px 16px;font-size:13px;font-weight:400;color:var(--text-3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;margin-bottom:-1px;transition:color .1s;}
+.t-class-tab.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
+.t-class-tab:hover:not(.active){color:var(--text-2);}
+#t-class-content{padding:2rem 2.25rem;max-width:900px;margin:0 auto;}
+.grades-table{width:100%;border-collapse:collapse;font-size:13px;}
+.grades-table th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);}
+.grades-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+.grades-table tr:last-child td{border-bottom:none;}
+.grades-table tr:hover td{background:var(--bg);}
+.grade-pct{display:inline-flex;align-items:center;justify-content:center;min-width:46px;padding:3px 8px;border-radius:var(--r);font-size:12px;font-weight:700;border:1px solid;}
+
+/* ══ ADMIN LAYOUT ════════════════════════════════════════════════════════ */
+#page-admin.active{display:flex;flex-direction:column;min-height:calc(100vh - 56px);}
+.a-layout{display:flex;flex:1;min-height:calc(100vh - 56px);}
+.a-sidebar{width:220px;min-width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
+.a-sidebar-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px;margin-bottom:1.75rem;padding:0 .375rem;}
+.a-sidebar-logo svg{width:20px;height:20px;flex-shrink:0;}
+.a-sidebar-nav{display:flex;flex-direction:column;gap:2px;}
+.a-nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;transition:all .1s;}
 .a-nav-item:hover{background:var(--bg);color:var(--text);}
 .a-nav-item.active{background:var(--bg);color:var(--text);font-weight:600;}
-.a-main{flex:1;padding:2rem 2.25rem;max-width:900px;overflow-y:auto;}
-.a-panel{display:block;}
+.a-nav-item svg{width:16px;height:16px;stroke-width:1.75;flex-shrink:0;}
+.a-main{flex:1;padding:2rem 2.5rem;overflow-y:auto;background:var(--bg);}
+.a-panel{animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
 .a-panel.hidden{display:none!important;}
-.a-panel-title{font-size:17px;font-weight:700;letter-spacing:-.03em;margin-bottom:1.5rem;}
-.a-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
-.a-table-wrap{overflow-x:auto;}
+.a-panel-title{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-bottom:1.5rem;}
+.a-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;}
+.a-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem;}
+.a-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.125rem;}
+.a-stat-val{font-size:1.8rem;font-weight:800;letter-spacing:-.05em;color:var(--text);margin-bottom:3px;}
+.a-stat-lbl{font-size:11px;color:var(--text-3);}
+.a-table-wrap{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white);}
 .a-table{width:100%;border-collapse:collapse;font-size:13px;}
-.a-table th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);}
-.a-table td{padding:10px 12px;border-bottom:1px solid var(--border);}
-.a-table tr:last-child td{border-bottom:none;}
-.a-toggle{position:relative;display:inline-block;width:38px;height:22px;}
+.a-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;background:var(--bg);border-bottom:1px solid var(--border);}
+.a-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+.a-table tbody tr:last-child td{border-bottom:none;}
+.a-table tbody tr:hover td{background:var(--bg);}
+.a-toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;}
 .a-toggle input{opacity:0;width:0;height:0;}
-.a-toggle-slider{position:absolute;cursor:pointer;inset:0;background:#d1d0cb;border-radius:22px;transition:.2s;}
-.a-toggle-slider:before{position:absolute;content:'';height:16px;width:16px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;}
-.a-toggle input:checked+.a-toggle-slider{background:var(--accent);}
-.a-toggle input:checked+.a-toggle-slider:before{transform:translateX(16px);}
-body.dark .a-sidebar{background:#1a1a1a;border-color:#2a2a2a;}
-body.dark .a-nav-item:hover,body.dark .a-nav-item.active{background:#252525;}
-body.dark .a-card{background:#1e1e1e;border-color:#2a2a2a;}
-body.dark .a-table th{border-color:#2a2a2a;}
-body.dark .a-table td{border-color:#2a2a2a;}
-
-/* ── PRICING ── */
-.pricing-wrap{padding:5rem 1.5rem;max-width:860px;margin:0 auto;}
-.pricing-label{font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.7px;text-transform:uppercase;margin-bottom:1rem;text-align:center;}
-.pricing-heading{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.04em;color:var(--text);text-align:center;margin-bottom:.75rem;}
-.pricing-sub{font-size:14px;color:var(--text-3);text-align:center;max-width:480px;margin:0 auto 3rem;line-height:1.7;}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem;align-items:start;}
-.pricing-card{
-  background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);
-  padding:2rem;position:relative;
-}
-.pricing-card-featured{
-  background:var(--text);color:#fff;border-color:var(--text);
-}
-.pricing-badge{
-  display:inline-flex;align-items:center;
-  background:rgba(255,255,255,.18);color:#fff;
-  font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
-  border:1px solid rgba(255,255,255,.25);border-radius:999px;
-  padding:3px 10px;margin-bottom:1rem;
-}
-.pricing-plan-name{font-size:15px;font-weight:700;letter-spacing:-.01em;margin-bottom:.75rem;}
-.pricing-card-featured .pricing-plan-name{color:#fff;}
-.pricing-price{display:flex;align-items:baseline;gap:4px;margin-bottom:.75rem;}
-.pricing-amount{font-size:2.4rem;font-weight:800;letter-spacing:-.05em;color:var(--text);}
-.pricing-card-featured .pricing-amount{color:#fff;}
-.pricing-period{font-size:13px;color:var(--text-3);}
-.pricing-card-featured .pricing-period{color:rgba(255,255,255,.55);}
-.pricing-desc{font-size:13px;color:var(--text-2);line-height:1.65;margin-bottom:1.5rem;}
-.pricing-card-featured .pricing-desc{color:rgba(255,255,255,.65);}
-.pricing-features{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:1.75rem;}
-.pricing-features li{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2);}
-.pricing-card-featured .pricing-features li{color:rgba(255,255,255,.85);}
-.pricing-features li svg{flex-shrink:0;color:var(--green);}
-.pricing-card-featured .pricing-features li svg{color:#86efac;}
-.pricing-feature-muted{opacity:.45;}
-body.dark .pricing-card{background:#1a1a1a;border-color:#2a2a2a;}
-body.dark .pricing-card-featured{background:var(--text);border-color:var(--text);}
-
-/* ── LANDING NAV ── */
-.landing-nav{
-  background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
-  position:sticky;top:56px;z-index:150;
-}
-.landing-nav-inner{
-  max-width:860px;margin:0 auto;padding:0 1.5rem;
-  display:flex;align-items:center;justify-content:space-between;height:46px;
-}
-.landing-nav-links{display:flex;gap:0;}
-.landing-nav-link{
-  padding:0 14px;height:46px;display:flex;align-items:center;
-  font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;
-  border-bottom:2px solid transparent;transition:color .12s,border-color .12s;
-}
-.landing-nav-link:hover{color:var(--text);}
-.landing-nav-link.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
-body.dark .landing-nav{background:rgba(13,13,13,.92);border-bottom-color:#2d2d2d;}
-
-/* ── LANDING SECTIONS ── */
-.lsec{padding:5.5rem 1.5rem;background:var(--white);}
-.lsec-alt{background:var(--bg);}
-.lsec-inner{max-width:860px;margin:0 auto;}
-.lsec-label{font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.7px;text-transform:uppercase;margin-bottom:1rem;text-align:center;}
-.lsec-heading{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;letter-spacing:-.04em;color:var(--text);text-align:center;margin-bottom:.75rem;}
-.lsec-sub{font-size:14px;color:var(--text-3);text-align:center;max-width:480px;margin:0 auto 3rem;line-height:1.7;}
-body.dark .lsec{background:#141414;}
-body.dark .lsec-alt{background:#0d0d0d;}
-
-/* ── HERO (landing) ── */
-#lsec-home .hero{padding:7rem 1.5rem 4rem;}
-
-/* ── HIGHLIGHTS STRIP ── */
-.highlights-strip{
-  max-width:860px;margin:0 auto;padding:0 1.5rem 5rem;
-  display:flex;align-items:center;justify-content:center;
-  gap:0;flex-wrap:wrap;
-  border:1px solid var(--border);border-radius:var(--rl);
-  background:var(--white);overflow:hidden;
-}
-.highlight-item{
-  display:flex;align-items:center;gap:10px;
-  padding:1.25rem 1.5rem;flex:1;min-width:140px;
-}
-.highlight-item svg{color:var(--text-2);flex-shrink:0;}
-.hl-title{font-size:13px;font-weight:600;color:var(--text);}
-.hl-sub{font-size:11px;color:var(--text-3);margin-top:1px;}
-.highlight-sep{width:1px;background:var(--border);align-self:stretch;min-height:60px;}
-body.dark .highlights-strip{background:#1a1a1a;border-color:#2d2d2d;}
-body.dark .highlight-sep{background:#2d2d2d;}
-
-/* ── FEATURES GRID 2 ── */
-.features-grid-2{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:1px;border:1px solid var(--border);border-radius:var(--rl);
-  overflow:hidden;background:var(--border);
-}
-.feat2-card{
-  background:var(--white);padding:1.75rem 1.5rem;
-  transition:background .12s;
-}
-.feat2-card:hover{background:var(--bg);}
-.feat2-icon{margin-bottom:1rem;color:var(--text-2);display:flex;}
-.feat2-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:5px;letter-spacing:-.01em;}
-.feat2-desc{font-size:12px;color:var(--text-3);line-height:1.7;}
-body.dark .features-grid-2{background:#2d2d2d;border-color:#2d2d2d;}
-body.dark .feat2-card{background:#1a1a1a;}
-body.dark .feat2-card:hover{background:#222;}
-
-/* ── CART ── */
-.cart-empty{
-  display:flex;flex-direction:column;align-items:center;gap:10px;
-  padding:3.5rem 2rem;text-align:center;
-  background:var(--white);border:1px solid var(--border);border-radius:var(--rl);
-}
-.cart-empty svg{color:var(--text-3);}
-.cart-empty-title{font-size:14px;font-weight:600;color:var(--text);}
-.cart-empty-sub{font-size:12px;color:var(--text-3);}
-body.dark .cart-empty{background:#1a1a1a;border-color:#2d2d2d;}
-
-/* ── LANDING FOOTER ── */
-.landing-footer{
-  background:var(--white);border-top:1px solid var(--border);
-  padding:2rem 1.5rem;
-}
-.landing-footer-inner{
-  max-width:860px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
-}
-body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
-
-/* ── PERSONAL PLAN CHECKOUT MODAL ── */
-.plan-checkout-price{
-  text-align:center;padding:1.5rem;
-  background:var(--bg);border-radius:var(--r);
-  margin-bottom:1.25rem;
-}
-.plan-checkout-price .amount{font-size:2rem;font-weight:800;letter-spacing:-.04em;}
-.plan-checkout-price .period{font-size:13px;color:var(--text-3);}
+.a-toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.2s;cursor:pointer;}
+.a-toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.a-toggle input:checked+.a-toggle-slider{background:var(--text);}
+.a-toggle input:checked+.a-toggle-slider::before{transform:translateX(16px);}
+body.dark .a-sidebar{background:#141414;border-right-color:#2d2d2d;}
+body.dark .a-nav-item.active,body.dark .a-nav-item:hover{background:#1e1e1e;}
+body.dark .a-main{background:#0d0d0d;}
+body.dark .a-card{background:#141414;border-color:#2d2d2d;}
+body.dark .a-stat-card{background:#141414;border-color:#2d2d2d;}
+body.dark .a-table-wrap{background:#141414;border-color:#2d2d2d;}
+body.dark .a-table th{background:#1a1a1a;border-bottom-color:#2d2d2d;}
+body.dark .a-table td{border-bottom-color:#2d2d2d;}
+body.dark .a-table tbody tr:hover td{background:#1e1e1e;}
+body.dark .t-nav,body.dark .t-class-header,body.dark .t-class-tabs{background:#141414;border-color:#2d2d2d;}
+body.dark .t-content{background:#0d0d0d;}
+body.dark .t-class-card{background:#141414;border-color:#2d2d2d;}
+body.dark .t-class-card:hover{border-color:#444;}
+body.dark .grades-table th{border-color:#2d2d2d;}
+body.dark .grades-table td{border-bottom-color:#2d2d2d;}
+body.dark .grades-table tr:hover td{background:#1e1e1e;}
 </style>
 </head>
 <body>
@@ -1092,6 +976,10 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
       <line x1="19.4" y1="9.7" x2="15.3" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
     </svg>
     <span class="logo-text">Vexify</span>
+  </div>
+  <div id="nav-center-links" style="display:flex;align-items:center;gap:0;margin-left:1.5rem">
+    <button onclick="showPage('features')" style="background:none;border:none;padding:8px 12px;font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;transition:color .1s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">Features</button>
+    <button onclick="showPage('pricing')" style="background:none;border:none;padding:8px 12px;font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;transition:color .1s;" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text-3)'">Pricing</button>
   </div>
   <div id="nav-right">
     <div class="theme-toggles">
@@ -1118,183 +1006,183 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
 
 <!-- INFO / LANDING -->
 <div id="page-info" class="page active">
+  <div class="hero">
+    <h1>Learn, build, and compete with Vexify</h1>
+    <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system — built for VEX teams.</p>
+    <div class="hero-btns">
+      <button class="btn btn-primary btn-pill" onclick="showPage('auth')">Get started</button>
+      <button class="btn btn-ghost btn-pill" onclick="document.getElementById('landing-features').scrollIntoView({behavior:'smooth'})">Learn more</button>
+    </div>
+  </div>
+  <hr class="landing-divider">
+  <div class="features-grid-wrap" id="landing-features">
+    <div class="features-grid-label">Features</div>
+    <div class="features-grid">
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+        <div class="feat-title">Structured Lessons</div>
+        <div class="feat-desc">30 lessons across Foundations, Design & CAD, and Programming. Read, learn, then mark complete to earn VCoins.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+        <div class="feat-title">Class Calendar</div>
+        <div class="feat-desc">Teachers schedule lessons by date. Students see what's coming and track what they've completed.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+        <div class="feat-title">Real-time Messaging</div>
+        <div class="feat-desc">Each class has a live chat channel powered by Firebase. Everyone stays in sync.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+        <div class="feat-title">Help Tickets</div>
+        <div class="feat-desc">Students submit support tickets. Teachers track, prioritize, and resolve them in one place.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M12 14v8M9 18h6"/></svg></span>
+        <div class="feat-title">VCoins & Shop</div>
+        <div class="feat-desc">Earn coins by completing lessons and class work. Spend them in the shop on badges and rewards.</div>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+        <div class="feat-title">Progress Tracking</div>
+        <div class="feat-desc">Teachers see every student's lesson completion rate and VCoins earned at a glance.</div>
+      </div>
+    </div>
+  </div>
+  <div class="landing-cta">
+    <h2>Ready to get started?</h2>
+    <p>Free to use. No credit card required.</p>
+    <button class="btn btn-primary btn-pill" onclick="showPage('auth')">Create an account</button>
+  </div>
+</div>
 
-  <!-- LANDING NAV -->
-  <nav class="landing-nav" id="landing-nav">
-    <div class="landing-nav-inner">
-      <div class="landing-nav-links">
-        <a class="landing-nav-link active" onclick="lnavScroll('home')">Home</a>
-        <a class="landing-nav-link" onclick="lnavScroll('features')">Features</a>
-        <a class="landing-nav-link" onclick="lnavScroll('pricing')">Pricing</a>
-        <a class="landing-nav-link" onclick="lnavScroll('cart')">Cart</a>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="showPage('auth')">Sign in</button>
+  <div class="landing-cta">
+    <h2>Ready to get started?</h2>
+    <p>Personal plan from <strong>$120/year</strong>. School plan for unlimited teams.</p>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary btn-pill" onclick="showPage('pricing')">See pricing</button>
+      <button class="btn btn-ghost btn-pill" onclick="showPage('auth')">Try for free</button>
     </div>
-  </nav>
+  </div>
+</div>
 
-  <!-- ── HOME SECTION ── -->
-  <section class="lsec" id="lsec-home">
-    <div class="hero">
-      <div class="hero-eyebrow"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> Built for VEX Robotics teams</div>
-      <h1>Learn, build, and compete with Vexify</h1>
-      <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system — all in one platform.</p>
-      <div class="hero-btns">
-        <button class="btn btn-primary btn-pill" onclick="lnavScroll('pricing')">See plans</button>
-        <button class="btn btn-ghost btn-pill" onclick="lnavScroll('features')">Explore features</button>
-      </div>
+<!-- FEATURES PAGE -->
+<div id="page-features" class="page">
+  <div style="max-width:860px;margin:0 auto;padding:4rem 1.5rem">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.6px;text-transform:uppercase;margin-bottom:1rem">Everything included</div>
+      <h1 style="font-size:2rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.875rem">Built for VEX teams</h1>
+      <p style="font-size:15px;color:var(--text-3);max-width:440px;margin:0 auto;line-height:1.7">Every feature your team needs — from structured curriculum to real-time collaboration.</p>
     </div>
-    <!-- Highlights strip -->
-    <div class="highlights-strip">
-      <div class="highlight-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-        <div><div class="hl-title">30+ Lessons</div><div class="hl-sub">Across 3 tracks</div></div>
-      </div>
-      <div class="highlight-sep"></div>
-      <div class="highlight-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        <div><div class="hl-title">Class Tools</div><div class="hl-sub">Teachers & students</div></div>
-      </div>
-      <div class="highlight-sep"></div>
-      <div class="highlight-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-        <div><div class="hl-title">VCoins</div><div class="hl-sub">Earn & spend rewards</div></div>
-      </div>
-      <div class="highlight-sep"></div>
-      <div class="highlight-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        <div><div class="hl-title">Live Chat</div><div class="hl-sub">Per-class messaging</div></div>
-      </div>
-      <div class="highlight-sep"></div>
-      <div class="highlight-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        <div><div class="hl-title">Progress</div><div class="hl-sub">Track every student</div></div>
-      </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden">
+      ${[
+        ['Structured Curriculum','30 lessons across Foundations, Design & CAD, and Programming. Fully written with key concepts, code examples, and pro tips.','M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z'],
+        ['VCoins & Rewards','Students earn VCoins by completing lessons. Spend them in the shop on custom rewards teachers create.','M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
+        ['Class Calendar','Teachers schedule lessons by date. Students see upcoming sessions and track what they\'ve completed.','M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
+        ['Grade Book','Record scores per student and assignment. See class averages and per-student performance at a glance.','M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
+        ['Real-time Messaging','Live class chat channels powered by Firebase. Messages sync instantly across all devices.','M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
+        ['Help Tickets','Students submit support tickets by priority. Teachers track and resolve them across all classes.','M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.9l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'],
+        ['Join Codes','Every class gets a unique code students can enter to join — no email required from the teacher.','M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'],
+        ['Admin Dashboard','Invite teachers, manage all users, change roles, and control platform-wide settings from a dedicated admin view.','M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
+        ['Progress Tracking','See per-student lesson completion rates, VCoins earned, and grade averages all in one place.','M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'],
+        ['Dark Mode','A fully implemented dark mode that covers every component — toggle any time, preference saved automatically.','M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z'],
+        ['Google Sign-In','One-click sign in with Google accounts. New users pick their role; returning users go straight to their dashboard.','M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'],
+        ['Firebase Backend','All data — users, classes, messages, grades, tickets — syncs in real time across every device via Firestore.','M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4'],
+      ].map(([title,desc,path])=>`
+        <div style="background:var(--white);padding:1.5rem">
+          <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg></div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">${title}</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.65">${desc}</div>
+        </div>`).join('')}
     </div>
-  </section>
+    <div style="text-align:center;margin-top:3rem">
+      <button class="btn btn-primary btn-pill" onclick="showPage('pricing')">See pricing →</button>
+    </div>
+  </div>
+</div>
 
-  <!-- ── FEATURES SECTION ── -->
-  <section class="lsec lsec-alt" id="lsec-features">
-    <div class="lsec-inner">
-      <div class="lsec-label">Features</div>
-      <h2 class="lsec-heading">Everything your team needs</h2>
-      <p class="lsec-sub">From a solo learner to a full school robotics program — Vexify has the tools to keep everyone on track.</p>
-      <div class="features-grid-2">
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
-          <div class="feat2-title">Structured Curriculum</div>
-          <div class="feat2-desc">30 expert-written lessons across Foundations, Design & CAD, and Programming tracks. Read, learn, mark complete — earn VCoins along the way.</div>
+<!-- PRICING PAGE -->
+<div id="page-pricing" class="page">
+  <div style="max-width:800px;margin:0 auto;padding:4rem 1.5rem">
+    <div style="text-align:center;margin-bottom:3rem">
+      <div style="font-size:11px;font-weight:600;color:var(--text-3);letter-spacing:.6px;text-transform:uppercase;margin-bottom:1rem">Simple pricing</div>
+      <h1 style="font-size:2rem;font-weight:800;letter-spacing:-.04em;margin-bottom:.875rem">Pick your plan</h1>
+      <p style="font-size:15px;color:var(--text-3);line-height:1.7">For individual students or entire school robotics programs.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:3rem">
+      <!-- Personal -->
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rxl);padding:2rem;display:flex;flex-direction:column;gap:1rem">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem">Personal</div>
+          <div style="font-size:2.5rem;font-weight:800;letter-spacing:-.06em;line-height:1">$120<span style="font-size:1rem;font-weight:400;color:var(--text-3)">/year</span></div>
+          <div style="font-size:12px;color:var(--text-3);margin-top:.375rem">$10/month billed annually</div>
         </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-          <div class="feat2-title">Class Calendar</div>
-          <div class="feat2-desc">Teachers schedule and assign lessons by date. Students see exactly what's coming, what's past due, and what they've already completed.</div>
+        <div style="height:1px;background:var(--border)"></div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          ${['Full curriculum access (30+ lessons)','VCoins & rewards system','Progress tracking','Help ticket submission','Join up to 5 classes','Google Sign-In'].map(f=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+        </ul>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:auto;padding:11px" onclick="showPage('cart')">Get started</button>
+      </div>
+      <!-- School -->
+      <div style="background:var(--text);border:1px solid var(--text);border-radius:var(--rxl);padding:2rem;display:flex;flex-direction:column;gap:1rem">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem">School</div>
+          <div style="font-size:2.5rem;font-weight:800;letter-spacing:-.06em;line-height:1;color:#fff">Custom<span style="font-size:1rem;font-weight:400;opacity:.5"> pricing</span></div>
+          <div style="font-size:12px;color:rgba(255,255,255,.4);margin-top:.375rem">Contact us for school licensing</div>
         </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-          <div class="feat2-title">Real-time Messaging</div>
-          <div class="feat2-desc">Every class gets its own live chat channel powered by Firebase. Ask questions, share updates, and keep everyone in sync.</div>
-        </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-          <div class="feat2-title">Help Ticket System</div>
-          <div class="feat2-desc">Students submit support requests directly in the app. Teachers track, prioritize, and resolve tickets — no separate tool needed.</div>
-        </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="6"/><path d="M12 14v8M9 18h6"/></svg></div>
-          <div class="feat2-title">VCoins & Reward Shop</div>
-          <div class="feat2-desc">Students earn VCoins for every lesson they complete. Teachers can award bonus coins too. Spend them in the shop on badges and digital rewards.</div>
-        </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div class="feat2-title">Progress Tracking</div>
-          <div class="feat2-desc">Teachers get a bird's-eye view of every student: lessons completed, VCoins earned, grades logged. No spreadsheet required.</div>
-        </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <div class="feat2-title">Class & Roster Management</div>
-          <div class="feat2-desc">Create multiple classes, generate join codes, add members, rename classes, and manage your whole roster from one panel.</div>
-        </div>
-        <div class="feat2-card">
-          <div class="feat2-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div class="feat2-title">Admin Dashboard</div>
-          <div class="feat2-desc">School admins control the whole platform — invite teachers, manage users, view platform-wide stats, and configure settings.</div>
-        </div>
+        <div style="height:1px;background:rgba(255,255,255,.1)"></div>
+        <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
+          ${['Everything in Personal','Unlimited students & teachers','Class management & grade book','Real-time class messaging','Admin dashboard','Teacher invite system','Priority support'].map(f=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+        </ul>
+        <button class="btn" style="width:100%;justify-content:center;margin-top:auto;padding:11px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="document.getElementById('contact-email').scrollIntoView({behavior:'smooth'})">Contact us</button>
       </div>
     </div>
-  </section>
+    <!-- FAQ -->
+    <div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white);margin-bottom:2rem">
+      <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">Common questions</div>
+      ${[
+        ['What does the Personal plan include?','Full access to all 30+ curriculum lessons, VCoins and the rewards shop, progress tracking, help ticket submission, and the ability to join up to 5 classes created by your teacher.'],
+        ['How does the School plan work?','An administrator purchases the School plan for their program. This unlocks the full platform — class management, grade book, messaging, teacher invites, and the admin dashboard — for the entire school.'],
+        ['Can I try before buying?','Yes. Create a free account and explore the platform. Curriculum previews, the dashboard, and class joining are available before purchasing a plan.'],
+        ['Do students need to pay if their school has a School plan?','No. If your school has purchased the School plan, students access everything for free through their school account.'],
+      ].map(([q,a])=>`<div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)"><div style="font-size:13px;font-weight:600;margin-bottom:.375rem">${q}</div><div style="font-size:12px;color:var(--text-3);line-height:1.65">${a}</div></div>`).join('')}
+    </div>
+    <div id="contact-email" style="text-align:center;padding:2rem;background:var(--bg);border-radius:var(--rl);border:1px solid var(--border)">
+      <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">Interested in the School plan?</div>
+      <div style="font-size:12px;color:var(--text-3);margin-bottom:1rem">Reach out and we'll set up your school's account.</div>
+      <a href="mailto:hello@vexify.app" style="font-size:14px;font-weight:600;color:var(--text);text-decoration:underline;text-underline-offset:3px">hello@vexify.app</a>
+    </div>
+  </div>
+</div>
 
-  <!-- ── PRICING SECTION ── -->
-  <section class="lsec" id="lsec-pricing">
-    <div class="lsec-inner">
-      <div class="lsec-label">Pricing</div>
-      <h2 class="lsec-heading">Two plans, one platform</h2>
-      <p class="lsec-sub">Whether you're learning solo or running a full robotics program, there's a plan for you.</p>
-      <div class="pricing-grid">
-        <div class="pricing-card">
-          <div class="pricing-plan-name">Personal</div>
-          <div class="pricing-price"><span class="pricing-amount">$120</span><span class="pricing-period">/ year</span></div>
-          <div class="pricing-desc">For individual students and self-learners working through the VEX curriculum on their own schedule.</div>
-          <ul class="pricing-features">
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full lesson library (30+ lessons)</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking & VCoins</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reward shop</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Dark mode</li>
-            <li class="pricing-feature-muted"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Class management</li>
-            <li class="pricing-feature-muted"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Team messaging</li>
-          </ul>
-          <button class="btn btn-primary btn-pill" style="width:100%;justify-content:center" onclick="addToCart('personal')">Add to cart — $120/yr</button>
-        </div>
-        <div class="pricing-card pricing-card-featured">
-          <div class="pricing-badge">For teams &amp; schools</div>
-          <div class="pricing-plan-name">School</div>
-          <div class="pricing-price"><span class="pricing-amount" style="font-size:1.5rem;letter-spacing:-.02em">Contact us</span></div>
-          <div class="pricing-desc">For coaches, teachers, and administrators running structured VEX robotics programs at scale.</div>
-          <ul class="pricing-features">
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Personal</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Class & roster management</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Real-time class messaging</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Help ticket system</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Grade tracking</li>
-            <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#86efac" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Admin dashboard & invites</li>
-          </ul>
-          <button class="btn btn-pill" style="width:100%;justify-content:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;font-size:13px;font-weight:500;padding:9px 20px" onclick="addToCart('school')">Add to cart — contact for price</button>
-        </div>
-      </div>
+<!-- CART PAGE -->
+<div id="page-cart" class="page">
+  <div style="max-width:480px;margin:0 auto;padding:4rem 1.5rem">
+    <button class="btn btn-ghost btn-sm" style="margin-bottom:1.5rem" onclick="showPage('pricing')">← Back to pricing</button>
+    <div style="font-size:20px;font-weight:800;letter-spacing:-.04em;margin-bottom:.375rem">Checkout</div>
+    <div style="font-size:13px;color:var(--text-3);margin-bottom:2rem">Personal Plan · $120/year</div>
+    <!-- Order summary -->
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1.5rem">
+      <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.875rem">Order summary</div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:.5rem"><span>Vexify Personal Plan</span><span style="font-weight:600">$120.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-3);margin-bottom:.875rem"><span>Billed annually</span><span>$10.00/mo</span></div>
+      <div style="height:1px;background:var(--border);margin-bottom:.875rem"></div>
+      <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700"><span>Total</span><span>$120.00 USD</span></div>
     </div>
-  </section>
-
-  <!-- ── CART SECTION ── -->
-  <section class="lsec lsec-alt" id="lsec-cart">
-    <div class="lsec-inner" style="max-width:600px">
-      <div class="lsec-label">Cart</div>
-      <h2 class="lsec-heading">Your order</h2>
-      <p class="lsec-sub">Review your plan selection and proceed to checkout.</p>
-      <div id="cart-body">
-        <div class="cart-empty">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-          <div class="cart-empty-title">Your cart is empty</div>
-          <div class="cart-empty-sub">Choose a plan above to get started.</div>
-          <button class="btn btn-ghost btn-sm" onclick="lnavScroll('pricing')">View plans</button>
-        </div>
-      </div>
+    <!-- Contact info -->
+    <div class="card" style="margin-bottom:1.5rem">
+      <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Your information</div>
+      <div class="form-group"><label>Full name</label><input type="text" id="cart-name" placeholder="Alex Kim"></div>
+      <div class="form-group"><label>Email address</label><input type="email" id="cart-email" placeholder="you@example.com"></div>
     </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="landing-footer">
-    <div class="landing-footer-inner">
-      <div style="display:flex;align-items:center;gap:8px">
-        <svg width="18" height="18" viewBox="0 0 26 26" fill="none"><circle cx="4" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="22" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="13" cy="20" r="3.8" stroke="currentColor" stroke-width="1.8" fill="none"/><circle cx="13" cy="20" r="1.4" fill="currentColor"/><line x1="6.6" y1="9.7" x2="10.7" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19.4" y1="9.7" x2="15.3" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        <span style="font-weight:700;font-size:13px">Vexify</span>
-      </div>
-      <div style="font-size:12px;color:var(--text-3)">© 2025 Vexify. Built for VEX Robotics teams.</div>
-      <div style="display:flex;gap:1.25rem">
-        <a onclick="lnavScroll('features')" style="font-size:12px;color:var(--text-3);cursor:pointer">Features</a>
-        <a onclick="lnavScroll('pricing')" style="font-size:12px;color:var(--text-3);cursor:pointer">Pricing</a>
-        <a onclick="showPage('auth')" style="font-size:12px;color:var(--text-3);cursor:pointer">Sign in</a>
-      </div>
+    <!-- Payment notice -->
+    <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--r);padding:.875rem 1rem;font-size:12px;color:var(--amber);line-height:1.65;margin-bottom:1.5rem">
+      <strong>Note:</strong> Payment processing is coming soon. Submit your info and we'll contact you to complete your purchase and activate your account.
     </div>
-  </footer>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;font-size:14px;font-weight:600" onclick="submitCart()">Submit order request</button>
+    <div style="text-align:center;margin-top:1rem;font-size:11px;color:var(--text-3)">By submitting you agree to our Terms of Service · Secure &amp; private</div>
+  </div>
 </div>
 
 <!-- AUTH -->
@@ -1327,15 +1215,12 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
       <div class="field"><label>Full name</label><div class="input-wrap"><input type="text" id="reg-name" placeholder="Alex Kim" autocomplete="name"></div></div>
       <div class="field"><label>Email address</label><div class="input-wrap"><input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email"></div></div>
       <div class="field"><label>Password</label><div class="input-wrap"><input type="password" id="reg-password" placeholder="Min 6 characters" autocomplete="new-password"></div></div>
-      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="student">Student (School plan)</option><option value="teacher">Teacher / Coach (School plan)</option></select></div>
-      <div style="background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--accent);margin-bottom:1rem;line-height:1.6">
-        This registers you on a <strong>School plan</strong> — your school's admin must have set up an account. For individual access, <a onclick="closeModal && closeModal('modal-personal-checkout'); startPersonalSignup()" style="font-weight:600;text-decoration:underline;cursor:pointer">get the Personal plan ($120/yr)</a>.
-      </div>
+      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="student">Student</option><option value="teacher">Teacher / Coach</option></select></div>
       <div class="auth-err" id="reg-err"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:9px" onclick="doRegister()">Create account</button>
       <div class="auth-footer"><span></span><span>Have an account? <a onclick="authSwitch('login')">Sign in</a></span></div>
     </div>
-    <div class="demo-links">Demo: <a onclick="demoLogin('teacher')">Teacher</a> · <a onclick="demoLogin('student')">Student</a> · <a onclick="demoLogin('personal')">Personal</a></div>
+    <div class="demo-links">Demo: <a onclick="demoLogin('teacher')">Teacher account</a> · <a onclick="demoLogin('student')">Student account</a></div>
   </div>
 </div>
 
@@ -1363,9 +1248,6 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
     </div>
     <div class="app-nav-item hidden" data-panel="manage" id="sidebar-manage" onclick="showPanel('manage')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage
-    </div>
-    <div class="app-nav-item hidden" data-panel="admin" id="nav-admin" onclick="showPanel('admin')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin
     </div>
   </nav>
   <div class="main-content">
@@ -1440,43 +1322,6 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
         <button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>
       </div>
       <div id="manage-body"></div>
-    </div>
-    <!-- TEACHER SHOP MANAGER -->
-    <div id="panel-teacher-shop" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Shop Manager</div><div class="panel-sub">Add custom reward items students can buy with VCoins</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddShopItemModal()">+ Add Item</button>
-      </div>
-      <div id="teacher-shop-body"></div>
-    </div>
-    <!-- TEACHER LESSON BUILDER -->
-    <div id="panel-teacher-lessons" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Lesson Builder</div><div class="panel-sub">Create custom lessons that appear in the student Lessons tab</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
-      </div>
-      <div id="teacher-lessons-body"></div>
-    </div>
-    <!-- ADMIN PANEL -->
-    <div id="panel-admin" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Admin Dashboard</div><div class="panel-sub">Manage teacher invites and all platform users</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
-        <div class="card" id="admin-stats-users"></div>
-        <div class="card" id="admin-stats-invites"></div>
-      </div>
-      <div class="card" style="margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;">Teacher Invites</div>
-          <button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button>
-        </div>
-        <div id="admin-invites-body"></div>
-      </div>
-      <div class="card">
-        <div style="font-size:13px;font-weight:600;margin-bottom:1rem;">All Users</div>
-        <div id="admin-users-body"></div>
-      </div>
     </div>
   </div>
 </div>
@@ -1585,10 +1430,6 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           Settings
         </div>
-        <div class="a-nav-item" onclick="signOut()" style="margin-top:auto;color:var(--red)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-          Sign out
-        </div>
       </nav>
     </div>
     <!-- Main -->
@@ -1608,7 +1449,6 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
               <option value="">All roles</option>
               <option value="student">Students</option>
               <option value="teacher">Teachers</option>
-              <option value="personal">Personal</option>
               <option value="removed">Removed</option>
             </select>
           </div>
@@ -1828,34 +1668,6 @@ body.dark .landing-footer{background:#141414;border-top-color:#2d2d2d;}
   </div>
 </div>
 
-<!-- Personal Plan Checkout Modal -->
-<div class="modal-overlay hidden" id="modal-personal-checkout">
-  <div class="modal" style="max-width:440px">
-    <div class="modal-header">
-      <div class="modal-title">Personal Plan</div>
-      <button class="modal-close" onclick="closeModal('modal-personal-checkout')">✕</button>
-    </div>
-    <div class="plan-checkout-price">
-      <div class="amount">$120</div>
-      <div class="period">per year · billed annually</div>
-    </div>
-    <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:1.25rem;">
-      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full 30-lesson VEX curriculum</li>
-      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking & VCoins</li>
-      <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-2)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reward shop</li>
-    </ul>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6">Create your account below. Payment details would be collected at checkout.</p>
-    <div class="form-group"><label>Full name</label><input type="text" id="personal-name" placeholder="Alex Kim" autocomplete="name"></div>
-    <div class="form-group"><label>Email address</label><input type="email" id="personal-email" placeholder="you@example.com" autocomplete="email"></div>
-    <div class="form-group"><label>Password</label><input type="password" id="personal-password" placeholder="Min 6 characters" autocomplete="new-password"></div>
-    <div class="auth-err" id="personal-err"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-personal-checkout')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="doPersonalSignup()">Create account & pay</button>
-    </div>
-  </div>
-</div>
-
 <script>
 // ═══════ STATE ═══════
 let DB={users:{},classes:{},messages:{},tickets:[],lessons:{},completedLessons:{},purchases:{}};
@@ -2040,11 +1852,17 @@ async function completeCurriculumLesson(lessonId,coins,event){
 
 async function loadDB(){
   if(!window._firebase) return;
-  DB.users     = await window._firebase.getAllUsers();
-  DB.classes   = await window._firebase.getAllClasses();
-  DB.lessons   = await window._firebase.getAllLessons();
+  DB.users            = await window._firebase.getAllUsers();
+  DB.classes          = await window._firebase.getAllClasses();
+  DB.lessons          = await window._firebase.getAllLessons();
   DB.completedLessons = await window._firebase.getAllCompleted();
-  DB.tickets   = await window._firebase.getAllTickets();
+  DB.tickets          = await window._firebase.getAllTickets();
+  DB.customLessons    = {};
+  DB.customShopItems  = {};
+  DB.grades           = {};
+  try{const cl=await window._firebase.getAllCustomLessons();cl.forEach(l=>{DB.customLessons[l.id]=l;});}catch(e){}
+  try{const si=await window._firebase.getAllShopItems();si.forEach(i=>{DB.customShopItems[i.id]=i;});}catch(e){}
+  Object.entries(DB.classes).forEach(([id,c])=>{if(c.grades) DB.grades[id]=c.grades;});
   Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
   if(!DB.purchases)DB.purchases={};
 }
@@ -2070,17 +1888,6 @@ async function doGoogleSignIn(){
   }
 }
 
-async function doMicrosoftSignIn(){
-  try {
-    const firebaseUser = await window._firebase.signInWithMicrosoft();
-    await _handleSocialSignIn(firebaseUser);
-  } catch(e) {
-    if(e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-      showToast('Microsoft sign-in failed. Try again.');
-      console.error(e);
-    }
-  }
-}
 
 async function _handleSocialSignIn(firebaseUser){
   const email = firebaseUser.email.toLowerCase();
@@ -2158,7 +1965,6 @@ async function renderAdminPanel(){
   const userList=Object.values(allUsers);
   const teachers=userList.filter(u=>u.role==='teacher');
   const students=userList.filter(u=>u.role==='student');
-  const personal=userList.filter(u=>u.role==='personal');
   const pending=userList.filter(u=>u.role==='teacher_pending');
   const removed=userList.filter(u=>u.role==='removed');
 
@@ -2168,7 +1974,6 @@ async function renderAdminPanel(){
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
-      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--green)">${personal.length}</div><div style="font-size:11px;color:var(--text-3)">Personal</div></div>
       ${pending.length?`<div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--amber)">${pending.length}</div><div style="font-size:11px;color:var(--text-3)">Pending</div></div>`:''}
     </div>`;
 
@@ -2205,8 +2010,8 @@ async function renderAdminPanel(){
   if(!displayUsers.length){
     usersBody.innerHTML=`<div style="font-size:12px;color:var(--text-3)">No users yet.</div>`;
   } else {
-    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red',personal:'badge-green'};
-    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed',personal:'Personal'};
+    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
+    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
     usersBody.innerHTML=displayUsers.map(u=>`
       <div class="member-row" style="${u.role==='removed'?'opacity:.5':''}">
         <div class="avatar">${initials(u.name)}</div>
@@ -2268,101 +2073,6 @@ function copyInviteLink(email){
   navigator.clipboard.writeText(msg).then(()=>showToast('Invite message copied!')).catch(()=>prompt('Copy this invite:',msg));
 }
 
-// ═══════ PAGE-ADMIN FUNCTIONS ═══════
-function aShowPanel(panelId){
-  document.querySelectorAll('.a-panel').forEach(el=>el.classList.add('hidden'));
-  document.querySelectorAll('.a-nav-item').forEach(el=>el.classList.remove('active'));
-  const panel=document.getElementById('a-panel-'+panelId);
-  if(panel) panel.classList.remove('hidden');
-  document.querySelector(`.a-nav-item[data-a="${panelId}"]`)?.classList.add('active');
-  if(panelId==='a-overview') aRenderOverview();
-  if(panelId==='a-users') aRenderUsers();
-  if(panelId==='a-teachers') aRenderTeachers();
-}
-async function aRenderOverview(){
-  const allUsers=await window._firebase.getAllUsers();
-  const allInvites=await window._firebase.getAllInvites();
-  const userList=Object.values(allUsers);
-  const teachers=userList.filter(u=>u.role==='teacher');
-  const students=userList.filter(u=>u.role==='student');
-  const personalUsers=userList.filter(u=>u.role==='personal');
-  const removed=userList.filter(u=>u.role==='removed');
-  const body=document.getElementById('a-overview-body');
-  if(!body) return;
-  body.innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem">
-      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active Users</div></div>
-      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
-      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
-      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em;color:var(--green)">${personalUsers.length}</div><div style="font-size:11px;color:var(--text-3)">Personal Plan</div></div>
-      <div class="a-card"><div style="font-size:1.6rem;font-weight:800;letter-spacing:-.04em">${allInvites.filter(i=>!i.used).length}</div><div style="font-size:11px;color:var(--text-3)">Pending Invites</div></div>
-    </div>`;
-}
-let _aAllUsers=[];
-async function aRenderUsers(){
-  _aAllUsers=Object.values(await window._firebase.getAllUsers()).filter(u=>u.role!=='admin');
-  aFilterUsers();
-}
-function aFilterUsers(){
-  const search=(document.getElementById('a-user-search')?.value||'').toLowerCase();
-  const role=document.getElementById('a-user-role-filter')?.value||'';
-  const tbody=document.getElementById('a-users-tbody');
-  if(!tbody) return;
-  const filtered=_aAllUsers.filter(u=>{
-    const matchRole=!role||u.role===role;
-    const matchSearch=!search||u.name.toLowerCase().includes(search)||u.email.toLowerCase().includes(search);
-    return matchRole&&matchSearch;
-  });
-  const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red',personal:'badge-green'};
-  const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed',personal:'Personal'};
-  tbody.innerHTML=filtered.length?filtered.map(u=>`<tr style="${u.role==='removed'?'opacity:.5':''}">
-    <td style="padding:10px 12px;font-size:13px;font-weight:500">${esc(u.name)}</td>
-    <td style="padding:10px 12px;font-size:12px;color:var(--text-3)">${u.email}</td>
-    <td style="padding:10px 12px"><span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span></td>
-    <td style="padding:10px 12px;font-size:12px">${u.coins||0}</td>
-    <td style="padding:10px 12px">
-      ${u.role!=='removed'?`
-        <select onchange="adminChangeRole('${u.email}',this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;margin-right:4px">
-          <option value="">Change role…</option>
-          <option value="student">→ Student</option>
-          <option value="teacher">→ Teacher</option>
-        </select>
-        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
-      `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}
-    </td>
-  </tr>`).join(''):`<tr><td colspan="5" style="padding:1.5rem;text-align:center;color:var(--text-3);font-size:12px">No users found.</td></tr>`;
-}
-async function aRenderTeachers(){
-  const allUsers=await window._firebase.getAllUsers();
-  const allInvites=await window._firebase.getAllInvites();
-  const teachers=Object.values(allUsers).filter(u=>u.role==='teacher');
-  const invitesBody=document.getElementById('a-invites-body');
-  const teachersBody=document.getElementById('a-teachers-body');
-  if(invitesBody){
-    invitesBody.innerHTML=allInvites.length?allInvites.map(inv=>`
-      <div class="member-row">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </div>
-        <div class="member-info"><div class="member-name">${inv.email}</div><div class="member-email">${inv.used?'Used':'Pending'}</div></div>
-        <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
-        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
-        <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}')">Revoke</button>
-      </div>`).join(''):`<div style="font-size:12px;color:var(--text-3)">No invites yet.</div>`;
-  }
-  if(teachersBody){
-    teachersBody.innerHTML=teachers.length?teachers.map(u=>`
-      <div class="member-row">
-        <div class="avatar">${initials(u.name)}</div>
-        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div>
-        <span class="badge badge-indigo">Teacher</span>
-        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
-      </div>`).join(''):`<div style="font-size:12px;color:var(--text-3)">No teachers yet.</div>`;
-  }
-}
-function saveAdminSettings(){ showToast('Settings saved!'); }
-function aSignOut(){ signOut(); }
-
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -2378,85 +2088,54 @@ function toggleDark(){
 
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  const pg=document.getElementById('page-'+p);
-  if(!pg){ console.warn('No page: page-'+p); return; }
-  pg.classList.add('active');
+  document.getElementById('page-'+p)?.classList.add('active');
+  // Show/hide nav center links only on marketing pages
+  const mktPages=['info','features','pricing','cart'];
+  const navCenter=document.getElementById('nav-center-links');
+  if(navCenter) navCenter.style.display=mktPages.includes(p)?'flex':'none';
   if(p==='dashboard') renderDashboard();
   if(p==='teacher')   tRenderClasses();
   if(p==='admin')     aShowPanel('a-overview');
-  if(p==='info'){
-    // hide landing nav sign-in btn if user is logged in
-    const lnSignIn=document.querySelector('.landing-nav .btn-primary');
-    if(lnSignIn) lnSignIn.style.display=currentUser?'none':'';
-  }
 }
 function goHome(){
   if(!currentUser) return showPage('info');
-  if(currentUser.role==='admin')    return showPage('admin');
-  if(currentUser.role==='teacher')  return showPage('teacher');
-  return showPage('dashboard');
+  if(currentUser.role==='admin') return showPage('admin');
+  if(currentUser.role==='teacher') return showPage('teacher');
+  showPage('dashboard');
 }
 
-// ── Landing page scroll nav ──
-function lnavScroll(section){
-  const el=document.getElementById('lsec-'+section);
-  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
-  document.querySelectorAll('.landing-nav-link').forEach(a=>{
-    a.classList.toggle('active',a.getAttribute('onclick')?.includes("'"+section+"'"));
-  });
+function submitCart(){
+  const name=document.getElementById('cart-name').value.trim();
+  const email=document.getElementById('cart-email').value.trim();
+  if(!name||!email){showToast('Please fill in your name and email.');return;}
+  showToast('Order submitted! We\'ll be in touch at '+email);
+  document.getElementById('cart-name').value='';
+  document.getElementById('cart-email').value='';
+  setTimeout(()=>showPage('pricing'),1800);
 }
 
-// ── Cart ──
-const _cart={};
-function addToCart(plan){
-  _cart.plan=plan;
-  renderCart();
-  lnavScroll('cart');
-}
-function renderCart(){
-  const body=document.getElementById('cart-body');
-  if(!body) return;
-  if(!_cart.plan){
-    body.innerHTML=`<div class="cart-empty">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      <div class="cart-empty-title">Your cart is empty</div>
-      <div class="cart-empty-sub">Choose a plan above to get started.</div>
-      <button class="btn btn-ghost btn-sm" onclick="lnavScroll('pricing')">View plans</button>
+function login(u){
+  currentUser=u;
+  document.getElementById('nav-signin-btn').classList.add('hidden');
+  const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
+  document.getElementById('nav-name').textContent=u.name;
+  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval'};
+  document.getElementById('nav-role-label').textContent=roleLabels[u.role]||u.role;
+  if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
+  if(u.role==='teacher_pending'){
+    showPage('dashboard');
+    document.querySelector('.main-content').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1rem;text-align:center;padding:2rem;">
+      <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+      <div style="font-size:15px;font-weight:600;">Account Pending Approval</div>
+      <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval.</div>
+      <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
     </div>`;
     return;
   }
-  const isPersonal=_cart.plan==='personal';
-  body.innerHTML=`
-    <div class="a-card" style="margin-bottom:1rem">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <div>
-          <div style="font-size:15px;font-weight:700;letter-spacing:-.02em">${isPersonal?'Personal Plan':'School Plan'}</div>
-          <div style="font-size:12px;color:var(--text-3);margin-top:3px">${isPersonal?'Self-paced VEX curriculum access':'Full platform access for your school'}</div>
-        </div>
-        <div style="display:flex;align-items:baseline;gap:4px">
-          <span style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${isPersonal?'$120':'Contact us'}</span>
-          ${isPersonal?'<span style="font-size:12px;color:var(--text-3)">/ year</span>':''}
-        </div>
-      </div>
-      ${isPersonal?`<ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full lesson library (30+ lessons)</li>
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking & VCoins</li>
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Reward shop & dark mode</li>
-      </ul>`:`<ul style="list-style:none;display:flex;flex-direction:column;gap:6px;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Personal</li>
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Class management, messaging & tickets</li>
-        <li style="display:flex;gap:8px;font-size:12px;color:var(--text-2)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Admin dashboard & teacher invites</li>
-      </ul>`}
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      ${isPersonal
-        ?`<button class="btn btn-primary btn-pill" style="flex:1;justify-content:center" onclick="startPersonalSignup()">Checkout — $120/yr</button>`
-        :`<button class="btn btn-primary btn-pill" style="flex:1;justify-content:center" onclick="showPage('auth')">Contact us / Sign in</button>`}
-      <button class="btn btn-ghost btn-sm" onclick="_cart.plan=null;renderCart()">Remove</button>
-    </div>`;
+  if(u.role==='admin')   { showPage('admin');   return; }
+  if(u.role==='teacher') { showPage('teacher'); return; }
+  showPage('dashboard');
 }
-
-function noClasses(){ return !currentUser||getMyClasses().length===0; }
 
 function _noClassHTML(){
   const isT = currentUser.role === 'teacher';
@@ -2482,23 +2161,13 @@ function showPanel(p){
   const renders={
     calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,
     progress:renderProgress,shop:renderShop,manage:renderManage,
-    home:renderHome,lessons:renderLessonsPanel,
-    'teacher-shop':renderTeacherShop,'teacher-lessons':renderTeacherLessons,
-    admin:renderAdminPanel
+    home:renderHome,lessons:renderLessonsPanel
   };
   if(renders[p]) renders[p]();
   _updateNavLockState();
 }
 
 function _updateNavLockState(){
-  if(currentUser.role==='personal'){
-    // Personal plan users are never locked — they don't have classes but their panels are always available
-    ['lessons','progress','shop'].forEach(p=>{
-      const el=document.querySelector(`.app-nav-item[data-panel="${p}"]`);
-      if(el){el.style.opacity='';el.title='';}
-    });
-    return;
-  }
   const locked = noClasses();
   const gatedPanels = ['calendar','messages','progress','tickets','shop'];
   gatedPanels.forEach(p=>{
@@ -2522,16 +2191,13 @@ async function doLogin(){
   const email=document.getElementById('login-email').value.trim().toLowerCase();
   const pw=document.getElementById('login-password').value;
   const errEl=document.getElementById('login-err');
-  if(!email||!pw){errEl.textContent='Please enter your email and password.';return;}
   errEl.textContent='Signing in…';
-  try{
-    const u = await window._firebase.getUser(email);
-    if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
-    if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';return;}
-    DB.users[email]=u;
-    errEl.textContent='';
-    login(u);
-  } catch(e){ errEl.textContent='Connection error. Please try again.'; console.error(e); }
+  const u = await window._firebase.getUser(email);
+  if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
+  if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';return;}
+  DB.users[email]=u;
+  errEl.textContent='';
+  login(u);
 }
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
@@ -2561,48 +2227,17 @@ async function doRegister(){
   login(userData);
 }
 async function demoLogin(r){
-  try{
-    const u = await window._firebase.getUser(r+'@demo.com');
-    if(u){ DB.users[u.email]=u; login(u); }
-    else{ showToast('Demo account not found — try again in a moment.'); }
-  } catch(e){ showToast('Could not connect. Check your internet connection.'); console.error(e); }
-}
-function startPersonalSignup(){
-  document.getElementById('personal-name').value='';
-  document.getElementById('personal-email').value='';
-  document.getElementById('personal-password').value='';
-  document.getElementById('personal-err').textContent='';
-  openModal('modal-personal-checkout');
-}
-async function doPersonalSignup(){
-  const name=document.getElementById('personal-name').value.trim();
-  const email=document.getElementById('personal-email').value.trim().toLowerCase();
-  const pw=document.getElementById('personal-password').value;
-  const errEl=document.getElementById('personal-err');
-  if(!name||!email||!pw){errEl.textContent='All fields required.';return;}
-  if(pw.length<6){errEl.textContent='Password must be 6+ characters.';return;}
-  const existing=await window._firebase.getUser(email);
-  if(existing){errEl.textContent='Email already registered.';return;}
-  errEl.textContent='Creating account…';
-  const userData={name,email,password:pw,role:'personal',plan:'personal',coins:0,inventory:[],planSince:new Date().toISOString()};
-  await window._firebase.createUser(userData);
-  DB.users[email]=userData;
-  errEl.textContent='';
-  closeModal('modal-personal-checkout');
-  login(userData);
+  const u = await window._firebase.getUser(r+'@demo.com');
+  if(u){ DB.users[u.email]=u; login(u); }
 }
 function login(u){
   currentUser=u;
   document.getElementById('nav-signin-btn').classList.add('hidden');
   const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
   document.getElementById('nav-name').textContent=u.name;
-  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval',personal:'Personal Plan'};
+  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval'};
   document.getElementById('nav-role-label').textContent=roleLabels[u.role]||u.role;
-  // Show coins for students and personal plan users
-  if(u.role==='student'||u.role==='personal'){
-    document.getElementById('nav-coins').classList.remove('hidden');
-    updateCoinDisplay();
-  }
+  if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
   if(u.role==='teacher_pending'){
     showPage('dashboard');
     document.querySelector('.main-content').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1rem;text-align:center;padding:2rem;">
@@ -2611,18 +2246,6 @@ function login(u){
       <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval.</div>
       <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
     </div>`;
-    return;
-  }
-  if(u.role==='admin'){
-    showPage('admin');
-    return;
-  }
-  if(u.role==='teacher'){
-    showPage('teacher');
-    return;
-  }
-  if(u.role==='personal'){
-    showPage('dashboard');
     return;
   }
   showPage('dashboard');
@@ -2634,6 +2257,7 @@ function signOut(){
   document.getElementById('nav-coins').classList.add('hidden');
   showPage('info');
 }
+function noClasses(){ return !currentUser||getMyClasses().length===0; }
 function updateCoinDisplay(){
   if(!currentUser)return;
   const c=currentUser.coins||0;
@@ -2662,19 +2286,8 @@ function doAddShopItem(){closeModal('modal-add-shop-item');}
 function openAddCustomLessonModal(){openModal('modal-add-custom-lesson');}
 function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
 
-// ═══════ DASHBOARD ═══════
+// ═══════ STUDENT DASHBOARD ═══════
 function renderDashboard(){
-  const isT=currentUser.role==='teacher';
-  const isA=currentUser.role==='admin';
-  const isP=currentUser.role==='personal';
-  document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
-  document.getElementById('nav-admin').classList.toggle('hidden',!isA);
-  // Personal plan: hide school-only panels
-  const schoolOnlyPanels=['calendar','messages','tickets','manage'];
-  schoolOnlyPanels.forEach(p=>{
-    const el=document.querySelector(`.app-nav-item[data-panel="${p}"]`);
-    if(el) el.classList.toggle('hidden',isP);
-  });
   _updateNavLockState();
   renderHome();
 }
@@ -2683,47 +2296,6 @@ function renderSidebarClasses(){}
 // ═══════ HOME ═══════
 function renderHome(){
   const isT=currentUser.role==='teacher';
-  const isP=currentUser.role==='personal';
-
-  if(isP){
-    document.getElementById('home-greeting').textContent='My Learning';
-    document.getElementById('home-sub').textContent='Personal plan · Self-paced VEX curriculum';
-    document.getElementById('home-new-class').classList.add('hidden');
-    let joinBtn=document.getElementById('home-join-btn');
-    if(joinBtn) joinBtn.classList.add('hidden');
-    const totalLessons=Object.values(CURRICULUM).flatMap(t=>t.units.flatMap(u=>u.lessons)).length;
-    const completed=Object.keys(DB.completedLessons).length;
-    const pct=totalLessons?Math.round(completed/totalLessons*100):0;
-    document.getElementById('home-stats').innerHTML=`
-      <div class="stat-card"><div class="stat-val">${completed}</div><div class="stat-lbl2">Lessons Done</div></div>
-      <div class="stat-card"><div class="stat-val">${totalLessons-completed}</div><div class="stat-lbl2">Remaining</div></div>
-      <div class="stat-card"><div class="stat-val">${currentUser.coins||0}</div><div class="stat-lbl2">VCoins</div></div>
-      <div class="stat-card"><div class="stat-val">${pct}%</div><div class="stat-lbl2">Complete</div></div>`;
-    document.getElementById('home-classes').innerHTML=`
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="background:var(--accent-light);border:1px solid var(--accent-border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-          <div>
-            <div style="font-size:13px;font-weight:600;color:var(--accent)">Personal Plan — Active</div>
-            <div style="font-size:12px;color:var(--text-3);margin-top:2px">Self-paced access to the full VEX curriculum</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="showPanel('lessons')">Continue learning →</button>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:4px">
-          ${Object.values(CURRICULUM).map(t=>{
-            const all=t.units.flatMap(u=>u.lessons);
-            const done=all.filter(l=>DB.completedLessons['cl_'+l.id]).length;
-            const p=all.length?Math.round(done/all.length*100):0;
-            return`<div class="card" style="cursor:pointer" onclick="showPanel('lessons');switchTrack('${Object.keys(CURRICULUM).find(k=>CURRICULUM[k]===t)}')">
-              <div style="font-size:12px;font-weight:600;margin-bottom:6px">${t.label}</div>
-              <div style="font-size:11px;color:var(--text-3);margin-bottom:8px">${done}/${all.length} lessons</div>
-              <div style="height:5px;background:var(--bg);border-radius:3px;overflow:hidden"><div style="height:100%;background:var(--accent);width:${p}%;border-radius:3px;transition:width .4s"></div></div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-    return;
-  }
-
   const classes=getMyClasses();
   document.getElementById('home-greeting').textContent='My Classes';
   document.getElementById('home-sub').textContent=isT?'Manage your classes and students':'Your enrolled classes';
@@ -3309,6 +2881,429 @@ function showToast(msg){
 function openModal(id){document.getElementById(id).classList.remove('hidden');}
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
+
+// ═══════ TEACHER ═══════
+let tActiveClass = null;
+let tActiveClassTab = 'overview';
+
+function tShowPanel(p){
+  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.t-nav-item[data-t="${p}"]`)?.classList.add('active');
+  document.querySelectorAll('.t-panel').forEach(el=>el.classList.add('hidden'));
+  document.getElementById(`t-panel-${p}`)?.classList.remove('hidden');
+  // Show/hide new class button
+  document.getElementById('t-new-class-btn').classList.toggle('hidden', p!=='classes');
+  if(p==='classes') tRenderClasses();
+  if(p==='t-lessons') renderTeacherLessons('t-lessons-body');
+  if(p==='t-shop') renderTeacherShop('t-shop-body');
+  if(p==='t-tickets') tRenderTickets();
+}
+
+function tRenderClasses(){
+  const classes = getMyClasses();
+  const grid = document.getElementById('t-classes-grid');
+  if(!classes.length){
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div><div class="empty-title">No classes yet</div><div class="empty-desc">Click "+ New Class" to create your first class.</div></div>`;
+    return;
+  }
+  grid.innerHTML=`<div class="t-class-grid">${classes.map(([id,c])=>{
+    const members=(c.members||[]).filter(e=>DB.users[e]?.role==='student');
+    const lessonCount=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
+    const gradeCount=(DB.grades&&DB.grades[id])?DB.grades[id].length:0;
+    return`<div class="t-class-card" onclick="tOpenClass('${id}')">
+      <div class="t-class-card-top">
+        <div class="t-class-av">${initials(c.name)}</div>
+        <div>
+          <div class="t-class-card-name">${esc(c.name)}</div>
+          <div class="t-class-card-meta">${c.season||''}${c.room?' · Room '+c.room:''}</div>
+        </div>
+      </div>
+      <div class="t-class-card-stats">
+        <div class="t-class-stat"><div class="t-class-stat-val">${members.length}</div><div class="t-class-stat-lbl">Students</div></div>
+        <div class="t-class-stat"><div class="t-class-stat-val">${lessonCount}</div><div class="t-class-stat-lbl">Lessons</div></div>
+        <div class="t-class-stat"><div class="t-class-stat-val">${gradeCount}</div><div class="t-class-stat-lbl">Grades</div></div>
+        <div class="t-class-stat" style="margin-left:auto">
+          <div style="font-family:monospace;font-size:11px;font-weight:700;letter-spacing:.1em;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text-2)">${c.code||'—'}</div>
+          <div class="t-class-stat-lbl">Code</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function tOpenClass(classId){
+  tActiveClass = classId;
+  const c = DB.classes[classId];
+  document.getElementById('t-class-name').textContent = c.name;
+  document.getElementById('t-class-meta').textContent = `${c.season||''}${c.room?' · Room '+c.room:''}${c.code?' · Code: '+c.code:''}`;
+  document.querySelectorAll('.t-panel').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('t-panel-class-detail').classList.remove('hidden');
+  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.remove('active'));
+  tClassTab('overview');
+}
+
+function tBackToClasses(){
+  tActiveClass = null;
+  tShowPanel('classes');
+}
+
+function tClassTab(tab){
+  tActiveClassTab = tab;
+  document.querySelectorAll('.t-class-tab').forEach(el=>el.classList.toggle('active', el.dataset.ct===tab));
+  const content = document.getElementById('t-class-content');
+  if(tab==='overview')  tRenderClassOverview(content);
+  if(tab==='calendar')  tRenderClassCalendar(content);
+  if(tab==='grades')    tRenderClassGrades(content);
+  if(tab==='messages')  tRenderClassMessages(content);
+  if(tab==='members')   tRenderClassMembers(content);
+}
+
+function tRenderClassOverview(el){
+  const c = DB.classes[tActiveClass];
+  const members = (c.members||[]).filter(e=>DB.users[e]?.role==='student');
+  const lessons = Object.entries(DB.lessons).filter(([k])=>k.startsWith(tActiveClass+'_'));
+  const grades = (DB.grades&&DB.grades[tActiveClass])||[];
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1.25rem;background:var(--white)">
+      <div style="padding:1rem;border-right:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${members.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
+      <div style="padding:1rem;border-right:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${lessons.length}</div><div style="font-size:11px;color:var(--text-3)">Lessons</div></div>
+      <div style="padding:1rem"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${grades.length}</div><div style="font-size:11px;color:var(--text-3)">Grade entries</div></div>
+    </div>
+    <div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:.875rem">Students</div>
+      ${members.length?members.map(email=>{
+        const u=DB.users[email];
+        if(!u) return '';
+        const done=Object.keys(DB.completedLessons).filter(k=>k.startsWith(email+'_'+tActiveClass+'_')).length;
+        return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${email}</div></div><span class="badge badge-gray">${done} done</span><span class="badge badge-gray" style="margin-left:4px">${u.coins||0} VC</span></div>`;
+      }).join(''):'<div style="font-size:12px;color:var(--text-3)">No students yet. Share the class code to let students join.</div>'}
+    </div>`;
+}
+
+function tRenderClassCalendar(el){
+  calClassId = tActiveClass;
+  el.innerHTML=`<div id="t-cal-inner"><div class="tab-row"><button class="tab-btn active">${DB.classes[tActiveClass]?.name}</button></div><div id="cal-body-t"></div></div>`;
+  // reuse calendar logic but target new element
+  const classes=[[tActiveClass,DB.classes[tActiveClass]]];
+  const lessonKeys=Object.keys(DB.lessons).filter(k=>k.startsWith(tActiveClass+'_'));
+  const lessons=lessonKeys.map(k=>DB.lessons[k]);
+  document.getElementById('add-lesson-btn')?.classList.remove('hidden');
+  renderCalForTeacher(el);
+}
+
+function renderCalForTeacher(container){
+  const calHTML=buildCalHTML(tActiveClass);
+  container.innerHTML=`<div style="display:flex;justify-content:flex-end;margin-bottom:1rem"><button class="btn btn-primary btn-sm" onclick="openLessonModal()">+ Add Lesson</button></div>${calHTML}`;
+}
+
+function tRenderClassGrades(el){
+  if(!DB.grades) DB.grades={};
+  if(!DB.grades[tActiveClass]) DB.grades[tActiveClass]=[];
+  const grades=DB.grades[tActiveClass];
+  const students=(DB.classes[tActiveClass].members||[]).filter(e=>DB.users[e]?.role==='student');
+  el.innerHTML=`
+    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+      <button class="btn btn-primary btn-sm" onclick="openAddGradeModal()">+ Add Grade</button>
+    </div>
+    ${grades.length?`<div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white)"><table class="grades-table">
+      <thead><tr><th>Student</th><th>Assignment</th><th>Score</th><th>%</th><th>Notes</th><th></th></tr></thead>
+      <tbody>${grades.map((g,i)=>{
+        const pct=Math.round((g.score/g.total)*100);
+        const color=pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)';
+        return`<tr>
+          <td style="font-weight:500">${esc(DB.users[g.email]?.name||g.email)}</td>
+          <td>${esc(g.assignment)}</td>
+          <td style="font-weight:600">${g.score}/${g.total}</td>
+          <td><span style="font-weight:700;color:${color}">${pct}%</span></td>
+          <td style="color:var(--text-3);font-size:12px">${g.notes?esc(g.notes):''}</td>
+          <td><button class="btn btn-danger btn-xs" onclick="deleteGrade(${i})">✕</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    <div style="margin-top:1rem;font-size:12px;color:var(--text-3)">
+      Class average: <strong style="color:var(--text)">${grades.length?Math.round(grades.reduce((s,g)=>s+(g.score/g.total*100),0)/grades.length)+'%':'—'}</strong>
+    </div>`
+    :`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="empty-title">No grades yet</div><div class="empty-desc">Click "+ Add Grade" to record student grades.</div></div>`}`;
+}
+
+function openAddGradeModal(){
+  const students=(DB.classes[tActiveClass].members||[]).filter(e=>DB.users[e]?.role==='student');
+  if(!students.length){showToast('No students in this class yet.');return;}
+  document.getElementById('grade-student').innerHTML=students.map(e=>`<option value="${e}">${esc(DB.users[e]?.name||e)}</option>`).join('');
+  document.getElementById('grade-assignment').value='';
+  document.getElementById('grade-score').value='';
+  document.getElementById('grade-total').value='100';
+  document.getElementById('grade-notes').value='';
+  openModal('modal-add-grade');
+}
+
+async function doAddGrade(){
+  const email=document.getElementById('grade-student').value;
+  const assignment=document.getElementById('grade-assignment').value.trim();
+  const score=parseFloat(document.getElementById('grade-score').value);
+  const total=parseFloat(document.getElementById('grade-total').value)||100;
+  if(!assignment||isNaN(score)){showToast('Please fill in all required fields.');return;}
+  if(!DB.grades) DB.grades={};
+  if(!DB.grades[tActiveClass]) DB.grades[tActiveClass]=[];
+  const entry={email,assignment,score,total,notes:document.getElementById('grade-notes').value.trim(),date:new Date().toLocaleDateString()};
+  DB.grades[tActiveClass].push(entry);
+  // Save to Firestore
+  await window._firebase.saveClass(tActiveClass,{...DB.classes[tActiveClass],grades:DB.grades[tActiveClass]});
+  closeModal('modal-add-grade');
+  tRenderClassGrades(document.getElementById('t-class-content'));
+  showToast('Grade saved!');
+}
+
+function deleteGrade(idx){
+  DB.grades[tActiveClass].splice(idx,1);
+  window._firebase.saveClass(tActiveClass,{...DB.classes[tActiveClass],grades:DB.grades[tActiveClass]});
+  tRenderClassGrades(document.getElementById('t-class-content'));
+}
+
+function tRenderClassMessages(el){
+  msgClassId = tActiveClass;
+  el.innerHTML=`<div class="tab-row" id="t-msg-tabs-inner"></div><div id="t-msg-body-inner"><div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div style="font-size:13px">Loading…</div></div></div>`;
+  // Reuse message rendering, redirect to inner elements
+  const origTabs=document.getElementById('msg-tabs');
+  const origBody=document.getElementById('msg-body');
+  // temporarily redirect
+  window._msgTabsEl=document.getElementById('t-msg-tabs-inner');
+  window._msgBodyEl=document.getElementById('t-msg-body-inner');
+  _renderMsgShellTo(window._msgBodyEl);
+  if(window._firebase){
+    window._firebase.listenMessages(tActiveClass,msgs=>{
+      _liveMessages=msgs;
+      _renderMsgList(msgs);
+    });
+  }
+}
+
+function _renderMsgShellTo(bodyEl){
+  bodyEl.innerHTML=`<div class="card">
+    <div class="msg-area" id="msg-list"><div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">Loading…</div></div>
+    <div class="msg-input-bar">
+      <input class="msg-input" id="msg-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button class="btn btn-primary btn-sm btn-pill" style="padding:10px 20px" onclick="sendMsg()">Send</button>
+    </div>
+  </div>`;
+}
+
+function tRenderClassMembers(el){
+  const c=DB.classes[tActiveClass];
+  const members=c.members||[];
+  el.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div style="font-size:13px;font-weight:600">${members.length} members</div>
+      <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClass}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClass}')">Give Coins</button></div>
+    </div>
+    <div class="card">${members.length?members.map(email=>{
+      const u=DB.users[email];
+      if(!u) return '';
+      return`<div class="member-row">
+        <div class="avatar">${initials(u.name)}</div>
+        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${email}</div></div>
+        <span class="badge badge-gray">${u.role}</span>
+        ${u.role==='student'?`<span class="badge badge-gray" style="margin-left:4px">${u.coins||0} VC</span>`:''}
+        <button class="btn btn-danger btn-sm" onclick="removeMember('${tActiveClass}','${email}');tRenderClassMembers(document.getElementById('t-class-content'))">Remove</button>
+      </div>`;
+    }).join(''):'<div style="font-size:12px;color:var(--text-3)">No members yet.</div>'}</div>
+    <div style="margin-top:1rem;display:flex;align-items:center;gap:8px">
+      <span style="font-size:12px;color:var(--text-3)">Join code:</span>
+      <span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.12em;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:3px 10px">${c.code||'—'}</span>
+      <button class="btn btn-xs btn-ghost" onclick="copyClassCode('${c.code}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
+    </div>`;
+}
+
+function tRenderTickets(){
+  const myIds=getMyClasses().map(([id])=>id);
+  const tickets=DB.tickets.filter(t=>myIds.includes(t.classId));
+  const body=document.getElementById('t-tickets-body');
+  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-title">No tickets</div><div class="empty-desc">No help tickets from students yet.</div></div>`;return;}
+  const pc={low:'badge-gray',medium:'badge-amber',high:'badge-red'};
+  const sc={open:'badge-amber',resolved:'badge-green'};
+  body.innerHTML=[...tickets].reverse().map(t=>`
+    <div class="ticket-card">
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:70px">
+        <span class="badge ${pc[t.priority]||'badge-gray'}">${t.priority}</span>
+        <span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span>
+      </div>
+      <div class="ticket-body">
+        <div class="ticket-title">${esc(t.title)}</div>
+        <div class="ticket-desc">${esc(t.desc)}</div>
+        <div class="ticket-meta"><span>${esc(t.userName)}</span><span>${DB.classes[t.classId]?.name||''}</span><span>${t.date}</span></div>
+      </div>
+      ${(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" onclick="resolveTicket('${t._id}');tRenderTickets()">Resolve</button>`:''}
+    </div>`).join('');
+}
+
+function renderTeacherLessons(bodyId){
+  const body=document.getElementById(bodyId||'teacher-lessons-body');
+  if(!body) return;
+  const customs=Object.values(DB.customLessons||{});
+  if(!customs.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><div class="empty-title">No custom lessons yet</div><div class="empty-desc">Create lessons that appear in the student Lessons tab.</div></div>`;return;}
+  body.innerHTML=customs.map(l=>`<div class="card" style="margin-bottom:8px;display:flex;align-items:flex-start;gap:12px">
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(l.title)}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">${esc(l.desc||'')} · ${l.track||'custom'} · ${l.coins} VCoins</div></div>
+    <button class="btn btn-danger btn-xs" onclick="deleteCustomLesson('${l.id}')">Remove</button>
+  </div>`).join('');
+}
+
+function renderTeacherShop(bodyId){
+  const body=document.getElementById(bodyId||'teacher-shop-body');
+  if(!body) return;
+  const items=Object.values(DB.customShopItems||{});
+  if(!items.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div><div class="empty-title">No custom shop items</div><div class="empty-desc">Add reward items students can buy with VCoins.</div></div>`;return;}
+  body.innerHTML=items.map(item=>`<div class="card" style="margin-bottom:8px;display:flex;align-items:center;gap:12px">
+    <span style="font-size:22px">${item.icon||'🎁'}</span>
+    <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(item.name)}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">${esc(item.desc||'')} · ${item.price} VCoins</div></div>
+    <button class="btn btn-danger btn-xs" onclick="deleteCustomShopItem('${item.id}')">Remove</button>
+  </div>`).join('');
+}
+
+// Build a simple calendar HTML string for teacher class view
+function buildCalHTML(classId){
+  const now=new Date();
+  const year=now.getFullYear(), month=now.getMonth();
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let html=`<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <div style="font-size:13px;font-weight:700">${monthNames[month]} ${year}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px">
+      ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-3);padding:3px">${d}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">`;
+  for(let i=0;i<firstDay;i++) html+=`<div></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const lesson=DB.lessons[classId+'_'+ds];
+    const isToday=d===now.getDate();
+    html+=`<div style="aspect-ratio:1;border-radius:6px;border:1px solid ${isToday?'var(--text)':'transparent'};background:${lesson?'var(--bg)':'transparent'};padding:4px;display:flex;flex-direction:column;align-items:center;cursor:${lesson?'pointer':'default'}" ${lesson?`onclick="tEditLesson('${ds}')"`:''}>
+      <div style="font-size:10px;font-weight:${isToday?'800':'500'};color:${isToday?'var(--text)':'var(--text-2)'}">${d}</div>
+      ${lesson?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:2px"></div><div style="font-size:7px;color:var(--text-3);line-height:1.2;text-align:center;overflow:hidden;max-width:100%">${esc(lesson.title.substring(0,8))}</div>`:''}
+    </div>`;
+  }
+  html+=`</div></div>`;
+  return html;
+}
+
+function tEditLesson(ds){
+  openLessonModal(ds);
+}
+
+// ═══════ ADMIN ═══════
+let _allUsersCache = [];
+
+function aShowPanel(p){
+  document.querySelectorAll('.a-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.a-nav-item[data-a="${p}"]`)?.classList.add('active');
+  document.querySelectorAll('.a-panel').forEach(el=>el.classList.add('hidden'));
+  document.getElementById(`a-panel-${p}`)?.classList.remove('hidden');
+  if(p==='a-overview') aRenderOverview();
+  if(p==='a-users')    aRenderUsers();
+  if(p==='a-teachers') aRenderTeachers();
+  if(p==='a-settings') aRenderSettings();
+}
+
+async function aRenderOverview(){
+  const allUsers=await window._firebase.getAllUsers();
+  const allClasses=await window._firebase.getAllClasses();
+  const users=Object.values(allUsers);
+  const classes=Object.values(allClasses);
+  const students=users.filter(u=>u.role==='student');
+  const teachers=users.filter(u=>u.role==='teacher');
+  const pending=users.filter(u=>u.role==='teacher_pending');
+  document.getElementById('a-overview-body').innerHTML=`
+    <div class="a-stats-grid">
+      <div class="a-stat-card"><div class="a-stat-val">${students.length}</div><div class="a-stat-lbl">Students</div></div>
+      <div class="a-stat-card"><div class="a-stat-val">${teachers.length}</div><div class="a-stat-lbl">Teachers</div></div>
+      <div class="a-stat-card"><div class="a-stat-val">${classes.length}</div><div class="a-stat-lbl">Classes</div></div>
+      ${pending.length?`<div class="a-stat-card"><div class="a-stat-val" style="color:var(--amber)">${pending.length}</div><div class="a-stat-lbl">Pending Teachers</div></div>`:''}
+    </div>
+    ${pending.length?`<div class="a-card"><div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Needs Attention — Pending Teacher Approvals</div>
+      ${pending.map(u=>`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div><button class="btn btn-primary btn-sm" onclick="adminApproveTeacher('${u.email}');aRenderOverview()">Approve</button><button class="btn btn-danger btn-sm" onclick="adminDeleteUser('${u.email}');aRenderOverview()">Reject</button></div>`).join('')}
+    </div>`:''}`;
+}
+
+async function aRenderUsers(){
+  const allUsers=await window._firebase.getAllUsers();
+  _allUsersCache=Object.values(allUsers).filter(u=>u.role!=='admin');
+  aFilterUsers();
+}
+
+function aFilterUsers(){
+  const search=(document.getElementById('a-user-search')?.value||'').toLowerCase();
+  const roleFilter=document.getElementById('a-user-role-filter')?.value||'';
+  const filtered=_allUsersCache.filter(u=>{
+    const matchSearch=!search||(u.name||'').toLowerCase().includes(search)||(u.email||'').toLowerCase().includes(search);
+    const matchRole=!roleFilter||u.role===roleFilter;
+    return matchSearch&&matchRole;
+  });
+  const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
+  const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
+  const tbody=document.getElementById('a-users-tbody');
+  if(!tbody) return;
+  tbody.innerHTML=filtered.map(u=>`<tr style="${u.role==='removed'?'opacity:.5':''}">
+    <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:9px">${initials(u.name)}</div><span style="font-weight:500">${esc(u.name)}</span></div></td>
+    <td style="color:var(--text-3)">${u.email}</td>
+    <td><span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span></td>
+    <td>${u.role==='student'?u.coins||0:'—'}</td>
+    <td style="display:flex;gap:6px;flex-wrap:wrap">
+      ${u.role!=='removed'?`
+        <select onchange="adminChangeRole('${u.email}',this.value);setTimeout(aRenderUsers,500)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text)">
+          <option value="">Role…</option>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}');setTimeout(aRenderUsers,500)">Remove</button>
+      `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}');setTimeout(aRenderUsers,500)">Restore</button>`}
+    </td>
+  </tr>`).join('');
+  if(!filtered.length) tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-3)">No users found</td></tr>`;
+}
+
+async function aRenderTeachers(){
+  const allUsers=await window._firebase.getAllUsers();
+  const allInvites=await window._firebase.getAllInvites();
+  const teachers=Object.values(allUsers).filter(u=>u.role==='teacher'||u.role==='teacher_pending');
+  const roleColors={teacher:'badge-green',teacher_pending:'badge-amber'};
+  const roleLabels={teacher:'Active',teacher_pending:'Pending'};
+  document.getElementById('a-invites-body').innerHTML=allInvites.length
+    ?allInvites.map(inv=>`<div class="member-row">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="member-info"><div class="member-name">${inv.email}</div><div class="member-email">${inv.used?'Registered':'Waiting for sign-up'}</div></div>
+        <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
+        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
+        <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}');setTimeout(aRenderTeachers,400)">Revoke</button>
+      </div>`).join('')
+    :`<div style="font-size:12px;color:var(--text-3)">No pending invites. Click "+ Invite Teacher" to send one.</div>`;
+  document.getElementById('a-teachers-body').innerHTML=teachers.length
+    ?teachers.map(u=>`<div class="member-row">
+        <div class="avatar">${initials(u.name)}</div>
+        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div>
+        <span class="badge ${roleColors[u.role]}">${roleLabels[u.role]}</span>
+        ${u.role==='teacher_pending'?`<button class="btn btn-primary btn-xs" onclick="adminApproveTeacher('${u.email}');setTimeout(aRenderTeachers,400)">Approve</button>`:''}
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}');setTimeout(aRenderTeachers,400)">Remove</button>
+      </div>`).join('')
+    :`<div style="font-size:12px;color:var(--text-3)">No teachers yet. Invite one above.</div>`;
+}
+
+function aRenderSettings(){
+  // Load saved settings
+  const name=localStorage.getItem('vexify_app_name')||'Vexify';
+  const tag=localStorage.getItem('vexify_tagline')||'VEX Robotics Education Platform';
+  document.getElementById('settings-app-name').value=name;
+  document.getElementById('settings-tagline').value=tag;
+}
+
+function saveAdminSettings(){
+  const name=document.getElementById('settings-app-name').value.trim()||'Vexify';
+  const tag=document.getElementById('settings-tagline').value.trim();
+  localStorage.setItem('vexify_app_name',name);
+  localStorage.setItem('vexify_tagline',tag);
+  document.querySelector('.logo-text').textContent=name;
+  showToast('Settings saved!');
+}
 </script>
 </body>
 </html>
