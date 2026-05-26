@@ -1076,25 +1076,66 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
       <p style="font-size:15px;color:var(--text-3);max-width:440px;margin:0 auto;line-height:1.7">Every feature your team needs — from structured curriculum to real-time collaboration.</p>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden">
-      ${[
-        ['Structured Curriculum','30 lessons across Foundations, Design & CAD, and Programming. Fully written with key concepts, code examples, and pro tips.','M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z'],
-        ['VCoins & Rewards','Students earn VCoins by completing lessons. Spend them in the shop on custom rewards teachers create.','M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'],
-        ['Class Calendar','Teachers schedule lessons by date. Students see upcoming sessions and track what they\'ve completed.','M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'],
-        ['Grade Book','Record scores per student and assignment. See class averages and per-student performance at a glance.','M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z'],
-        ['Real-time Messaging','Live class chat channels powered by Firebase. Messages sync instantly across all devices.','M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'],
-        ['Help Tickets','Students submit support tickets by priority. Teachers track and resolve them across all classes.','M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.9l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z'],
-        ['Join Codes','Every class gets a unique code students can enter to join — no email required from the teacher.','M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'],
-        ['Admin Dashboard','Invite teachers, manage all users, change roles, and control platform-wide settings from a dedicated admin view.','M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'],
-        ['Progress Tracking','See per-student lesson completion rates, VCoins earned, and grade averages all in one place.','M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'],
-        ['Dark Mode','A fully implemented dark mode that covers every component — toggle any time, preference saved automatically.','M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z'],
-        ['Google Sign-In','One-click sign in with Google accounts. New users pick their role; returning users go straight to their dashboard.','M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z'],
-        ['Firebase Backend','All data — users, classes, messages, grades, tickets — syncs in real time across every device via Firestore.','M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4'],
-      ].map(([title,desc,path])=>`
-        <div style="background:var(--white);padding:1.5rem">
-          <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="${path}"/></svg></div>
-          <div style="font-size:13px;font-weight:700;margin-bottom:5px">${title}</div>
-          <div style="font-size:12px;color:var(--text-3);line-height:1.65">${desc}</div>
-        </div>`).join('')}
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Structured Curriculum</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">30 lessons across Foundations, Design & CAD, and Programming. Fully written with key concepts, code examples, and pro tips.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">VCoins & Rewards</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Students earn VCoins by completing lessons. Spend them in the shop on custom rewards teachers create.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Class Calendar</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Teachers schedule lessons by date. Students see upcoming sessions and track what they've completed.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Grade Book</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Record scores per student and assignment. See class averages and per-student performance at a glance.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Real-time Messaging</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Live class chat channels powered by Firebase. Messages sync instantly across all devices.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.9l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Help Tickets</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Students submit support tickets by priority. Teachers track and resolve them across all classes.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Join Codes</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Every class gets a unique code students can enter to join — no email required from the teacher.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Admin Dashboard</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Invite teachers, manage all users, change roles, and control platform-wide settings from a dedicated admin view.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Progress Tracking</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">See per-student lesson completion rates, VCoins earned, and grade averages all in one place.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Dark Mode</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">A fully implemented dark mode that covers every component — toggle any time, preference saved automatically.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Google Sign-In</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">One-click sign in with Google accounts. New users pick their role; returning users go straight to their dashboard.</div>
+      </div>
+      <div style="background:var(--white);padding:1.5rem">
+        <div style="margin-bottom:.75rem"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg></div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:5px">Firebase Backend</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">All data — users, classes, messages, grades, tickets — syncs in real time across every device via Firestore.</div>
+      </div>
     </div>
     <div style="text-align:center;margin-top:3rem">
       <button class="btn btn-primary btn-pill" onclick="showPage('pricing')">See pricing →</button>
@@ -1120,7 +1161,12 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
         </div>
         <div style="height:1px;background:var(--border)"></div>
         <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
-          ${['Full curriculum access (30+ lessons)','VCoins & rewards system','Progress tracking','Help ticket submission','Join up to 5 classes','Google Sign-In'].map(f=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+                    <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Full curriculum access (30+ lessons)</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>VCoins & rewards system</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Progress tracking</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Help ticket submission</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Join up to 5 classes</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Google Sign-In</li>
         </ul>
         <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:auto;padding:11px" onclick="showPage('cart')">Get started</button>
       </div>
@@ -1133,7 +1179,13 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
         </div>
         <div style="height:1px;background:rgba(255,255,255,.1)"></div>
         <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px">
-          ${['Everything in Personal','Unlimited students & teachers','Class management & grade book','Real-time class messaging','Admin dashboard','Teacher invite system','Priority support'].map(f=>`<li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`).join('')}
+                    <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Everything in Personal</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Unlimited students & teachers</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Class management & grade book</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Real-time class messaging</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Admin dashboard</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Teacher invite system</li>
+          <li style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.85)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Priority support</li>
         </ul>
         <button class="btn" style="width:100%;justify-content:center;margin-top:auto;padding:11px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)" onclick="document.getElementById('contact-email').scrollIntoView({behavior:'smooth'})">Contact us</button>
       </div>
@@ -1141,12 +1193,22 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
     <!-- FAQ -->
     <div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white);margin-bottom:2rem">
       <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;padding:1rem 1.25rem;border-bottom:1px solid var(--border)">Common questions</div>
-      ${[
-        ['What does the Personal plan include?','Full access to all 30+ curriculum lessons, VCoins and the rewards shop, progress tracking, help ticket submission, and the ability to join up to 5 classes created by your teacher.'],
-        ['How does the School plan work?','An administrator purchases the School plan for their program. This unlocks the full platform — class management, grade book, messaging, teacher invites, and the admin dashboard — for the entire school.'],
-        ['Can I try before buying?','Yes. Create a free account and explore the platform. Curriculum previews, the dashboard, and class joining are available before purchasing a plan.'],
-        ['Do students need to pay if their school has a School plan?','No. If your school has purchased the School plan, students access everything for free through their school account.'],
-      ].map(([q,a])=>`<div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)"><div style="font-size:13px;font-weight:600;margin-bottom:.375rem">${q}</div><div style="font-size:12px;color:var(--text-3);line-height:1.65">${a}</div></div>`).join('')}
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">What does the Personal plan include?</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Full access to all 30+ curriculum lessons, VCoins and the rewards shop, progress tracking, help ticket submission, and the ability to join up to 5 classes created by your teacher.</div>
+      </div>
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">How does the School plan work?</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">An administrator purchases the School plan for their program. This unlocks the full platform — class management, grade book, messaging, teacher invites, and the admin dashboard — for the entire school.</div>
+      </div>
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">Can I try before buying?</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">Yes. Create a free account and explore the platform. Curriculum previews, the dashboard, and class joining are available before purchasing a plan.</div>
+      </div>
+      <div style="padding:1rem 1.25rem">
+        <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">Do students need to pay if their school has a School plan?</div>
+        <div style="font-size:12px;color:var(--text-3);line-height:1.65">No. If your school has purchased the School plan, students access everything for free through their school account.</div>
+      </div>
     </div>
     <div id="contact-email" style="text-align:center;padding:2rem;background:var(--bg);border-radius:var(--rl);border:1px solid var(--border)">
       <div style="font-size:13px;font-weight:600;margin-bottom:.375rem">Interested in the School plan?</div>
