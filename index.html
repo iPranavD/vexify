@@ -1542,15 +1542,34 @@ async function completeCurriculumLesson(lessonId,coins,event){
   switchTrack(activeTrack);
 }
 
+// Hardcoded demo accounts that work offline / file:// without Firestore
+const DEMO_USERS = {
+  'teacher@demo.com': {name:'Demo Teacher',email:'teacher@demo.com',password:'demo',role:'teacher',coins:0,inventory:[]},
+  'student@demo.com': {name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]},
+  'admin@vexify.com': {name:'Vexify Admin',email:'admin@vexify.com',password:'vexify-admin-2024',role:'admin',coins:0,inventory:[]}
+};
+let _firestoreAvailable = false;
+
 async function loadDB(){
   if(!window._firebase) return;
-  DB.users     = await window._firebase.getAllUsers();
-  DB.classes   = await window._firebase.getAllClasses();
-  DB.lessons   = await window._firebase.getAllLessons();
-  DB.completedLessons = await window._firebase.getAllCompleted();
-  DB.tickets   = await window._firebase.getAllTickets();
-  Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
-  if(!DB.purchases)DB.purchases={};
+  try {
+    DB.users     = await window._firebase.getAllUsers();
+    DB.classes   = await window._firebase.getAllClasses();
+    DB.lessons   = await window._firebase.getAllLessons();
+    DB.completedLessons = await window._firebase.getAllCompleted();
+    DB.tickets   = await window._firebase.getAllTickets();
+    Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
+    if(!DB.purchases)DB.purchases={};
+    _firestoreAvailable = true;
+    // Merge demo users into local cache so login works even if not in Firestore yet
+    Object.assign(DB.users, DEMO_USERS);
+  } catch(e) {
+    console.warn('Firestore unavailable (file:// origin?), using demo data only:', e.message);
+    _firestoreAvailable = false;
+    // Fall back to demo-only mode
+    DB.users = {...DEMO_USERS};
+    DB.classes = {}; DB.lessons = {}; DB.completedLessons = {}; DB.tickets = [];
+  }
 }
 function saveDB(){}
 
@@ -1827,26 +1846,35 @@ async function doLogin(){
   const errEl=document.getElementById('login-err');
   const btn=document.querySelector('#form-login .btn-dark');
   if(!email||!pw){errEl.textContent='Please enter your email and password.';return;}
-  if(!window._firebase){errEl.textContent='Still connecting — please wait a moment and try again.';return;}
   errEl.textContent='';
   if(btn){btn.textContent='Signing in…';btn.disabled=true;}
+
+  function resetBtn(){if(btn){btn.textContent='Continue';btn.disabled=false;}}
+
+  // 1. Check local cache first (always populated, even in offline/file:// mode)
+  let u = DB.users[email];
+  if(u && u.password===pw){
+    if(u.role==='removed'){errEl.textContent='This account has been removed.';resetBtn();return;}
+    login(u);
+    return;
+  }
+
+  // 2. If not in local cache, try Firestore
+  if(!window._firebase){errEl.textContent='Still connecting — please wait a moment.';resetBtn();return;}
   try{
-    const u=await window._firebase.getUser(email);
-    if(!u||u.password!==pw){
-      errEl.textContent='Incorrect email or password.';
-      if(btn){btn.textContent='Continue';btn.disabled=false;}
-      return;
-    }
-    if(u.role==='removed'){
-      errEl.textContent='This account has been removed. Contact your admin.';
-      if(btn){btn.textContent='Continue';btn.disabled=false;}
-      return;
-    }
+    u = await window._firebase.getUser(email);
+    if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';resetBtn();return;}
+    if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';resetBtn();return;}
     DB.users[email]=u;
     login(u);
   }catch(e){
-    errEl.textContent='Connection error — please try again.';
-    if(btn){btn.textContent='Continue';btn.disabled=false;}
+    // Firestore blocked (file:// origin) — check if it was just a wrong password
+    if(DB.users[email]){
+      errEl.textContent='Incorrect email or password.';
+    } else {
+      errEl.textContent='Cannot reach server. Check your connection or try a demo account below.';
+    }
+    resetBtn();
     console.error(e);
   }
 }
@@ -1878,13 +1906,18 @@ async function doRegister(){
   login(userData);
 }
 async function demoLogin(r){
-  if(!window._firebase){showToast('Still loading — please wait a moment.');return;}
+  const email = r+'@demo.com';
+  // Always available from local cache — works even without Firestore
+  const u = DB.users[email] || DEMO_USERS[email];
+  if(u){ DB.users[email]=u; login(u); return; }
+  // Fallback: try Firestore
+  if(!window._firebase){showToast('Demo account not available offline.');return;}
   try{
-    const u=await window._firebase.getUser(r+'@demo.com');
-    if(u){DB.users[u.email]=u;login(u);}
-    else{showToast('Demo account not found — try again in a moment.');}
+    const fu=await window._firebase.getUser(email);
+    if(fu){DB.users[fu.email]=fu;login(fu);}
+    else{showToast('Demo account not found.');}
   }catch(e){
-    showToast('Connection error — please try again.');
+    showToast('Cannot reach server — demo account unavailable.');
     console.error(e);
   }
 }
