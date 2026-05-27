@@ -14,9 +14,7 @@
     getFirestore, collection, addDoc, onSnapshot, query, orderBy,
     doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-  import {
-    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
-  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
 
   const firebaseConfig = {
     apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
@@ -29,18 +27,10 @@
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
-  const auth = getAuth(app);
-  const googleProvider = new GoogleAuthProvider();
 
   let activeListener = null;
 
   window._firebase = {
-
-    // ── GOOGLE SIGN IN ──────────────────────────────────────────────────────
-    async signInWithGoogle() {
-      const result = await signInWithPopup(auth, googleProvider);
-      return result.user;
-    },
 
     // ── USERS ──────────────────────────────────────────────────────────────
     async getUser(email) {
@@ -281,23 +271,6 @@ a{cursor:pointer;}
 .btn-pill-lg{border-radius:999px;padding:11px 28px;font-size:14px;font-weight:600;}
 
 /* ── GOOGLE SIGN IN BUTTON ── */
-.btn-google{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:9px 16px;border-radius:var(--r);
-  font-size:13px;font-weight:500;
-  background:#fff;color:#3c4043;
-  border:1px solid #dadce0;
-  box-shadow:0 1px 3px rgba(0,0,0,.08);
-  cursor:pointer;width:100%;justify-content:center;
-  transition:box-shadow .12s,border-color .12s;
-}
-.btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
-.btn-google svg{width:18px;height:18px;flex-shrink:0;}
-.auth-divider{
-  display:flex;align-items:center;gap:10px;
-  margin:1rem 0;color:var(--text-3);font-size:11px;font-weight:500;
-}
-.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ── PAGES ── */
 .page{display:none;min-height:calc(100vh - 56px);}
@@ -724,8 +697,8 @@ body.dark .msg-input{background:#111;color:var(--text);}
 body.dark #page-info{background:#0d0d0d;}
 body.dark .landing-cta{background:#111;}
 body.dark .hero h1{color:#f0f0f0;}
-body.dark .btn-google{background:#2a2a2a;color:#e0e0e0;border-color:#3a3a3a;}
-body.dark .btn-google:hover{background:#333;border-color:#555;}
+body.dark
+body.dark
   /* btn-gold dark */
   body.dark .btn-gold{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3);}
   body.dark .btn-gold:hover{background:rgba(251,191,36,.2);}
@@ -791,8 +764,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .auth-tab-btn.active{background:#252525;color:#ededed;}
   body.dark .auth-wordmark,body.dark .auth-title{color:#ededed;}
   body.dark .auth-sub,body.dark .demo-links{color:#555;}
-  body.dark .auth-divider{color:#444;}
-  body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2d;}
+  body.dark
   body.dark .demo-links a{color:#aaa;}
   body.dark .auth-footer a{color:#aaa;}
   body.dark .auth-err{color:#f87171;}
@@ -1040,13 +1012,6 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
     <div class="auth-title" id="auth-heading">Welcome back</div>
     <div class="auth-sub" id="auth-subhead">Sign in to your account to continue</div>
 
-    <!-- Google Sign In -->
-    <button class="btn-google" onclick="doGoogleSignIn()">
-      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="none" d="M0 0h48v48H0z"/></svg>
-      Continue with Google
-    </button>
-
-    <div class="auth-divider">or</div>
 
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tab-login" onclick="authSwitch('login')">Sign in</button>
@@ -1583,32 +1548,6 @@ if(window._firebaseReady){ boot(); }
 else { document.addEventListener('firebase-ready', boot); }
 
 // ═══════ GOOGLE SIGN IN ═══════
-async function doGoogleSignIn(){
-  try {
-    const firebaseUser = await window._firebase.signInWithGoogle();
-    const email = firebaseUser.email.toLowerCase();
-    // Check if user already exists in our DB
-    const existing = await window._firebase.getUser(email);
-    if(existing && existing.role && existing.role !== 'removed') {
-      DB.users[email] = existing;
-      login(existing);
-      return;
-    }
-    // New Google user — need to pick a role
-    _pendingGoogleUser = {
-      email,
-      name: firebaseUser.displayName || email.split('@')[0],
-      photoURL: firebaseUser.photoURL || null
-    };
-    openModal('modal-google-role');
-  } catch(e) {
-    if(e.code !== 'auth/popup-closed-by-user') {
-      showToast('Google sign-in failed. Try again.');
-      console.error(e);
-    }
-  }
-}
-
 async function completeGoogleSignIn(role){
   if(!_pendingGoogleUser) return;
   closeModal('modal-google-role');
