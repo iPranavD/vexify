@@ -8,45 +8,6 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d0d0d'/><circle cx='8' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='3.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='1.2' fill='white'/><circle cx='24' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><line x1='10.2' y1='12.4' x2='14.2' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/><line x1='21.8' y1='12.4' x2='17.8' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase SDK -->
-<script>
-  window._firebaseReady = false;
-  window._firebase = {
-    async signInWithGoogle() { return null; },
-    async signInWithMicrosoft() { return null; },
-    async getUser(email) { return null; },
-    async createUser(userData) {},
-    async updateUser(email, fields) { console.warn("Firebase still connecting... postponing update."); },
-    async getAllUsers() { return {}; },
-    async saveClass(classId, classData) {},
-    async deleteClass(classId) {},
-    async getAllClasses() { return {}; },
-    async saveLesson(lessonKey, lessonData) {},
-    async deleteLesson(lessonKey) {},
-    async getAllLessons() { return {}; },
-    async markLessonComplete(key) {},
-    async getAllCompleted() { return {}; },
-    async addTicket(ticket) { return ''; },
-    async resolveTicket(ticketId) {},
-    async getAllTickets() { return []; },
-    async saveShopItem(item) {},
-    async deleteShopItem(id) {},
-    async getAllShopItems() { return []; },
-    async saveCustomLesson(lesson) {},
-    async deleteCustomLesson(id) {},
-    async getAllCustomLessons() { return []; },
-    async createInvite(email) {},
-    async getInvite(email) { return null; },
-    async markInviteUsed(email) {},
-    async getAllInvites() { return []; },
-    async deleteInvite(email) {},
-    async sendMessage(classId, user, text) {},
-    listenMessages(classId, cb) {},
-    stopListening() {},
-    async editMessage(classId, msgId, newText) {},
-    async deleteMessage(classId, msgId) {}
-  };
-</script>
-
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import {
@@ -57,18 +18,15 @@
     getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-  // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey: "AIzaSyB_1uZ6_uc4cv3Z5ZLIIX3VQVvbbN5oEcc",
-    authDomain: "vexify-c1adf.firebaseapp.com",
-    projectId: "vexify-c1adf",
-    storageBucket: "vexify-c1adf.firebasestorage.app",
-    messagingSenderId: "345649781610",
-    appId: "1:345649781610:web:81408d6255aa4018976313",
-    measurementId: "G-W5DZ04V9NQ"
+    apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
+    authDomain:        "vexify-cf750.firebaseapp.com",
+    projectId:         "vexify-cf750",
+    storageBucket:     "vexify-cf750.firebasestorage.app",
+    messagingSenderId: "285678258097",
+    appId:             "1:285678258097:web:bff1fd9229ebe134cb5f90"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
   const auth = getAuth(app);
@@ -699,118 +657,173 @@ a{cursor:pointer;}
 
 /* ── DARK MODE ── */
 body.dark{
-  --bg:#111111;--white:#1c1c1c;--border:#2d2d2d;--border-focus:#e0e0e0;
-  --text:#ededed;--text-2:#aaaaaa;--text-3:#666666;
-  --accent:#5b8fff;--accent-light:rgba(91,143,255,.12);--accent-border:rgba(91,143,255,.25);
-  --green:#34d399;--green-bg:rgba(52,211,153,.1);--green-border:rgba(52,211,153,.25);
+  --bg:#111111;
+  --white:#1a1a1a;
+  --border:#2a2a2a;
+  --border-focus:#fff;
+  --text:#f0f0f0;
+  --text-2:#a0a0a0;
+  --text-3:#606060;
+  --accent:#4f8aff;
+  --accent-light:rgba(79,138,255,.1);
+  --accent-border:rgba(79,138,255,.25);
+  --green:#22c55e;--green-bg:rgba(34,197,94,.1);--green-border:rgba(34,197,94,.25);
   --red:#f87171;--red-bg:rgba(248,113,113,.1);--red-border:rgba(248,113,113,.25);
   --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);--amber-border:rgba(251,191,36,.25);
-  --shadow-xs:0 1px 2px rgba(0,0,0,.3);
-  --shadow-sm:0 2px 8px rgba(0,0,0,.4);
-  --shadow:0 4px 20px rgba(0,0,0,.5);
-  --shadow-lg:0 8px 40px rgba(0,0,0,.6);
 }
-/* Nav & top bars */
-body.dark #nav{background:rgba(15,15,15,.95);border-bottom:1px solid #2d2d2d;}
-body.dark .app-nav{background:rgba(15,15,15,.95);border-bottom:1px solid #2d2d2d;}
-body.dark .logo-text{color:#ededed;}
-/* User info in nav */
-body.dark #nav-name{color:#ededed !important;}
-body.dark #nav-role-label{color:#666 !important;}
-/* Buttons: primary/dark flip to light so they remain legible */
-body.dark .btn-primary,body.dark .btn-dark{background:#e8e8e8;color:#000;border-color:#e8e8e8;}
-body.dark .btn-primary:hover,body.dark .btn-dark:hover{background:#fff;border-color:#fff;box-shadow:0 2px 12px rgba(255,255,255,.1);}
-body.dark .btn-ghost{background:#252525;color:#c8c8c8;border-color:#2d2d2d;}
-body.dark .btn-ghost:hover{background:#303030;border-color:#3d3d3d;color:#ededed;}
-body.dark #nav .btn-ghost{background:#222;color:#aaa;border-color:#2d2d2d;}
-body.dark #nav .btn-ghost:hover{background:#2a2a2a;border-color:#3a3a3a;color:#ddd;}
+
+/* ── DARK MODE NAV FIX — force nav text/icons to always be readable ── */
+body.dark #nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
+body.dark .logo-text{color:#f0f0f0;}
+body.dark #nav-name{color:#f0f0f0 !important;}
+body.dark #nav-role-label{color:#888 !important;}
+
+/* Dark mode button fixes */
+body.dark .btn-primary{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-primary:hover{background:#fff;border-color:#fff;box-shadow:0 2px 12px rgba(255,255,255,.15);}
+body.dark .btn-dark{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .btn-dark:hover{background:#fff;border-color:#fff;}
+body.dark .btn-ghost{background:#1e1e1e;color:#d0d0d0;border-color:#333;}
+body.dark .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
 body.dark .btn-danger{background:transparent;color:#f87171;border-color:rgba(248,113,113,.3);}
 body.dark .btn-danger:hover{background:rgba(248,113,113,.1);}
-body.dark .btn-gold{background:rgba(251,191,36,.1);color:#fbbf24;border-color:rgba(251,191,36,.25);}
-/* Sign in button */
-body.dark #nav-signin-btn{background:#e8e8e8;color:#000;border-color:#e8e8e8;}
-body.dark #nav-signin-btn:hover{background:#fff;border-color:#fff;}
-/* Theme toggle */
-body.dark .theme-btn{background:#252525;border-color:#2d2d2d;color:#888;}
-body.dark .theme-btn:hover{color:#ccc;border-color:#444;}
-body.dark .theme-btn.active{background:#e8e8e8;color:#000;border-color:#e8e8e8;}
-/* Lesson buttons */
-body.dark .lesson-complete-btn{background:#e8e8e8;color:#000;}
+
+/* Dark mode theme toggle — stays visually consistent */
+body.dark .theme-btn{background:#222;border-color:#333;color:#aaa;}
+body.dark .theme-btn:hover{color:#f0f0f0;border-color:#555;}
+body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+
+/* Nav sign-in button */
+body.dark #nav-signin-btn{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark #nav-signin-btn:hover{background:#fff;}
+
+/* Sign-out button in dark mode */
+body.dark #nav .btn-ghost{background:#222;color:#d0d0d0;border-color:#333;}
+body.dark #nav .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
+
+body.dark .app-nav{background:rgba(17,17,17,.85);border-bottom:1px solid #222;}
+body.dark .lesson-complete-btn{background:#f0f0f0;color:#000;}
 body.dark .lesson-complete-btn:hover{background:#fff;}
-body.dark .track-tab.active{background:#e8e8e8;color:#000;border-color:#e8e8e8;}
-/* Auth */
-body.dark .auth-card{background:#1c1c1c;border-color:#2d2d2d;}
-body.dark .auth-tabs{background:#111;border-color:#2d2d2d;}
-body.dark .auth-tab-btn{color:#666;}
-body.dark .auth-tab-btn.active{background:#252525;color:#ededed;box-shadow:0 1px 3px rgba(0,0,0,.5);}
-body.dark .auth-wordmark{color:#ededed;}
-body.dark .auth-title{color:#ededed;}
-body.dark .auth-sub{color:#666;}
-body.dark .auth-divider{color:#444;}
-body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2d;}
-body.dark .demo-links{color:#555;}
-body.dark .demo-links a{color:#aaa;}
-body.dark .auth-footer a{color:#aaa;}
-/* Google button */
-body.dark .btn-google{background:#252525;color:#e0e0e0;border-color:#3a3a3a;}
-body.dark .btn-google:hover{background:#303030;border-color:#555;}
-/* Inputs & selects */
-body.dark .field input,body.dark .field select,
-body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{
-  background:#141414 !important;color:#ededed !important;border-color:#2d2d2d !important;
-}
-body.dark .field input:focus,body.dark .field select:focus,
-body.dark .form-group input:focus,body.dark .form-group select:focus{border-color:#ededed !important;}
-body.dark select option{background:#1c1c1c;color:#ededed;}
-/* Modal */
-body.dark .modal{background:#1c1c1c;border-color:#2d2d2d;}
-body.dark .modal-overlay{background:rgba(0,0,0,.75);}
-body.dark .modal-close{background:#252525;border-color:#2d2d2d;color:#777;}
-body.dark .modal-close:hover{background:#303030;}
-body.dark .modal-title{color:#ededed;}
-body.dark .modal-footer{border-top-color:#2d2d2d;}
-/* Cards */
-body.dark .card{background:#1c1c1c;border-color:#2d2d2d;}
-body.dark .stat-card{background:#1c1c1c;border-right-color:#2d2d2d;}
-body.dark .feat-card{background:#1c1c1c;}
-body.dark .feat-card:hover{background:#242424;}
-body.dark .shop-item{background:#1c1c1c;}
-body.dark .shop-item:hover{background:#242424;}
-body.dark .shop-item-price{background:#1a1a1a;border-color:#2d2d2d;}
-body.dark .ticket-card{background:#1c1c1c;}
-body.dark .class-card{background:#1c1c1c;}
-body.dark .class-card:hover{border-color:#444;}
-body.dark .unit-block{background:#1c1c1c;}
-body.dark .track-summary{background:#1c1c1c;}
-body.dark .lesson-row:hover,.body.dark .unit-header:hover{background:#222;}
-body.dark .lesson-content-panel{background:#161616;}
-/* Lesson code block */
-body.dark .lc-code{background:#0a0a0a;border-color:#1a1a1a;}
+body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+body.dark .auth-tabs{background:#0d0d0d;border-color:#2a2a2a;}
+body.dark .auth-tab-btn.active{background:#2a2a2a;color:#f0f0f0;box-shadow:0 1px 3px rgba(0,0,0,.4);}
+body.dark .modal-close{background:#222;border-color:#333;color:#888;}
+body.dark .modal-close:hover{background:#333;}
+body.dark select option{background:#1a1a1a;color:#f0f0f0;}
+body.dark .modal-overlay{background:rgba(0,0,0,.7);}
+body.dark .auth-card{background:var(--white);}
+body.dark .feat-card{background:var(--white);}
+body.dark .feat-card:hover{background:#222;}
+body.dark .shop-item{background:var(--white);}
+body.dark .shop-item:hover{background:#222;}
+body.dark .lc-code{background:#080808;border-color:#1a1a1a;}
 body.dark .lc-code pre{color:#c9c9d4;}
-body.dark .lc-tip{background:#1a1600;border-color:#3a2a00;}
-/* Messages */
-body.dark .msg-area{background:#141414;border-color:#2d2d2d;}
-body.dark .msg-bubble{background:#252525;border-color:#2d2d2d;}
-body.dark .msg-input{background:#141414;border-color:#2d2d2d;color:#ededed;}
-/* Tab rows */
-body.dark .tab-row{border-bottom-color:#2d2d2d;}
-body.dark .tab-btn{color:#555;}
-body.dark .tab-btn.active{color:#ededed;border-bottom-color:#ededed;}
-/* Landing */
+body.dark .field input,body.dark .field select,
+body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{background:#111;color:var(--text);}
+body.dark .msg-input{background:#111;color:var(--text);}
 body.dark #page-info{background:#0d0d0d;}
-body.dark .landing-cta{background:#111;border-top-color:#2d2d2d;}
-body.dark .hero h1{color:#ededed;}
-body.dark .hero-sub{color:#555;}
-body.dark .hero-eyebrow{background:rgba(91,143,255,.12);border-color:rgba(91,143,255,.25);color:#5b8fff;}
-body.dark .landing-divider{border-top-color:#2d2d2d;}
-body.dark .features-grid{border-color:#2d2d2d;}
-body.dark .feat-card{border-color:#2d2d2d;}
-body.dark .feat-icon{color:#666;}
-body.dark .feat-title{color:#ededed;}
-body.dark .feat-desc{color:#555;}
-/* auth-divider dark */
-body.dark .auth-divider{color:#444;}
-body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2d;}
+body.dark .landing-cta{background:#111;}
+body.dark .hero h1{color:#f0f0f0;}
+body.dark .btn-google{background:#2a2a2a;color:#e0e0e0;border-color:#3a3a3a;}
+body.dark .btn-google:hover{background:#333;border-color:#555;}
+  /* btn-gold dark */
+  body.dark .btn-gold{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3);}
+  body.dark .btn-gold:hover{background:rgba(251,191,36,.2);}
+  /* modal dark */
+  body.dark .modal{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .modal-overlay{background:rgba(0,0,0,.7);}
+  body.dark .modal-close{background:#252525;border-color:#2d2d2d;color:#888;}
+  body.dark .modal-close:hover{background:#333;}
+  body.dark .modal-title{color:#ededed;}
+  body.dark .modal-footer{border-top-color:#2d2d2d;}
+  /* card / stat dark */
+  body.dark .card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .stat-card{background:#1c1c1c;border-right-color:#2d2d2d;}
+  body.dark .stat-cards{border-color:#2d2d2d;}
+  /* inputs dark */
+  body.dark .field input,body.dark .field select,
+  body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{
+    background:#141414 !important;color:#ededed !important;border-color:#333 !important;}
+  body.dark .form-group input:focus,body.dark .form-group select:focus,body.dark .form-group textarea:focus{border-color:#888 !important;}
+  body.dark select option{background:#1c1c1c;color:#ededed;}
+  /* tab rows dark */
+  body.dark .tab-row{border-bottom-color:#2d2d2d;}
+  body.dark .tab-btn{color:#666;}
+  body.dark .tab-btn.active{color:#ededed;border-bottom-color:#ededed;}
+  /* app-nav dark */
+  body.dark .app-nav{background:rgba(15,15,15,.95);border-bottom-color:#2d2d2d;}
+  body.dark .app-nav-item{color:#666;}
+  body.dark .app-nav-item:hover{color:#ededed;}
+  body.dark .app-nav-item.active{color:#ededed;border-bottom-color:#ededed;}
+  /* class cards dark */
+  body.dark .class-card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .class-card:hover{border-color:#444;}
+  /* shop dark */
+  body.dark .shop-item{background:#1c1c1c;}
+  body.dark .shop-item:hover{background:#242424;}
+  /* ticket dark */
+  body.dark .ticket-card{background:#1c1c1c;border-color:#2d2d2d;}
+  /* unit/lesson dark */
+  body.dark .unit-block{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .unit-header:hover{background:#222;}
+  body.dark .lesson-row:hover{background:#222;}
+  body.dark .lesson-content-panel{background:#181818;}
+  body.dark .track-summary{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
+  /* messages dark */
+  body.dark .msg-area{background:#141414;border-color:#2d2d2d;}
+  body.dark .msg-bubble{background:#252525;border-color:#2d2d2d;}
+  body.dark .msg-input{background:#141414;border-color:#2d2d2d;color:#ededed;}
+  body.dark .msg-row.own .msg-bubble{background:#333;border-color:#444;}
+  /* landing dark */
+  body.dark #page-info,body.dark #page-features,body.dark #page-pricing,body.dark #page-cart{background:#0d0d0d;}
+  body.dark .feat-card{background:#1a1a1a;border-color:#2d2d2d;}
+  body.dark .feat-card:hover{background:#222;}
+  body.dark .feat-title{color:#ededed;}
+  body.dark .feat-desc{color:#555;}
+  body.dark .hero h1{color:#ededed;}
+  body.dark .hero-sub{color:#555;}
+  body.dark .landing-cta{background:#0d0d0d;border-top-color:#2d2d2d;}
+  /* auth dark */
+  body.dark .auth-card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .auth-tabs{background:#141414;border-color:#2d2d2d;}
+  body.dark .auth-tab-btn{color:#666;}
+  body.dark .auth-tab-btn.active{background:#252525;color:#ededed;}
+  body.dark .auth-wordmark,body.dark .auth-title{color:#ededed;}
+  body.dark .auth-sub,body.dark .demo-links{color:#555;}
+  body.dark .auth-divider{color:#444;}
+  body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2d;}
+  body.dark .demo-links a{color:#aaa;}
+  body.dark .auth-footer a{color:#aaa;}
+  body.dark .auth-err{color:#f87171;}
+  /* teacher page dark */
+  body.dark #page-teacher.active{background:#0d0d0d;}
+  body.dark .t-nav{background:rgba(10,10,10,.95);border-bottom-color:#2d2d2d;}
+  body.dark .t-content{background:#0d0d0d;}
+  body.dark .t-class-card{background:#1a1a1a;border-color:#2d2d2d;}
+  body.dark .t-class-card:hover{border-color:#444;}
+  /* admin page dark */
+  body.dark .a-sidebar{background:#141414;border-right-color:#2d2d2d;}
+  body.dark .a-main{background:#0d0d0d;}
+  body.dark .a-card{background:#1a1a1a;border-color:#2d2d2d;}
+  body.dark .a-nav-item:hover,body.dark .a-nav-item.active{background:#1e1e1e;}
+  body.dark .a-table-wrap{border-color:#2d2d2d;}
+  body.dark .a-table th{background:#1a1a1a;border-bottom-color:#2d2d2d;color:#666;}
+  body.dark .a-table td{border-bottom-color:#2d2d2d;}
+  body.dark .a-table tbody tr:hover td{background:#1e1e1e;}
+  body.dark .pricing-card{background:#1a1a1a;border-color:#2d2d2d;}
+  /* member row dark */
+  body.dark .member-row{border-bottom-color:#2d2d2d;}
+  body.dark .member-name{color:#ededed;}
+  body.dark .member-email{color:#666;}
+  /* nav coins dark */
+  body.dark .nav-coins{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);}
+  /* progress dark */
+  body.dark .progress-bar-bg{background:#2d2d2d;}
+  /* empty state dark */
+  body.dark .empty-icon{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .empty-title{color:#ededed;}
+
 /* ── SMOOTH ANIMATIONS ── */
 :root{
   --ease-out:cubic-bezier(0.16,1,0.3,1);
@@ -941,7 +954,7 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
       </div>
       <div style="text-align:right;line-height:1.3">
         <div style="font-size:13px;font-weight:500" id="nav-name"></div>
-        <div style="font-size:11px" id="nav-role-label"></div>
+        <div style="font-size:11px;color:#888" id="nav-role-label"></div>
       </div>
       <button class="btn btn-ghost btn-sm" onclick="signOut()" title="Sign out" style="padding:5px 8px">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -954,7 +967,7 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 <!-- INFO / LANDING -->
 <div id="page-info" class="page active">
   <div class="hero">
-    <div class="hero-eyebrow">VEX Robotics Education Platform</div>
+    
     <h1>Learn, build, and compete with Vexify</h1>
     <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system — built for VEX teams.</p>
     <div class="hero-btns">
@@ -1035,7 +1048,7 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
       <div class="field"><label>Full name</label><div class="input-wrap"><input type="text" id="reg-name" placeholder="Alex Kim" autocomplete="name"></div></div>
       <div class="field"><label>Email address</label><div class="input-wrap"><input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email"></div></div>
       <div class="field"><label>Password</label><div class="input-wrap"><input type="password" id="reg-password" placeholder="Min 6 characters" autocomplete="new-password"></div></div>
-      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="student">Student</option><option value="teacher">Teacher / Coach</option></select></div>
+      <div class="field"><label>I am a...</label><select id="reg-role" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:#fff"><option value="student">Student</option><option value="teacher">Teacher / Coach</option></select></div>
       <div class="auth-err" id="reg-err"></div>
       <button class="btn btn-primary" style="width:100%;justify-content:center;padding:9px" onclick="doRegister()">Create account</button>
       <div class="auth-footer"><span></span><span>Have an account? <a onclick="authSwitch('login')">Sign in</a></span></div>
@@ -1289,9 +1302,9 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 <div class="modal-overlay hidden" id="modal-ticket">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">New Help Ticket</div><button class="modal-close" onclick="closeModal('modal-ticket')">✕</button></div>
-    <div class="form-group"><label>Class</label><select id="ticket-class" style="padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);width:100%;font-size:13px;background:var(--white);color:var(--text)"></select></div>
+    <div class="form-group"><label>Class</label><select id="ticket-class" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
     <div class="form-group"><label>Subject</label><input type="text" id="ticket-title" placeholder="Brief description"></div>
-    <div class="form-group"><label>Priority</label><select id="ticket-priority" style="padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);width:100%;font-size:13px;background:var(--white);color:var(--text)"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+    <div class="form-group"><label>Priority</label><select id="ticket-priority" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
     <div class="form-group"><label>Details</label><textarea id="ticket-desc" placeholder="Describe your problem..."></textarea></div>
     <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-ticket')">Cancel</button><button class="btn btn-primary btn-sm" onclick="submitTicket()">Submit Ticket</button></div>
   </div>
@@ -1299,7 +1312,7 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 <div class="modal-overlay hidden" id="modal-give-coins">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Give VCoins</div><button class="modal-close" onclick="closeModal('modal-give-coins')">✕</button></div>
-    <div class="form-group"><label>Student</label><select id="gc-student" style="padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);width:100%;font-size:13px;background:var(--white);color:var(--text)"></select></div>
+    <div class="form-group"><label>Student</label><select id="gc-student" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
     <div class="form-group"><label>Amount of VCoins</label><input type="number" id="gc-amount" min="1" max="999" value="10" placeholder="How many coins?"></div>
     <div class="form-group"><label>Reason (optional)</label><input type="text" id="gc-reason" placeholder="e.g. Great work today!"></div>
     <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-give-coins')">Cancel</button><button class="btn btn-gold btn-sm" onclick="doGiveCoins()">Give Coins</button></div>
@@ -1316,22 +1329,19 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 <!-- Google Role Selection Modal -->
 <div class="modal-overlay hidden" id="modal-google-role">
   <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">One more thing</div>
-      <button class="modal-close" onclick="closeModal('modal-google-role')">✕</button>
-    </div>
+    <div class="modal-header"><div class="modal-title">One more thing</div></div>
     <p style="font-size:13px;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6">Welcome! How will you be using Vexify?</p>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('student')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        <span style="font-size:20px">🎓</span>
         <div style="text-align:left"><div style="font-weight:600;font-size:13px">Student</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I'm here to learn and complete lessons</div></div>
       </button>
       <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('teacher')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Teacher / Coach</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I manage classes and students — requires an admin invite</div></div>
+        <span style="font-size:20px">👩‍🏫</span>
+        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Teacher / Coach</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I manage classes and students</div></div>
       </button>
     </div>
-    <p style="font-size:11px;color:var(--text-3);margin-top:1rem;line-height:1.5">If you're a teacher without an invite, select Student and contact your admin to get one.</p>
+    <p style="font-size:11px;color:var(--text-3);margin-top:1rem;line-height:1.5">Teachers require an admin invite to register. If you're a teacher without an invite, select Student and contact your admin.</p>
   </div>
 </div>
 
@@ -1548,10 +1558,6 @@ async function doGoogleSignIn(){
       login(existing);
       return;
     }
-    if(existing && existing.role === 'removed'){
-      showToast('This account has been removed. Contact your admin.');
-      return;
-    }
     // New Google user — need to pick a role
     _pendingGoogleUser = {
       email,
@@ -1602,12 +1608,9 @@ async function doAdminInvite(){
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
-  errEl.textContent='Checking…';
+  errEl.textContent='Sending invite…';
   const existing=await window._firebase.getUser(email);
-  // Block invite only if an active (non-removed) account already exists
-  if(existing && existing.role !== 'removed'){
-    errEl.textContent='An active account with this email already exists.';return;
-  }
+  if(existing && existing.role!=='removed'){errEl.textContent='An active account with this email already exists.';return;}
   const existing_invite=await window._firebase.getInvite(email);
   if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
   await window._firebase.createInvite(email);
@@ -1623,12 +1626,11 @@ async function renderAdminPanel(){
   const teachers=userList.filter(u=>u.role==='teacher');
   const students=userList.filter(u=>u.role==='student');
   const pending=userList.filter(u=>u.role==='teacher_pending');
-  const removed=userList.filter(u=>u.role==='removed');
 
   document.getElementById('admin-stats-users').innerHTML=`
     <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem">Users</div>
     <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length-removed.length}</div><div style="font-size:11px;color:var(--text-3)">Active</div></div>
+      <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${userList.length}</div><div style="font-size:11px;color:var(--text-3)">Total</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${teachers.length}</div><div style="font-size:11px;color:var(--text-3)">Teachers</div></div>
       <div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em">${students.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
       ${pending.length?`<div><div style="font-size:1.4rem;font-weight:800;letter-spacing:-.04em;color:var(--amber)">${pending.length}</div><div style="font-size:11px;color:var(--text-3)">Pending</div></div>`:''}
@@ -1644,7 +1646,7 @@ async function renderAdminPanel(){
 
   const inviteBody=document.getElementById('admin-invites-body');
   if(!allInvites.length){
-    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet. Click "+ Invite Teacher" to get started.</div>`;
+    inviteBody.innerHTML=`<div style="font-size:12px;color:var(--text-3);padding:.5rem 0">No invites sent yet.</div>`;
   } else {
     inviteBody.innerHTML=allInvites.map(inv=>`
       <div class="member-row">
@@ -1656,13 +1658,12 @@ async function renderAdminPanel(){
           <div class="member-email">${inv.used?'Used — teacher has registered':'Pending — waiting for teacher to sign up'}</div>
         </div>
         <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
-        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
+        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy link</button>`:''}
         <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}')">Revoke</button>
       </div>`).join('');
   }
 
   const usersBody=document.getElementById('admin-users-body');
-  // Show all non-admin users, including removed ones
   const displayUsers=userList.filter(u=>u.role!=='admin');
   if(!displayUsers.length){
     usersBody.innerHTML=`<div style="font-size:12px;color:var(--text-3)">No users yet.</div>`;
@@ -1670,31 +1671,24 @@ async function renderAdminPanel(){
     const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
     const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
     usersBody.innerHTML=displayUsers.map(u=>`
-      <div class="member-row" style="${u.role==='removed'?'opacity:.5':''}">
+      <div class="member-row" style="${u.role==='removed'?'opacity:.55':''}">
         <div class="avatar">${initials(u.name)}</div>
         <div class="member-info">
           <div class="member-name">${esc(u.name)}</div>
           <div class="member-email">${u.email}</div>
         </div>
         <span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span>
+        ${u.role==='teacher_pending'?`<button class="btn btn-primary btn-xs" onclick="adminApproveTeacher('${u.email}')">Approve</button>`:''}
         ${u.role!=='removed'?`
-          <select class="admin-role-select" onchange="adminChangeRole('${u.email}',this.value)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;">
+          <select onchange="adminChangeRole('${u.email}',this.value);this.value=''" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;height:26px;">
             <option value="">Change role…</option>
-            <option value="student" ${u.role==='student'?'disabled':''}>→ Student</option>
-            <option value="teacher" ${u.role==='teacher'?'disabled':''}>→ Teacher</option>
+            <option value="student">→ Student</option>
+            <option value="teacher">→ Teacher</option>
           </select>
           <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
         `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}
       </div>`).join('');
   }
-}
-
-async function adminChangeRole(email, newRole){
-  if(!newRole) return;
-  await window._firebase.updateUser(email,{role:newRole});
-  if(DB.users[email]) DB.users[email].role=newRole;
-  showToast(`${email} is now a ${newRole}`);
-  renderAdminPanel();
 }
 
 async function adminApproveTeacher(email){
@@ -1711,10 +1705,10 @@ async function adminRevokeInvite(email){
 }
 
 async function adminDeleteUser(email){
-  if(!confirm(`Remove ${email}? They won't be able to sign in.`)) return;
+  if(!confirm(`Remove ${email} from Vexify? They will be marked as removed and can be re-invited later.`)) return;
   await window._firebase.updateUser(email,{role:'removed'});
   if(DB.users[email]) DB.users[email].role='removed';
-  showToast('User removed');
+  showToast('User removed — you can re-invite them as a teacher anytime.');
   renderAdminPanel();
 }
 
@@ -1722,6 +1716,14 @@ async function adminRestoreUser(email){
   await window._firebase.updateUser(email,{role:'student'});
   if(DB.users[email]) DB.users[email].role='student';
   showToast(`${email} restored as student`);
+  renderAdminPanel();
+}
+
+async function adminChangeRole(email, newRole){
+  if(!newRole) return;
+  await window._firebase.updateUser(email,{role:newRole});
+  if(DB.users[email]) DB.users[email].role=newRole;
+  showToast(`${email} is now a ${newRole}`);
   renderAdminPanel();
 }
 
@@ -1811,7 +1813,6 @@ async function doLogin(){
   errEl.textContent='Signing in…';
   const u = await window._firebase.getUser(email);
   if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
-  if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';return;}
   DB.users[email]=u;
   errEl.textContent='';
   login(u);
