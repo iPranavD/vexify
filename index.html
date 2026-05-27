@@ -8,6 +8,45 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230d0d0d'/><circle cx='8' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='3.5' fill='none' stroke='white' stroke-width='1.5'/><circle cx='16' cy='22' r='1.2' fill='white'/><circle cx='24' cy='11' r='2.5' fill='none' stroke='white' stroke-width='1.5'/><line x1='10.2' y1='12.4' x2='14.2' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/><line x1='21.8' y1='12.4' x2='17.8' y2='20' stroke='white' stroke-width='1.5' stroke-linecap='round'/></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Firebase SDK -->
+<script>
+  window._firebaseReady = false;
+  window._firebase = {
+    async signInWithGoogle() { return null; },
+    async signInWithMicrosoft() { return null; },
+    async getUser(email) { return null; },
+    async createUser(userData) {},
+    async updateUser(email, fields) { console.warn("Firebase still connecting... postponing update."); },
+    async getAllUsers() { return {}; },
+    async saveClass(classId, classData) {},
+    async deleteClass(classId) {},
+    async getAllClasses() { return {}; },
+    async saveLesson(lessonKey, lessonData) {},
+    async deleteLesson(lessonKey) {},
+    async getAllLessons() { return {}; },
+    async markLessonComplete(key) {},
+    async getAllCompleted() { return {}; },
+    async addTicket(ticket) { return ''; },
+    async resolveTicket(ticketId) {},
+    async getAllTickets() { return []; },
+    async saveShopItem(item) {},
+    async deleteShopItem(id) {},
+    async getAllShopItems() { return []; },
+    async saveCustomLesson(lesson) {},
+    async deleteCustomLesson(id) {},
+    async getAllCustomLessons() { return []; },
+    async createInvite(email) {},
+    async getInvite(email) { return null; },
+    async markInviteUsed(email) {},
+    async getAllInvites() { return []; },
+    async deleteInvite(email) {},
+    async sendMessage(classId, user, text) {},
+    listenMessages(classId, cb) {},
+    stopListening() {},
+    async editMessage(classId, msgId, newText) {},
+    async deleteMessage(classId, msgId) {}
+  };
+</script>
+
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import {
@@ -18,15 +57,18 @@
     getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
+  // Your web app's Firebase configuration
   const firebaseConfig = {
-    apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
-    authDomain:        "vexify-cf750.firebaseapp.com",
-    projectId:         "vexify-cf750",
-    storageBucket:     "vexify-cf750.firebasestorage.app",
-    messagingSenderId: "285678258097",
-    appId:             "1:285678258097:web:bff1fd9229ebe134cb5f90"
+    apiKey: "AIzaSyB_1uZ6_uc4cv3Z5ZLIIX3VQVvbbN5oEcc",
+    authDomain: "vexify-c1adf.firebaseapp.com",
+    projectId: "vexify-c1adf",
+    storageBucket: "vexify-c1adf.firebasestorage.app",
+    messagingSenderId: "345649781610",
+    appId: "1:345649781610:web:81408d6255aa4018976313",
+    measurementId: "G-W5DZ04V9NQ"
   };
 
+  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
   const auth = getAuth(app);
