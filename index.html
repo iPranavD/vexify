@@ -1549,6 +1549,8 @@ const DEMO_USERS = {
   'admin@vexify.com': {name:'Vexify Admin',email:'admin@vexify.com',password:'vexify-admin-2024',role:'admin',coins:0,inventory:[]}
 };
 let _firestoreAvailable = false;
+// Pre-seed demo accounts immediately — works even if Firebase never loads
+Object.assign(DB.users, DEMO_USERS);
 
 async function loadDB(){
   if(!window._firebase) return;
@@ -1872,7 +1874,7 @@ async function doLogin(){
     if(DB.users[email]){
       errEl.textContent='Incorrect email or password.';
     } else {
-      errEl.textContent='Cannot reach server. Check your connection or try a demo account below.';
+      errEl.textContent='Account not found locally. If this is a real account, host the app on a web server to connect to the database.';
     }
     resetBtn();
     console.error(e);
