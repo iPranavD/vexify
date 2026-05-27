@@ -881,92 +881,6 @@ body.dark .auth-divider::before,body.dark .auth-divider::after{background:#2d2d2
 .lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
-
-/* ══ TEACHER LAYOUT ══════════════════════════════════════════════════════ */
-#page-teacher.active{display:flex;flex-direction:column;background:var(--white);}
-.t-nav{background:var(--white);border-bottom:1px solid var(--border);padding:0 1.75rem;display:flex;align-items:center;gap:0;position:sticky;top:56px;z-index:100;overflow-x:auto;}
-.t-nav-items{display:flex;align-items:center;gap:0;flex:1;}
-.t-nav-item{display:flex;align-items:center;gap:6px;padding:14px 14px;font-size:12px;font-weight:400;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s;}
-.t-nav-item:hover{color:var(--text);}
-.t-nav-item.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
-.t-nav-item svg{width:14px;height:14px;stroke-width:1.75;}
-.t-content{flex:1;overflow-y:auto;background:var(--bg);}
-.t-panel{padding:2rem 2.25rem;max-width:1000px;margin:0 auto;animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
-.t-panel.hidden{display:none!important;}
-.t-panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap;}
-.t-panel-title{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.03em;}
-.t-panel-sub{font-size:12px;color:var(--text-3);margin-top:3px;}
-.t-class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
-.t-class-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;cursor:pointer;transition:border-color .12s,transform .15s;}
-.t-class-card:hover{border-color:#aaa;transform:translateY(-1px);}
-.t-class-card-top{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
-.t-class-av{width:42px;height:42px;border-radius:var(--r);background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--text-2);flex-shrink:0;}
-.t-class-card-name{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
-.t-class-card-meta{font-size:11px;color:var(--text-3);margin-top:3px;}
-.t-class-card-stats{display:flex;gap:1rem;padding-top:.875rem;border-top:1px solid var(--border);}
-.t-class-stat-val{font-size:1.1rem;font-weight:700;letter-spacing:-.03em;color:var(--text);}
-.t-class-stat-lbl{font-size:10px;color:var(--text-3);margin-top:1px;}
-.t-class-header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:1rem 2.25rem;background:var(--white);border-bottom:1px solid var(--border);position:sticky;top:calc(56px + 49px);z-index:90;}
-.t-class-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 2.25rem;background:var(--white);position:sticky;top:calc(56px + 49px + 57px);z-index:89;overflow-x:auto;}
-.t-class-tab{padding:11px 16px;font-size:13px;font-weight:400;color:var(--text-3);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;margin-bottom:-1px;transition:color .1s;}
-.t-class-tab.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
-.t-class-tab:hover:not(.active){color:var(--text-2);}
-#t-class-content{padding:2rem 2.25rem;max-width:900px;margin:0 auto;}
-.grades-table{width:100%;border-collapse:collapse;font-size:13px;}
-.grades-table th{padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--border);}
-.grades-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);}
-.grades-table tr:last-child td{border-bottom:none;}
-.grades-table tr:hover td{background:var(--bg);}
-.grade-pct{display:inline-flex;align-items:center;justify-content:center;min-width:46px;padding:3px 8px;border-radius:var(--r);font-size:12px;font-weight:700;border:1px solid;}
-
-/* ══ ADMIN LAYOUT ════════════════════════════════════════════════════════ */
-#page-admin.active{display:flex;flex-direction:column;min-height:calc(100vh - 56px);}
-.a-layout{display:flex;flex:1;min-height:calc(100vh - 56px);}
-.a-sidebar{width:220px;min-width:220px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;}
-.a-sidebar-logo{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.3px;margin-bottom:1.75rem;padding:0 .375rem;}
-.a-sidebar-logo svg{width:20px;height:20px;flex-shrink:0;}
-.a-sidebar-nav{display:flex;flex-direction:column;gap:2px;}
-.a-nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;transition:all .1s;}
-.a-nav-item:hover{background:var(--bg);color:var(--text);}
-.a-nav-item.active{background:var(--bg);color:var(--text);font-weight:600;}
-.a-nav-item svg{width:16px;height:16px;stroke-width:1.75;flex-shrink:0;}
-.a-main{flex:1;padding:2rem 2.5rem;overflow-y:auto;background:var(--bg);}
-.a-panel{animation:panelIn var(--dur-slow) var(--ease-out) forwards;}
-.a-panel.hidden{display:none!important;}
-.a-panel-title{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-bottom:1.5rem;}
-.a-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.375rem;}
-.a-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.5rem;}
-.a-stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.125rem;}
-.a-stat-val{font-size:1.8rem;font-weight:800;letter-spacing:-.05em;color:var(--text);margin-bottom:3px;}
-.a-stat-lbl{font-size:11px;color:var(--text-3);}
-.a-table-wrap{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white);}
-.a-table{width:100%;border-collapse:collapse;font-size:13px;}
-.a-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;background:var(--bg);border-bottom:1px solid var(--border);}
-.a-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
-.a-table tbody tr:last-child td{border-bottom:none;}
-.a-table tbody tr:hover td{background:var(--bg);}
-.a-toggle{position:relative;display:inline-block;width:36px;height:20px;flex-shrink:0;}
-.a-toggle input{opacity:0;width:0;height:0;}
-.a-toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:999px;transition:.2s;cursor:pointer;}
-.a-toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
-.a-toggle input:checked+.a-toggle-slider{background:var(--text);}
-.a-toggle input:checked+.a-toggle-slider::before{transform:translateX(16px);}
-body.dark .a-sidebar{background:#141414;border-right-color:#2d2d2d;}
-body.dark .a-nav-item.active,body.dark .a-nav-item:hover{background:#1e1e1e;}
-body.dark .a-main{background:#0d0d0d;}
-body.dark .a-card{background:#141414;border-color:#2d2d2d;}
-body.dark .a-stat-card{background:#141414;border-color:#2d2d2d;}
-body.dark .a-table-wrap{background:#141414;border-color:#2d2d2d;}
-body.dark .a-table th{background:#1a1a1a;border-bottom-color:#2d2d2d;}
-body.dark .a-table td{border-bottom-color:#2d2d2d;}
-body.dark .a-table tbody tr:hover td{background:#1e1e1e;}
-body.dark .t-nav,body.dark .t-class-header,body.dark .t-class-tabs{background:#141414;border-color:#2d2d2d;}
-body.dark .t-content{background:#0d0d0d;}
-body.dark .t-class-card{background:#141414;border-color:#2d2d2d;}
-body.dark .t-class-card:hover{border-color:#444;}
-body.dark .grades-table th{border-color:#2d2d2d;}
-body.dark .grades-table td{border-bottom-color:#2d2d2d;}
-body.dark .grades-table tr:hover td{background:#1e1e1e;}
 </style>
 </head>
 <body>
@@ -1133,6 +1047,9 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
     <div class="app-nav-item hidden" data-panel="manage" id="sidebar-manage" onclick="showPanel('manage')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage
     </div>
+    <div class="app-nav-item hidden" data-panel="admin" id="nav-admin" onclick="showPanel('admin')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin
+    </div>
   </nav>
   <div class="main-content">
     <!-- HOME -->
@@ -1207,199 +1124,43 @@ body.dark .grades-table tr:hover td{background:#1e1e1e;}
       </div>
       <div id="manage-body"></div>
     </div>
-  </div>
-</div>
-
-<!-- ══ TEACHER PAGE ══════════════════════════════════════════════════════ -->
-<div id="page-teacher" class="page">
-  <nav class="t-nav">
-    <div class="t-nav-items">
-      <div class="t-nav-item active" data-t="classes" onclick="tShowPanel('classes')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Classes
-      </div>
-      <div class="t-nav-item" data-t="t-lessons" onclick="tShowPanel('t-lessons')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Lessons
-      </div>
-      <div class="t-nav-item" data-t="t-shop" onclick="tShowPanel('t-shop')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>Shop
-      </div>
-      <div class="t-nav-item" data-t="t-tickets" onclick="tShowPanel('t-tickets')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Tickets
-      </div>
-    </div>
-    <button class="btn btn-primary btn-sm" id="t-new-class-btn" onclick="openCreateClassModal()" style="margin-left:auto">+ New Class</button>
-  </nav>
-  <div class="t-content">
-    <!-- CLASSES LIST -->
-    <div id="t-panel-classes" class="t-panel">
-      <div class="t-panel-header">
-        <div>
-          <div class="t-panel-title">My Classes</div>
-          <div class="t-panel-sub">Click a class to manage it</div>
-        </div>
-      </div>
-      <div id="t-classes-grid"></div>
-    </div>
-    <!-- CLASS DETAIL VIEW -->
-    <div id="t-panel-class-detail" class="t-panel hidden">
-      <div class="t-class-header">
-        <button class="btn btn-ghost btn-sm" onclick="tBackToClasses()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Back
-        </button>
-        <div style="flex:1">
-          <div class="t-panel-title" id="t-class-name"></div>
-          <div class="t-panel-sub" id="t-class-meta"></div>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="openAddMember(tActiveClass)" style="gap:5px">+ Add Member</button>
-        <button class="btn btn-gold btn-sm" onclick="openGiveCoins(tActiveClass)">Give Coins</button>
-      </div>
-      <div class="t-class-tabs">
-        <div class="t-class-tab active" data-ct="overview" onclick="tClassTab('overview')">Overview</div>
-        <div class="t-class-tab" data-ct="calendar" onclick="tClassTab('calendar')">Calendar</div>
-        <div class="t-class-tab" data-ct="grades" onclick="tClassTab('grades')">Grades</div>
-        <div class="t-class-tab" data-ct="messages" onclick="tClassTab('messages')">Messages</div>
-        <div class="t-class-tab" data-ct="members" onclick="tClassTab('members')">Members</div>
-      </div>
-      <div id="t-class-content"></div>
-    </div>
-    <!-- LESSONS BUILDER (reuses existing) -->
-    <div id="t-panel-t-lessons" class="t-panel hidden">
-      <div class="t-panel-header">
-        <div><div class="t-panel-title">Lesson Builder</div><div class="t-panel-sub">Create custom lessons for the student Lessons tab</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
-      </div>
-      <div id="t-lessons-body"></div>
-    </div>
-    <!-- SHOP MANAGER -->
-    <div id="t-panel-t-shop" class="t-panel hidden">
-      <div class="t-panel-header">
-        <div><div class="t-panel-title">Shop Manager</div><div class="t-panel-sub">Add custom reward items students can purchase</div></div>
+    <!-- TEACHER SHOP MANAGER -->
+    <div id="panel-teacher-shop" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Shop Manager</div><div class="panel-sub">Add custom reward items students can buy with VCoins</div></div>
         <button class="btn btn-primary btn-sm" onclick="openAddShopItemModal()">+ Add Item</button>
       </div>
-      <div id="t-shop-body"></div>
+      <div id="teacher-shop-body"></div>
     </div>
-    <!-- TICKETS -->
-    <div id="t-panel-t-tickets" class="t-panel hidden">
-      <div class="t-panel-header">
-        <div><div class="t-panel-title">Help Tickets</div><div class="t-panel-sub">Student support requests across all your classes</div></div>
+    <!-- TEACHER LESSON BUILDER -->
+    <div id="panel-teacher-lessons" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Lesson Builder</div><div class="panel-sub">Create custom lessons that appear in the student Lessons tab</div></div>
+        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
       </div>
-      <div id="t-tickets-body"></div>
+      <div id="teacher-lessons-body"></div>
     </div>
-  </div>
-</div>
-
-<!-- ══ ADMIN PAGE ═════════════════════════════════════════════════════════ -->
-<div id="page-admin" class="page">
-  <div class="a-layout">
-    <!-- Sidebar -->
-    <div class="a-sidebar">
-      <div class="a-sidebar-logo">
-        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"><path d="M4 7L8 15L11 10L14 15L18 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Vexify Admin
+    <!-- ADMIN PANEL -->
+    <div id="panel-admin" class="panel hidden">
+      <div class="panel-header">
+        <div><div class="panel-title">Admin Dashboard</div><div class="panel-sub">Manage teacher invites and all platform users</div></div>
       </div>
-      <nav class="a-sidebar-nav">
-        <div class="a-nav-item active" data-a="a-overview" onclick="aShowPanel('a-overview')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          Overview
-        </div>
-        <div class="a-nav-item" data-a="a-users" onclick="aShowPanel('a-users')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Users
-        </div>
-        <div class="a-nav-item" data-a="a-teachers" onclick="aShowPanel('a-teachers')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-          Teachers
-        </div>
-        <div class="a-nav-item" data-a="a-settings" onclick="aShowPanel('a-settings')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-          Settings
-        </div>
-      </nav>
-    </div>
-    <!-- Main -->
-    <div class="a-main">
-      <!-- OVERVIEW -->
-      <div id="a-panel-a-overview" class="a-panel">
-        <div class="a-panel-title">Overview</div>
-        <div id="a-overview-body"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+        <div class="card" id="admin-stats-users"></div>
+        <div class="card" id="admin-stats-invites"></div>
       </div>
-      <!-- USERS -->
-      <div id="a-panel-a-users" class="a-panel hidden">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem;flex-wrap:wrap">
-          <div class="a-panel-title">Users</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <input type="text" id="a-user-search" placeholder="Search by name or email…" oninput="aFilterUsers()" style="padding:7px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:220px;">
-            <select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:7px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);">
-              <option value="">All roles</option>
-              <option value="student">Students</option>
-              <option value="teacher">Teachers</option>
-              <option value="removed">Removed</option>
-            </select>
-          </div>
-        </div>
-        <div class="a-table-wrap">
-          <table class="a-table">
-            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Coins</th><th>Actions</th></tr></thead>
-            <tbody id="a-users-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-      <!-- TEACHERS -->
-      <div id="a-panel-a-teachers" class="a-panel hidden">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem">
-          <div class="a-panel-title">Teachers</div>
+      <div class="card" style="margin-bottom:1rem;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;">Teacher Invites</div>
           <button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button>
         </div>
-        <div class="a-card" style="margin-bottom:1rem">
-          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Pending Invites</div>
-          <div id="a-invites-body"></div>
-        </div>
-        <div class="a-card">
-          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Active Teachers</div>
-          <div id="a-teachers-body"></div>
-        </div>
+        <div id="admin-invites-body"></div>
       </div>
-      <!-- SETTINGS -->
-      <div id="a-panel-a-settings" class="a-panel hidden">
-        <div class="a-panel-title" style="margin-bottom:1.5rem">Site Settings</div>
-        <div class="a-card" style="margin-bottom:1rem;max-width:520px">
-          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Branding</div>
-          <div class="form-group"><label>App Name</label><input type="text" id="settings-app-name" value="Vexify" placeholder="Vexify"></div>
-          <div class="form-group"><label>Tagline</label><input type="text" id="settings-tagline" value="VEX Robotics Education Platform" placeholder="Short description shown on login"></div>
-          <div class="modal-footer" style="padding-top:.75rem;margin-top:.5rem;border-top:1px solid var(--border);justify-content:flex-start">
-            <button class="btn btn-primary btn-sm" onclick="saveAdminSettings()">Save Changes</button>
-          </div>
-        </div>
-        <div class="a-card" style="max-width:520px">
-          <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Registration</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
-            <div><div style="font-size:13px;font-weight:500">Allow student self-registration</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">Students can create accounts without an invite</div></div>
-            <label class="a-toggle"><input type="checkbox" id="settings-student-reg" checked><span class="a-toggle-slider"></span></label>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0">
-            <div><div style="font-size:13px;font-weight:500">Require teacher invite</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">Teachers must be invited by admin to register</div></div>
-            <label class="a-toggle"><input type="checkbox" id="settings-teacher-invite" checked disabled><span class="a-toggle-slider"></span></label>
-          </div>
-        </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:600;margin-bottom:1rem;">All Users</div>
+        <div id="admin-users-body"></div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Add Grade Modal -->
-<div class="modal-overlay hidden" id="modal-add-grade">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add Grade</div><button class="modal-close" onclick="closeModal('modal-add-grade')">✕</button></div>
-    <div class="form-group"><label>Student</label>
-      <select id="grade-student" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"></select>
-    </div>
-    <div class="form-group"><label>Assignment</label><input type="text" id="grade-assignment" placeholder="e.g. Build Challenge #1"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Score</label><input type="number" id="grade-score" placeholder="92" min="0" max="999"></div>
-      <div class="form-group"><label>Out of</label><input type="number" id="grade-total" placeholder="100" min="1" max="999" value="100"></div>
-    </div>
-    <div class="form-group"><label>Notes (optional)</label><input type="text" id="grade-notes" placeholder="Great work on the autonomous section"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-grade')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAddGrade()">Save Grade</button></div>
   </div>
 </div>
 
@@ -1736,17 +1497,11 @@ async function completeCurriculumLesson(lessonId,coins,event){
 
 async function loadDB(){
   if(!window._firebase) return;
-  DB.users            = await window._firebase.getAllUsers();
-  DB.classes          = await window._firebase.getAllClasses();
-  DB.lessons          = await window._firebase.getAllLessons();
+  DB.users     = await window._firebase.getAllUsers();
+  DB.classes   = await window._firebase.getAllClasses();
+  DB.lessons   = await window._firebase.getAllLessons();
   DB.completedLessons = await window._firebase.getAllCompleted();
-  DB.tickets          = await window._firebase.getAllTickets();
-  DB.customLessons    = {};
-  DB.customShopItems  = {};
-  DB.grades           = {};
-  try{const cl=await window._firebase.getAllCustomLessons();cl.forEach(l=>{DB.customLessons[l.id]=l;});}catch(e){}
-  try{const si=await window._firebase.getAllShopItems();si.forEach(i=>{DB.customShopItems[i.id]=i;});}catch(e){}
-  Object.entries(DB.classes).forEach(([id,c])=>{if(c.grades) DB.grades[id]=c.grades;});
+  DB.tickets   = await window._firebase.getAllTickets();
   Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
   if(!DB.purchases)DB.purchases={};
 }
@@ -1983,40 +1738,12 @@ function toggleDark(){
 
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p)?.classList.add('active');
-  if(p==='dashboard') renderDashboard();
-  if(p==='teacher')   tRenderClasses();
-  if(p==='admin')     aShowPanel('a-overview');
+  document.getElementById('page-'+p).classList.add('active');
+  if(p==='dashboard')renderDashboard();
 }
-function goHome(){
-  if(!currentUser) return showPage('info');
-  if(currentUser.role==='admin') return showPage('admin');
-  if(currentUser.role==='teacher') return showPage('teacher');
-  showPage('dashboard');
-}
+function goHome(){currentUser?showPage('dashboard'):showPage('info');}
 
-function login(u){
-  currentUser=u;
-  document.getElementById('nav-signin-btn').classList.add('hidden');
-  const nd=document.getElementById('nav-user');nd.classList.remove('hidden');nd.style.display='flex';
-  document.getElementById('nav-name').textContent=u.name;
-  const roleLabels={teacher:'Teacher',student:'Student',admin:'Admin',teacher_pending:'Pending Approval'};
-  document.getElementById('nav-role-label').textContent=roleLabels[u.role]||u.role;
-  if(u.role==='student'){document.getElementById('nav-coins').classList.remove('hidden');updateCoinDisplay();}
-  if(u.role==='teacher_pending'){
-    showPage('dashboard');
-    document.querySelector('.main-content').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:1rem;text-align:center;padding:2rem;">
-      <div class="empty-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-      <div style="font-size:15px;font-weight:600;">Account Pending Approval</div>
-      <div style="font-size:13px;color:var(--text-3);max-width:340px;line-height:1.7">Your teacher account is awaiting admin approval.</div>
-      <button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button>
-    </div>`;
-    return;
-  }
-  if(u.role==='admin')   { showPage('admin');   return; }
-  if(u.role==='teacher') { showPage('teacher'); return; }
-  showPage('dashboard');
-}
+function noClasses(){ return getMyClasses().length === 0; }
 
 function _noClassHTML(){
   const isT = currentUser.role === 'teacher';
@@ -2042,7 +1769,9 @@ function showPanel(p){
   const renders={
     calendar:renderCalPanel,messages:renderMsgPanel,tickets:renderTickets,
     progress:renderProgress,shop:renderShop,manage:renderManage,
-    home:renderHome,lessons:renderLessonsPanel
+    home:renderHome,lessons:renderLessonsPanel,
+    'teacher-shop':renderTeacherShop,'teacher-lessons':renderTeacherLessons,
+    admin:renderAdminPanel
   };
   if(renders[p]) renders[p]();
   _updateNavLockState();
@@ -2138,7 +1867,6 @@ function signOut(){
   document.getElementById('nav-coins').classList.add('hidden');
   showPage('info');
 }
-function noClasses(){ return !currentUser||getMyClasses().length===0; }
 function updateCoinDisplay(){
   if(!currentUser)return;
   const c=currentUser.coins||0;
@@ -2167,8 +1895,12 @@ function doAddShopItem(){closeModal('modal-add-shop-item');}
 function openAddCustomLessonModal(){openModal('modal-add-custom-lesson');}
 function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
 
-// ═══════ STUDENT DASHBOARD ═══════
+// ═══════ DASHBOARD ═══════
 function renderDashboard(){
+  const isT=currentUser.role==='teacher';
+  const isA=currentUser.role==='admin';
+  document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
+  document.getElementById('nav-admin').classList.toggle('hidden',!isA);
   _updateNavLockState();
   renderHome();
 }
@@ -2762,429 +2494,6 @@ function showToast(msg){
 function openModal(id){document.getElementById(id).classList.remove('hidden');}
 function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
-
-// ═══════ TEACHER ═══════
-let tActiveClass = null;
-let tActiveClassTab = 'overview';
-
-function tShowPanel(p){
-  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.remove('active'));
-  document.querySelector(`.t-nav-item[data-t="${p}"]`)?.classList.add('active');
-  document.querySelectorAll('.t-panel').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(`t-panel-${p}`)?.classList.remove('hidden');
-  // Show/hide new class button
-  document.getElementById('t-new-class-btn').classList.toggle('hidden', p!=='classes');
-  if(p==='classes') tRenderClasses();
-  if(p==='t-lessons') renderTeacherLessons('t-lessons-body');
-  if(p==='t-shop') renderTeacherShop('t-shop-body');
-  if(p==='t-tickets') tRenderTickets();
-}
-
-function tRenderClasses(){
-  const classes = getMyClasses();
-  const grid = document.getElementById('t-classes-grid');
-  if(!classes.length){
-    grid.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div><div class="empty-title">No classes yet</div><div class="empty-desc">Click "+ New Class" to create your first class.</div></div>`;
-    return;
-  }
-  grid.innerHTML=`<div class="t-class-grid">${classes.map(([id,c])=>{
-    const members=(c.members||[]).filter(e=>DB.users[e]?.role==='student');
-    const lessonCount=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
-    const gradeCount=(DB.grades&&DB.grades[id])?DB.grades[id].length:0;
-    return`<div class="t-class-card" onclick="tOpenClass('${id}')">
-      <div class="t-class-card-top">
-        <div class="t-class-av">${initials(c.name)}</div>
-        <div>
-          <div class="t-class-card-name">${esc(c.name)}</div>
-          <div class="t-class-card-meta">${c.season||''}${c.room?' · Room '+c.room:''}</div>
-        </div>
-      </div>
-      <div class="t-class-card-stats">
-        <div class="t-class-stat"><div class="t-class-stat-val">${members.length}</div><div class="t-class-stat-lbl">Students</div></div>
-        <div class="t-class-stat"><div class="t-class-stat-val">${lessonCount}</div><div class="t-class-stat-lbl">Lessons</div></div>
-        <div class="t-class-stat"><div class="t-class-stat-val">${gradeCount}</div><div class="t-class-stat-lbl">Grades</div></div>
-        <div class="t-class-stat" style="margin-left:auto">
-          <div style="font-family:monospace;font-size:11px;font-weight:700;letter-spacing:.1em;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--text-2)">${c.code||'—'}</div>
-          <div class="t-class-stat-lbl">Code</div>
-        </div>
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
-
-function tOpenClass(classId){
-  tActiveClass = classId;
-  const c = DB.classes[classId];
-  document.getElementById('t-class-name').textContent = c.name;
-  document.getElementById('t-class-meta').textContent = `${c.season||''}${c.room?' · Room '+c.room:''}${c.code?' · Code: '+c.code:''}`;
-  document.querySelectorAll('.t-panel').forEach(el=>el.classList.add('hidden'));
-  document.getElementById('t-panel-class-detail').classList.remove('hidden');
-  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.remove('active'));
-  tClassTab('overview');
-}
-
-function tBackToClasses(){
-  tActiveClass = null;
-  tShowPanel('classes');
-}
-
-function tClassTab(tab){
-  tActiveClassTab = tab;
-  document.querySelectorAll('.t-class-tab').forEach(el=>el.classList.toggle('active', el.dataset.ct===tab));
-  const content = document.getElementById('t-class-content');
-  if(tab==='overview')  tRenderClassOverview(content);
-  if(tab==='calendar')  tRenderClassCalendar(content);
-  if(tab==='grades')    tRenderClassGrades(content);
-  if(tab==='messages')  tRenderClassMessages(content);
-  if(tab==='members')   tRenderClassMembers(content);
-}
-
-function tRenderClassOverview(el){
-  const c = DB.classes[tActiveClass];
-  const members = (c.members||[]).filter(e=>DB.users[e]?.role==='student');
-  const lessons = Object.entries(DB.lessons).filter(([k])=>k.startsWith(tActiveClass+'_'));
-  const grades = (DB.grades&&DB.grades[tActiveClass])||[];
-  el.innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:0;border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:1.25rem;background:var(--white)">
-      <div style="padding:1rem;border-right:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${members.length}</div><div style="font-size:11px;color:var(--text-3)">Students</div></div>
-      <div style="padding:1rem;border-right:1px solid var(--border)"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${lessons.length}</div><div style="font-size:11px;color:var(--text-3)">Lessons</div></div>
-      <div style="padding:1rem"><div style="font-size:1.5rem;font-weight:800;letter-spacing:-.04em">${grades.length}</div><div style="font-size:11px;color:var(--text-3)">Grade entries</div></div>
-    </div>
-    <div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:.875rem">Students</div>
-      ${members.length?members.map(email=>{
-        const u=DB.users[email];
-        if(!u) return '';
-        const done=Object.keys(DB.completedLessons).filter(k=>k.startsWith(email+'_'+tActiveClass+'_')).length;
-        return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${email}</div></div><span class="badge badge-gray">${done} done</span><span class="badge badge-gray" style="margin-left:4px">${u.coins||0} VC</span></div>`;
-      }).join(''):'<div style="font-size:12px;color:var(--text-3)">No students yet. Share the class code to let students join.</div>'}
-    </div>`;
-}
-
-function tRenderClassCalendar(el){
-  calClassId = tActiveClass;
-  el.innerHTML=`<div id="t-cal-inner"><div class="tab-row"><button class="tab-btn active">${DB.classes[tActiveClass]?.name}</button></div><div id="cal-body-t"></div></div>`;
-  // reuse calendar logic but target new element
-  const classes=[[tActiveClass,DB.classes[tActiveClass]]];
-  const lessonKeys=Object.keys(DB.lessons).filter(k=>k.startsWith(tActiveClass+'_'));
-  const lessons=lessonKeys.map(k=>DB.lessons[k]);
-  document.getElementById('add-lesson-btn')?.classList.remove('hidden');
-  renderCalForTeacher(el);
-}
-
-function renderCalForTeacher(container){
-  const calHTML=buildCalHTML(tActiveClass);
-  container.innerHTML=`<div style="display:flex;justify-content:flex-end;margin-bottom:1rem"><button class="btn btn-primary btn-sm" onclick="openLessonModal()">+ Add Lesson</button></div>${calHTML}`;
-}
-
-function tRenderClassGrades(el){
-  if(!DB.grades) DB.grades={};
-  if(!DB.grades[tActiveClass]) DB.grades[tActiveClass]=[];
-  const grades=DB.grades[tActiveClass];
-  const students=(DB.classes[tActiveClass].members||[]).filter(e=>DB.users[e]?.role==='student');
-  el.innerHTML=`
-    <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
-      <button class="btn btn-primary btn-sm" onclick="openAddGradeModal()">+ Add Grade</button>
-    </div>
-    ${grades.length?`<div style="border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;background:var(--white)"><table class="grades-table">
-      <thead><tr><th>Student</th><th>Assignment</th><th>Score</th><th>%</th><th>Notes</th><th></th></tr></thead>
-      <tbody>${grades.map((g,i)=>{
-        const pct=Math.round((g.score/g.total)*100);
-        const color=pct>=90?'var(--green)':pct>=70?'var(--amber)':'var(--red)';
-        return`<tr>
-          <td style="font-weight:500">${esc(DB.users[g.email]?.name||g.email)}</td>
-          <td>${esc(g.assignment)}</td>
-          <td style="font-weight:600">${g.score}/${g.total}</td>
-          <td><span style="font-weight:700;color:${color}">${pct}%</span></td>
-          <td style="color:var(--text-3);font-size:12px">${g.notes?esc(g.notes):''}</td>
-          <td><button class="btn btn-danger btn-xs" onclick="deleteGrade(${i})">✕</button></td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table></div>
-    <div style="margin-top:1rem;font-size:12px;color:var(--text-3)">
-      Class average: <strong style="color:var(--text)">${grades.length?Math.round(grades.reduce((s,g)=>s+(g.score/g.total*100),0)/grades.length)+'%':'—'}</strong>
-    </div>`
-    :`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="empty-title">No grades yet</div><div class="empty-desc">Click "+ Add Grade" to record student grades.</div></div>`}`;
-}
-
-function openAddGradeModal(){
-  const students=(DB.classes[tActiveClass].members||[]).filter(e=>DB.users[e]?.role==='student');
-  if(!students.length){showToast('No students in this class yet.');return;}
-  document.getElementById('grade-student').innerHTML=students.map(e=>`<option value="${e}">${esc(DB.users[e]?.name||e)}</option>`).join('');
-  document.getElementById('grade-assignment').value='';
-  document.getElementById('grade-score').value='';
-  document.getElementById('grade-total').value='100';
-  document.getElementById('grade-notes').value='';
-  openModal('modal-add-grade');
-}
-
-async function doAddGrade(){
-  const email=document.getElementById('grade-student').value;
-  const assignment=document.getElementById('grade-assignment').value.trim();
-  const score=parseFloat(document.getElementById('grade-score').value);
-  const total=parseFloat(document.getElementById('grade-total').value)||100;
-  if(!assignment||isNaN(score)){showToast('Please fill in all required fields.');return;}
-  if(!DB.grades) DB.grades={};
-  if(!DB.grades[tActiveClass]) DB.grades[tActiveClass]=[];
-  const entry={email,assignment,score,total,notes:document.getElementById('grade-notes').value.trim(),date:new Date().toLocaleDateString()};
-  DB.grades[tActiveClass].push(entry);
-  // Save to Firestore
-  await window._firebase.saveClass(tActiveClass,{...DB.classes[tActiveClass],grades:DB.grades[tActiveClass]});
-  closeModal('modal-add-grade');
-  tRenderClassGrades(document.getElementById('t-class-content'));
-  showToast('Grade saved!');
-}
-
-function deleteGrade(idx){
-  DB.grades[tActiveClass].splice(idx,1);
-  window._firebase.saveClass(tActiveClass,{...DB.classes[tActiveClass],grades:DB.grades[tActiveClass]});
-  tRenderClassGrades(document.getElementById('t-class-content'));
-}
-
-function tRenderClassMessages(el){
-  msgClassId = tActiveClass;
-  el.innerHTML=`<div class="tab-row" id="t-msg-tabs-inner"></div><div id="t-msg-body-inner"><div class="select-prompt"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><div style="font-size:13px">Loading…</div></div></div>`;
-  // Reuse message rendering, redirect to inner elements
-  const origTabs=document.getElementById('msg-tabs');
-  const origBody=document.getElementById('msg-body');
-  // temporarily redirect
-  window._msgTabsEl=document.getElementById('t-msg-tabs-inner');
-  window._msgBodyEl=document.getElementById('t-msg-body-inner');
-  _renderMsgShellTo(window._msgBodyEl);
-  if(window._firebase){
-    window._firebase.listenMessages(tActiveClass,msgs=>{
-      _liveMessages=msgs;
-      _renderMsgList(msgs);
-    });
-  }
-}
-
-function _renderMsgShellTo(bodyEl){
-  bodyEl.innerHTML=`<div class="card">
-    <div class="msg-area" id="msg-list"><div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">Loading…</div></div>
-    <div class="msg-input-bar">
-      <input class="msg-input" id="msg-input" placeholder="Type a message…" onkeydown="if(event.key==='Enter')sendMsg()">
-      <button class="btn btn-primary btn-sm btn-pill" style="padding:10px 20px" onclick="sendMsg()">Send</button>
-    </div>
-  </div>`;
-}
-
-function tRenderClassMembers(el){
-  const c=DB.classes[tActiveClass];
-  const members=c.members||[];
-  el.innerHTML=`
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:13px;font-weight:600">${members.length} members</div>
-      <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClass}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClass}')">Give Coins</button></div>
-    </div>
-    <div class="card">${members.length?members.map(email=>{
-      const u=DB.users[email];
-      if(!u) return '';
-      return`<div class="member-row">
-        <div class="avatar">${initials(u.name)}</div>
-        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${email}</div></div>
-        <span class="badge badge-gray">${u.role}</span>
-        ${u.role==='student'?`<span class="badge badge-gray" style="margin-left:4px">${u.coins||0} VC</span>`:''}
-        <button class="btn btn-danger btn-sm" onclick="removeMember('${tActiveClass}','${email}');tRenderClassMembers(document.getElementById('t-class-content'))">Remove</button>
-      </div>`;
-    }).join(''):'<div style="font-size:12px;color:var(--text-3)">No members yet.</div>'}</div>
-    <div style="margin-top:1rem;display:flex;align-items:center;gap:8px">
-      <span style="font-size:12px;color:var(--text-3)">Join code:</span>
-      <span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.12em;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:3px 10px">${c.code||'—'}</span>
-      <button class="btn btn-xs btn-ghost" onclick="copyClassCode('${c.code}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy</button>
-    </div>`;
-}
-
-function tRenderTickets(){
-  const myIds=getMyClasses().map(([id])=>id);
-  const tickets=DB.tickets.filter(t=>myIds.includes(t.classId));
-  const body=document.getElementById('t-tickets-body');
-  if(!tickets.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="empty-title">No tickets</div><div class="empty-desc">No help tickets from students yet.</div></div>`;return;}
-  const pc={low:'badge-gray',medium:'badge-amber',high:'badge-red'};
-  const sc={open:'badge-amber',resolved:'badge-green'};
-  body.innerHTML=[...tickets].reverse().map(t=>`
-    <div class="ticket-card">
-      <div style="display:flex;flex-direction:column;gap:4px;min-width:70px">
-        <span class="badge ${pc[t.priority]||'badge-gray'}">${t.priority}</span>
-        <span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span>
-      </div>
-      <div class="ticket-body">
-        <div class="ticket-title">${esc(t.title)}</div>
-        <div class="ticket-desc">${esc(t.desc)}</div>
-        <div class="ticket-meta"><span>${esc(t.userName)}</span><span>${DB.classes[t.classId]?.name||''}</span><span>${t.date}</span></div>
-      </div>
-      ${(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" onclick="resolveTicket('${t._id}');tRenderTickets()">Resolve</button>`:''}
-    </div>`).join('');
-}
-
-function renderTeacherLessons(bodyId){
-  const body=document.getElementById(bodyId||'teacher-lessons-body');
-  if(!body) return;
-  const customs=Object.values(DB.customLessons||{});
-  if(!customs.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div><div class="empty-title">No custom lessons yet</div><div class="empty-desc">Create lessons that appear in the student Lessons tab.</div></div>`;return;}
-  body.innerHTML=customs.map(l=>`<div class="card" style="margin-bottom:8px;display:flex;align-items:flex-start;gap:12px">
-    <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(l.title)}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">${esc(l.desc||'')} · ${l.track||'custom'} · ${l.coins} VCoins</div></div>
-    <button class="btn btn-danger btn-xs" onclick="deleteCustomLesson('${l.id}')">Remove</button>
-  </div>`).join('');
-}
-
-function renderTeacherShop(bodyId){
-  const body=document.getElementById(bodyId||'teacher-shop-body');
-  if(!body) return;
-  const items=Object.values(DB.customShopItems||{});
-  if(!items.length){body.innerHTML=`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg></div><div class="empty-title">No custom shop items</div><div class="empty-desc">Add reward items students can buy with VCoins.</div></div>`;return;}
-  body.innerHTML=items.map(item=>`<div class="card" style="margin-bottom:8px;display:flex;align-items:center;gap:12px">
-    <span style="font-size:22px">${item.icon||'🎁'}</span>
-    <div style="flex:1"><div style="font-size:13px;font-weight:600">${esc(item.name)}</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">${esc(item.desc||'')} · ${item.price} VCoins</div></div>
-    <button class="btn btn-danger btn-xs" onclick="deleteCustomShopItem('${item.id}')">Remove</button>
-  </div>`).join('');
-}
-
-// Build a simple calendar HTML string for teacher class view
-function buildCalHTML(classId){
-  const now=new Date();
-  const year=now.getFullYear(), month=now.getMonth();
-  const firstDay=new Date(year,month,1).getDay();
-  const daysInMonth=new Date(year,month+1,0).getDate();
-  const monthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  let html=`<div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:1.25rem">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-      <div style="font-size:13px;font-weight:700">${monthNames[month]} ${year}</div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px">
-      ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div style="text-align:center;font-size:10px;font-weight:600;color:var(--text-3);padding:3px">${d}</div>`).join('')}
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px">`;
-  for(let i=0;i<firstDay;i++) html+=`<div></div>`;
-  for(let d=1;d<=daysInMonth;d++){
-    const ds=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const lesson=DB.lessons[classId+'_'+ds];
-    const isToday=d===now.getDate();
-    html+=`<div style="aspect-ratio:1;border-radius:6px;border:1px solid ${isToday?'var(--text)':'transparent'};background:${lesson?'var(--bg)':'transparent'};padding:4px;display:flex;flex-direction:column;align-items:center;cursor:${lesson?'pointer':'default'}" ${lesson?`onclick="tEditLesson('${ds}')"`:''}>
-      <div style="font-size:10px;font-weight:${isToday?'800':'500'};color:${isToday?'var(--text)':'var(--text-2)'}">${d}</div>
-      ${lesson?`<div style="width:4px;height:4px;border-radius:50%;background:var(--accent);margin-top:2px"></div><div style="font-size:7px;color:var(--text-3);line-height:1.2;text-align:center;overflow:hidden;max-width:100%">${esc(lesson.title.substring(0,8))}</div>`:''}
-    </div>`;
-  }
-  html+=`</div></div>`;
-  return html;
-}
-
-function tEditLesson(ds){
-  openLessonModal(ds);
-}
-
-// ═══════ ADMIN ═══════
-let _allUsersCache = [];
-
-function aShowPanel(p){
-  document.querySelectorAll('.a-nav-item').forEach(el=>el.classList.remove('active'));
-  document.querySelector(`.a-nav-item[data-a="${p}"]`)?.classList.add('active');
-  document.querySelectorAll('.a-panel').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(`a-panel-${p}`)?.classList.remove('hidden');
-  if(p==='a-overview') aRenderOverview();
-  if(p==='a-users')    aRenderUsers();
-  if(p==='a-teachers') aRenderTeachers();
-  if(p==='a-settings') aRenderSettings();
-}
-
-async function aRenderOverview(){
-  const allUsers=await window._firebase.getAllUsers();
-  const allClasses=await window._firebase.getAllClasses();
-  const users=Object.values(allUsers);
-  const classes=Object.values(allClasses);
-  const students=users.filter(u=>u.role==='student');
-  const teachers=users.filter(u=>u.role==='teacher');
-  const pending=users.filter(u=>u.role==='teacher_pending');
-  document.getElementById('a-overview-body').innerHTML=`
-    <div class="a-stats-grid">
-      <div class="a-stat-card"><div class="a-stat-val">${students.length}</div><div class="a-stat-lbl">Students</div></div>
-      <div class="a-stat-card"><div class="a-stat-val">${teachers.length}</div><div class="a-stat-lbl">Teachers</div></div>
-      <div class="a-stat-card"><div class="a-stat-val">${classes.length}</div><div class="a-stat-lbl">Classes</div></div>
-      ${pending.length?`<div class="a-stat-card"><div class="a-stat-val" style="color:var(--amber)">${pending.length}</div><div class="a-stat-lbl">Pending Teachers</div></div>`:''}
-    </div>
-    ${pending.length?`<div class="a-card"><div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1rem">Needs Attention — Pending Teacher Approvals</div>
-      ${pending.map(u=>`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div><button class="btn btn-primary btn-sm" onclick="adminApproveTeacher('${u.email}');aRenderOverview()">Approve</button><button class="btn btn-danger btn-sm" onclick="adminDeleteUser('${u.email}');aRenderOverview()">Reject</button></div>`).join('')}
-    </div>`:''}`;
-}
-
-async function aRenderUsers(){
-  const allUsers=await window._firebase.getAllUsers();
-  _allUsersCache=Object.values(allUsers).filter(u=>u.role!=='admin');
-  aFilterUsers();
-}
-
-function aFilterUsers(){
-  const search=(document.getElementById('a-user-search')?.value||'').toLowerCase();
-  const roleFilter=document.getElementById('a-user-role-filter')?.value||'';
-  const filtered=_allUsersCache.filter(u=>{
-    const matchSearch=!search||(u.name||'').toLowerCase().includes(search)||(u.email||'').toLowerCase().includes(search);
-    const matchRole=!roleFilter||u.role===roleFilter;
-    return matchSearch&&matchRole;
-  });
-  const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
-  const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
-  const tbody=document.getElementById('a-users-tbody');
-  if(!tbody) return;
-  tbody.innerHTML=filtered.map(u=>`<tr style="${u.role==='removed'?'opacity:.5':''}">
-    <td><div style="display:flex;align-items:center;gap:8px"><div class="avatar" style="width:26px;height:26px;font-size:9px">${initials(u.name)}</div><span style="font-weight:500">${esc(u.name)}</span></div></td>
-    <td style="color:var(--text-3)">${u.email}</td>
-    <td><span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span></td>
-    <td>${u.role==='student'?u.coins||0:'—'}</td>
-    <td style="display:flex;gap:6px;flex-wrap:wrap">
-      ${u.role!=='removed'?`
-        <select onchange="adminChangeRole('${u.email}',this.value);setTimeout(aRenderUsers,500)" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text)">
-          <option value="">Role…</option>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
-        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}');setTimeout(aRenderUsers,500)">Remove</button>
-      `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}');setTimeout(aRenderUsers,500)">Restore</button>`}
-    </td>
-  </tr>`).join('');
-  if(!filtered.length) tbody.innerHTML=`<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-3)">No users found</td></tr>`;
-}
-
-async function aRenderTeachers(){
-  const allUsers=await window._firebase.getAllUsers();
-  const allInvites=await window._firebase.getAllInvites();
-  const teachers=Object.values(allUsers).filter(u=>u.role==='teacher'||u.role==='teacher_pending');
-  const roleColors={teacher:'badge-green',teacher_pending:'badge-amber'};
-  const roleLabels={teacher:'Active',teacher_pending:'Pending'};
-  document.getElementById('a-invites-body').innerHTML=allInvites.length
-    ?allInvites.map(inv=>`<div class="member-row">
-        <div style="width:30px;height:30px;border-radius:50%;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <div class="member-info"><div class="member-name">${inv.email}</div><div class="member-email">${inv.used?'Registered':'Waiting for sign-up'}</div></div>
-        <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
-        ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy</button>`:''}
-        <button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}');setTimeout(aRenderTeachers,400)">Revoke</button>
-      </div>`).join('')
-    :`<div style="font-size:12px;color:var(--text-3)">No pending invites. Click "+ Invite Teacher" to send one.</div>`;
-  document.getElementById('a-teachers-body').innerHTML=teachers.length
-    ?teachers.map(u=>`<div class="member-row">
-        <div class="avatar">${initials(u.name)}</div>
-        <div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div>
-        <span class="badge ${roleColors[u.role]}">${roleLabels[u.role]}</span>
-        ${u.role==='teacher_pending'?`<button class="btn btn-primary btn-xs" onclick="adminApproveTeacher('${u.email}');setTimeout(aRenderTeachers,400)">Approve</button>`:''}
-        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}');setTimeout(aRenderTeachers,400)">Remove</button>
-      </div>`).join('')
-    :`<div style="font-size:12px;color:var(--text-3)">No teachers yet. Invite one above.</div>`;
-}
-
-function aRenderSettings(){
-  // Load saved settings
-  const name=localStorage.getItem('vexify_app_name')||'Vexify';
-  const tag=localStorage.getItem('vexify_tagline')||'VEX Robotics Education Platform';
-  document.getElementById('settings-app-name').value=name;
-  document.getElementById('settings-tagline').value=tag;
-}
-
-function saveAdminSettings(){
-  const name=document.getElementById('settings-app-name').value.trim()||'Vexify';
-  const tag=document.getElementById('settings-tagline').value.trim();
-  localStorage.setItem('vexify_app_name',name);
-  localStorage.setItem('vexify_tagline',tag);
-  document.querySelector('.logo-text').textContent=name;
-  showToast('Settings saved!');
-}
 </script>
 </body>
 </html>
