@@ -919,6 +919,21 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 .lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
+
+  /* Fix browser autofill blue background in dark mode */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus{
+    -webkit-box-shadow:0 0 0 1000px var(--white) inset !important;
+    -webkit-text-fill-color:var(--text) !important;
+    transition:background-color 5000s ease-in-out 0s;
+  }
+  body.dark input:-webkit-autofill,
+  body.dark input:-webkit-autofill:hover,
+  body.dark input:-webkit-autofill:focus{
+    -webkit-box-shadow:0 0 0 1000px #141414 inset !important;
+    -webkit-text-fill-color:#ededed !important;
+  }
 </style>
 </head>
 <body>
@@ -1810,12 +1825,30 @@ async function doLogin(){
   const email=document.getElementById('login-email').value.trim().toLowerCase();
   const pw=document.getElementById('login-password').value;
   const errEl=document.getElementById('login-err');
-  errEl.textContent='Signing in…';
-  const u = await window._firebase.getUser(email);
-  if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';return;}
-  DB.users[email]=u;
+  const btn=document.querySelector('#form-login .btn-dark');
+  if(!email||!pw){errEl.textContent='Please enter your email and password.';return;}
+  if(!window._firebase){errEl.textContent='Still connecting — please wait a moment and try again.';return;}
   errEl.textContent='';
-  login(u);
+  if(btn){btn.textContent='Signing in…';btn.disabled=true;}
+  try{
+    const u=await window._firebase.getUser(email);
+    if(!u||u.password!==pw){
+      errEl.textContent='Incorrect email or password.';
+      if(btn){btn.textContent='Continue';btn.disabled=false;}
+      return;
+    }
+    if(u.role==='removed'){
+      errEl.textContent='This account has been removed. Contact your admin.';
+      if(btn){btn.textContent='Continue';btn.disabled=false;}
+      return;
+    }
+    DB.users[email]=u;
+    login(u);
+  }catch(e){
+    errEl.textContent='Connection error — please try again.';
+    if(btn){btn.textContent='Continue';btn.disabled=false;}
+    console.error(e);
+  }
 }
 async function doRegister(){
   const name=document.getElementById('reg-name').value.trim();
@@ -1845,8 +1878,15 @@ async function doRegister(){
   login(userData);
 }
 async function demoLogin(r){
-  const u = await window._firebase.getUser(r+'@demo.com');
-  if(u){ DB.users[u.email]=u; login(u); }
+  if(!window._firebase){showToast('Still loading — please wait a moment.');return;}
+  try{
+    const u=await window._firebase.getUser(r+'@demo.com');
+    if(u){DB.users[u.email]=u;login(u);}
+    else{showToast('Demo account not found — try again in a moment.');}
+  }catch(e){
+    showToast('Connection error — please try again.');
+    console.error(e);
+  }
 }
 function login(u){
   currentUser=u;
