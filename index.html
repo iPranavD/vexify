@@ -1089,6 +1089,11 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px var(--white) inset!important;-webkit-text-fill-color:var(--text)!important;transition:background-color 5000s ease-in-out 0s;}
   body.dark input:-webkit-autofill,body.dark input:-webkit-autofill:hover,body.dark input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 1000px #141414 inset!important;-webkit-text-fill-color:#ededed!important;}
 
+
+
+  #page-teacher.active ~ #nav, #page-admin.active ~ #nav { display:none; }
+  #page-teacher.active { display:flex !important; }
+  #page-admin.active { display:flex !important; }
 </style>
 </head>
 <body>
@@ -1222,6 +1227,110 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 </div>
 
 <!-- DASHBOARD -->
+<div id="page-teacher" class="page" style="padding:0;min-height:100vh;">
+  <div class="t-layout">
+    <div class="t-sidebar">
+      <div class="t-sidebar-header">
+        <span class="t-sidebar-logo">Vexify</span>
+        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+        </button>
+      </div>
+      <div class="t-sidebar-section">
+        <div class="t-sidebar-label">Menu</div>
+        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes</div>
+        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading</div>
+        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons</div>
+        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets</div>
+      </div>
+      <div class="t-sidebar-section">
+        <div class="t-sidebar-label">My Classes</div>
+        <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
+        <div style="padding:.25rem .75rem .5rem;"><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button></div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="padding:.5rem;border-top:1px solid var(--border);">
+        <div class="t-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
+      </div>
+    </div>
+    <div class="t-main">
+      <div class="t-topbar">
+        <div class="t-topbar-title" id="t-topbar-title">Classes</div>
+        <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
+          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
+          <div><div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div><div style="font-size:11px;color:var(--text-3);">Teacher</div></div>
+        </div>
+      </div>
+      <div class="t-content-area">
+        <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
+        <div id="t-panel-class-detail" class="t-panel">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+            <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')">&#8592; Back</button>
+            <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;" id="t-detail-name"></div>
+          </div>
+          <div class="t-inner-tabs">
+            <div class="t-inner-tab active" data-dtab="overview" onclick="tDetailTab('overview')">Overview</div>
+            <div class="t-inner-tab" data-dtab="messages" onclick="tDetailTab('messages')">Messages</div>
+            <div class="t-inner-tab" data-dtab="members" onclick="tDetailTab('members')">Members</div>
+          </div>
+          <div id="t-detail-body"></div>
+        </div>
+        <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
+        <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
+        <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-admin" class="page" style="padding:0;min-height:100vh;">
+  <div class="a-layout">
+    <div class="a-sidebar">
+      <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item active" data-apanel="overview" onclick="aNavTo('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</div>
+      <div class="a-nav-item" data-apanel="users" onclick="aNavTo('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</div>
+      <div class="a-nav-item" data-apanel="teachers" onclick="aNavTo('teachers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M1 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/></svg>Teachers</div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item" data-apanel="settings" onclick="aNavTo('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Site Settings</div>
+      <div style="flex:1"></div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
+    </div>
+    <div class="a-main-area">
+      <div class="a-topbar">
+        <div class="a-topbar-title" id="a-topbar-title">Overview</div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleDark()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg></button>
+      </div>
+      <div class="a-content">
+        <div id="a-panel-overview" class="a-panel a-active">
+          <div class="a-stat-row" id="a-overview-stats"></div>
+          <div class="a-sh"><div class="a-sh-title">All Users</div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th></tr></thead><tbody id="a-overview-tbody"></tbody></table></div>
+        </div>
+        <div id="a-panel-users" class="a-panel">
+          <div class="a-sh"><div class="a-sh-title">All Users</div><div style="display:flex;gap:8px;"><input id="a-user-search" placeholder="Search…" oninput="aFilterUsers()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:150px;"><select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);"><option value="">All</option><option value="student">Student</option><option value="teacher">Teacher</option><option value="removed">Removed</option></select></div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th><th>Actions</th></tr></thead><tbody id="a-users-tbody"></tbody></table></div>
+        </div>
+        <div id="a-panel-teachers" class="a-panel">
+          <div class="a-sh"><div class="a-sh-title">Teacher Invites</div><button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button></div>
+          <div class="a-table-wrap" style="margin-bottom:1.5rem;"><table class="a-table"><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-invites-tbody"></tbody></table></div>
+          <div class="a-sh"><div class="a-sh-title">Active Teachers</div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="a-teachers-tbody"></tbody></table></div>
+        </div>
+        <div id="a-panel-settings" class="a-panel">
+          <div class="a-sh-title" style="margin-bottom:1rem;">Site Settings</div>
+          <div class="settings-group">
+            <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle theme</div></div><button class="btn btn-ghost btn-sm" onclick="toggleDark()">Toggle</button></div>
+            <div class="settings-row"><div><div class="settings-row-label">Admin Account</div><div class="settings-row-sub" id="a-settings-email"></div></div><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign Out</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="page-dashboard" class="page">
   <nav class="app-nav" id="app-nav">
     <div class="app-nav-item active" data-panel="home" onclick="showPanel('home')">
@@ -1318,144 +1427,6 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
     <!-- MANAGE -->
 
 
-<!-- TEACHER PANEL (full-screen overlay, direct body child) -->
-<div id="panel-teacher" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--white);">
-  <div class="t-layout">
-    <div class="t-sidebar">
-      <div class="t-sidebar-header">
-        <span class="t-sidebar-logo">Vexify</span>
-        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-        </button>
-      </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">Menu</div>
-        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes
-        </div>
-        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading
-        </div>
-        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons
-        </div>
-        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets
-        </div>
-      </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">My Classes</div>
-        <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
-        <div style="padding:.25rem .75rem .5rem;">
-          <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button>
-        </div>
-      </div>
-      <div style="flex:1"></div>
-      <div style="padding:.5rem;border-top:1px solid var(--border);">
-        <div class="t-nav-item" onclick="signOut()" style="color:var(--red);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
-        </div>
-      </div>
-    </div>
-    <div class="t-main">
-      <div class="t-topbar">
-        <div class="t-topbar-title" id="t-topbar-title">Classes</div>
-        <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
-          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
-          <div><div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div><div style="font-size:11px;color:var(--text-3);">Teacher</div></div>
-        </div>
-      </div>
-      <div class="t-content-area">
-        <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
-        <div id="t-panel-class-detail" class="t-panel">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
-            <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')">← Back</button>
-            <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;" id="t-detail-name"></div>
-          </div>
-          <div class="t-inner-tabs">
-            <div class="t-inner-tab active" data-dtab="overview" onclick="tDetailTab('overview')">Overview</div>
-            <div class="t-inner-tab" data-dtab="messages" onclick="tDetailTab('messages')">Messages</div>
-            <div class="t-inner-tab" data-dtab="members" onclick="tDetailTab('members')">Members</div>
-          </div>
-          <div id="t-detail-body"></div>
-        </div>
-        <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
-        <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
-        <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN PANEL (full-screen overlay, direct body child) -->
-<div id="panel-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--white);">
-  <div class="a-layout">
-    <div class="a-sidebar">
-      <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item active" data-apanel="overview" onclick="aNavTo('overview')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview
-      </div>
-      <div class="a-nav-item" data-apanel="users" onclick="aNavTo('users')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users
-      </div>
-      <div class="a-nav-item" data-apanel="teachers" onclick="aNavTo('teachers')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M1 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/></svg>Teachers
-      </div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item" data-apanel="settings" onclick="aNavTo('settings')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Site Settings
-      </div>
-      <div style="flex:1"></div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item" onclick="signOut()" style="color:var(--red);">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out
-      </div>
-    </div>
-    <div class="a-main-area">
-      <div class="a-topbar">
-        <div class="a-topbar-title" id="a-topbar-title">Overview</div>
-        <button class="btn btn-ghost btn-sm" onclick="toggleDark()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
-        </button>
-      </div>
-      <div class="a-content">
-        <div id="a-warn" style="display:none;background:#7c3aed11;border:1px solid #7c3aed44;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:#a78bfa;line-height:1.6"><strong>⚠️ Local file mode</strong> — Firestore is disabled. Host on a web server for real data.</div>
-        <div id="a-panel-overview" class="a-panel a-active">
-          <div class="a-stat-row" id="a-overview-stats"></div>
-          <div class="a-sh"><div class="a-sh-title">All Users</div></div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th></tr></thead><tbody id="a-overview-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-users" class="a-panel">
-          <div class="a-sh">
-            <div class="a-sh-title">All Users</div>
-            <div style="display:flex;gap:8px;">
-              <input id="a-user-search" placeholder="Search…" oninput="aFilterUsers()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:150px;">
-              <select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);">
-                <option value="">All roles</option><option value="student">Student</option><option value="teacher">Teacher</option><option value="removed">Removed</option>
-              </select>
-            </div>
-          </div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th><th>Actions</th></tr></thead><tbody id="a-users-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-teachers" class="a-panel">
-          <div class="a-sh"><div class="a-sh-title">Teacher Invites</div><button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button></div>
-          <div class="a-table-wrap" style="margin-bottom:1.5rem;"><table class="a-table"><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-invites-tbody"></tbody></table></div>
-          <div class="a-sh"><div class="a-sh-title">Active Teachers</div></div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="a-teachers-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-settings" class="a-panel">
-          <div class="a-sh-title" style="margin-bottom:1rem;">Site Settings</div>
-          <div class="settings-group">
-            <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle dark/light theme</div></div><button class="btn btn-ghost btn-sm" onclick="toggleDark()">Toggle</button></div>
-            <div class="settings-row"><div><div class="settings-row-label">Admin Account</div><div class="settings-row-sub" id="a-settings-email"></div></div><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign Out</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script>
 // ═══════ STATE ═══════
@@ -1897,6 +1868,9 @@ function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   const pageEl=document.getElementById('page-'+p);
   if(pageEl){pageEl.classList.add('active');pageEl.style.visibility='';}
+  // Hide global nav + app-nav for teacher/admin pages (they have their own sidebar)
+  const nav=document.getElementById('nav');
+  if(nav) nav.style.display=(p==='teacher'||p==='admin')?'none':'';
   if(p==='dashboard')renderDashboard();
 }
 function goHome(){currentUser?showPage('dashboard'):showPage('info');}
@@ -2034,23 +2008,11 @@ function login(u){
     </div>`;
     return;
   }
-  // For teacher/admin, bypass showPage to avoid dashboard nav showing
-  if(u.role==='teacher'||u.role==='admin'){
-    renderDashboard();
-  } else {
-    showPage('dashboard');
-  }
+  showPage('dashboard');
 }
 function signOut(){
   currentUser=null;calClassId=null;msgClassId=null;
   if(window._firebase)window._firebase.stopListening();
-  // Hide full-page panels
-  const tp=document.getElementById('panel-teacher');if(tp)tp.style.display='none';
-  const ap=document.getElementById('panel-admin');if(ap)ap.style.display='none';
-  const appNav=document.getElementById('app-nav');
-  if(appNav)appNav.style.display='';
-  const mainNav=document.getElementById('nav');
-  if(mainNav)mainNav.style.display='';
   // Restore page-dashboard
   const dash=document.getElementById('page-dashboard');
   if(dash){dash.style.visibility='';dash.classList.remove('active');}
@@ -2091,17 +2053,9 @@ function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
 function renderDashboard(){
   const isT=currentUser.role==='teacher';
   const isA=currentUser.role==='admin';
-  const tp=document.getElementById('panel-teacher');
-  const ap=document.getElementById('panel-admin');
 
   if(isT){
-    // Hide ALL pages and the student nav, then show teacher panel
-    document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
-    const appNav=document.getElementById('app-nav');
-    if(appNav)appNav.style.display='none';
-    const mainNav=document.getElementById('nav');
-    if(mainNav)mainNav.style.display='none';
-    if(tp){tp.style.display='flex';}
+    showPage('teacher');
     document.getElementById('t-user-name').textContent=currentUser.name;
     document.getElementById('t-avatar').textContent=initials(currentUser.name);
     tRefreshClassList();
@@ -2109,13 +2063,7 @@ function renderDashboard(){
     return;
   }
   if(isA){
-    // Hide ALL pages and the student nav, then show admin panel
-    document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
-    const appNav=document.getElementById('app-nav');
-    if(appNav)appNav.style.display='none';
-    const mainNav=document.getElementById('nav');
-    if(mainNav)mainNav.style.display='none';
-    if(ap){ap.style.display='flex';}
+    showPage('admin');
     const emailEl=document.getElementById('a-settings-email');
     if(emailEl)emailEl.textContent=currentUser.email;
     const warn=document.getElementById('a-warn');
@@ -2124,7 +2072,7 @@ function renderDashboard(){
     aLoadData();
     return;
   }
-  // Student: use normal dashboard
+  // Student: normal dashboard
   document.getElementById('sidebar-manage').classList.add('hidden');
   document.getElementById('nav-admin').classList.add('hidden');
   _updateNavLockState();
