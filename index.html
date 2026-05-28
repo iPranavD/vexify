@@ -1319,7 +1319,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 
 
 <!-- TEACHER PANEL (full-screen overlay, direct body child) -->
-<div id="panel-teacher" style="display:none;position:fixed;inset:0;z-index:100;background:var(--white);">
+<div id="panel-teacher" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--white);">
   <div class="t-layout">
     <div class="t-sidebar">
       <div class="t-sidebar-header">
@@ -1389,7 +1389,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 </div>
 
 <!-- ADMIN PANEL (full-screen overlay, direct body child) -->
-<div id="panel-admin" style="display:none;position:fixed;inset:0;z-index:100;background:var(--white);">
+<div id="panel-admin" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--white);">
   <div class="a-layout">
     <div class="a-sidebar">
       <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
@@ -1895,7 +1895,8 @@ function toggleDark(){
 
 function showPage(p){
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
+  const pageEl=document.getElementById('page-'+p);
+  if(pageEl){pageEl.classList.add('active');pageEl.style.visibility='';}
   if(p==='dashboard')renderDashboard();
 }
 function goHome(){currentUser?showPage('dashboard'):showPage('info');}
@@ -2033,7 +2034,12 @@ function login(u){
     </div>`;
     return;
   }
-  showPage('dashboard');
+  // For teacher/admin, bypass showPage to avoid dashboard nav showing
+  if(u.role==='teacher'||u.role==='admin'){
+    renderDashboard();
+  } else {
+    showPage('dashboard');
+  }
 }
 function signOut(){
   currentUser=null;calClassId=null;msgClassId=null;
@@ -2041,6 +2047,9 @@ function signOut(){
   // Hide full-page panels
   const tp=document.getElementById('panel-teacher');if(tp)tp.style.display='none';
   const ap=document.getElementById('panel-admin');if(ap)ap.style.display='none';
+  // Restore page-dashboard
+  const dash=document.getElementById('page-dashboard');
+  if(dash){dash.style.visibility='';dash.classList.remove('active');}
   document.getElementById('nav-signin-btn').classList.remove('hidden');
   document.getElementById('nav-user').classList.add('hidden');
   document.getElementById('nav-coins').classList.add('hidden');
@@ -2082,7 +2091,9 @@ function renderDashboard(){
   const ap=document.getElementById('panel-admin');
 
   if(isT){
-    // Show teacher full-page panel
+    // Hide page-dashboard so its nav/content don't overlap
+    document.getElementById('page-dashboard').classList.remove('active');
+    document.getElementById('page-dashboard').style.visibility='hidden';
     if(tp){tp.style.display='flex';}
     document.getElementById('t-user-name').textContent=currentUser.name;
     document.getElementById('t-avatar').textContent=initials(currentUser.name);
@@ -2091,7 +2102,9 @@ function renderDashboard(){
     return;
   }
   if(isA){
-    // Show admin full-page panel
+    // Hide page-dashboard so its nav/content don't overlap
+    document.getElementById('page-dashboard').classList.remove('active');
+    document.getElementById('page-dashboard').style.visibility='hidden';
     if(ap){ap.style.display='flex';}
     const emailEl=document.getElementById('a-settings-email');
     if(emailEl)emailEl.textContent=currentUser.email;
