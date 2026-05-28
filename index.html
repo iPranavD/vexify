@@ -2047,6 +2047,10 @@ function signOut(){
   // Hide full-page panels
   const tp=document.getElementById('panel-teacher');if(tp)tp.style.display='none';
   const ap=document.getElementById('panel-admin');if(ap)ap.style.display='none';
+  const appNav=document.getElementById('app-nav');
+  if(appNav)appNav.style.display='';
+  const mainNav=document.getElementById('nav');
+  if(mainNav)mainNav.style.display='';
   // Restore page-dashboard
   const dash=document.getElementById('page-dashboard');
   if(dash){dash.style.visibility='';dash.classList.remove('active');}
@@ -2091,8 +2095,12 @@ function renderDashboard(){
   const ap=document.getElementById('panel-admin');
 
   if(isT){
-    // Hide ALL pages (including page-auth) then show teacher panel
+    // Hide ALL pages and the student nav, then show teacher panel
     document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
+    const appNav=document.getElementById('app-nav');
+    if(appNav)appNav.style.display='none';
+    const mainNav=document.getElementById('nav');
+    if(mainNav)mainNav.style.display='none';
     if(tp){tp.style.display='flex';}
     document.getElementById('t-user-name').textContent=currentUser.name;
     document.getElementById('t-avatar').textContent=initials(currentUser.name);
@@ -2101,8 +2109,12 @@ function renderDashboard(){
     return;
   }
   if(isA){
-    // Hide ALL pages (including page-auth) then show admin panel
+    // Hide ALL pages and the student nav, then show admin panel
     document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
+    const appNav=document.getElementById('app-nav');
+    if(appNav)appNav.style.display='none';
+    const mainNav=document.getElementById('nav');
+    if(mainNav)mainNav.style.display='none';
     if(ap){ap.style.display='flex';}
     const emailEl=document.getElementById('a-settings-email');
     if(emailEl)emailEl.textContent=currentUser.email;
