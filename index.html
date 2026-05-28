@@ -2091,9 +2091,8 @@ function renderDashboard(){
   const ap=document.getElementById('panel-admin');
 
   if(isT){
-    // Hide page-dashboard so its nav/content don't overlap
-    document.getElementById('page-dashboard').classList.remove('active');
-    document.getElementById('page-dashboard').style.visibility='hidden';
+    // Hide ALL pages (including page-auth) then show teacher panel
+    document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
     if(tp){tp.style.display='flex';}
     document.getElementById('t-user-name').textContent=currentUser.name;
     document.getElementById('t-avatar').textContent=initials(currentUser.name);
@@ -2102,9 +2101,8 @@ function renderDashboard(){
     return;
   }
   if(isA){
-    // Hide page-dashboard so its nav/content don't overlap
-    document.getElementById('page-dashboard').classList.remove('active');
-    document.getElementById('page-dashboard').style.visibility='hidden';
+    // Hide ALL pages (including page-auth) then show admin panel
+    document.querySelectorAll('.page').forEach(el=>{el.classList.remove('active');el.style.visibility='';});
     if(ap){ap.style.display='flex';}
     const emailEl=document.getElementById('a-settings-email');
     if(emailEl)emailEl.textContent=currentUser.email;
