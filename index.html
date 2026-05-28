@@ -1583,18 +1583,30 @@ async function doAdminInvite(){
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
+  if(!_firestoreAvailable){
+    errEl.textContent='Invites require a hosted connection. Open this app via a web server (e.g. VS Code Live Server) for Firestore features to work.';
+    return;
+  }
   errEl.textContent='Sending invite…';
-  const existing=await window._firebase.getUser(email);
-  if(existing && existing.role!=='removed'){errEl.textContent='An active account with this email already exists.';return;}
-  const existing_invite=await window._firebase.getInvite(email);
-  if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
-  await window._firebase.createInvite(email);
-  closeModal('modal-admin-invite');
-  showToast(`Invite sent to ${email}`);
-  renderAdminPanel();
+  try{
+    const existing=await window._firebase.getUser(email);
+    if(existing && existing.role!=='removed'){errEl.textContent='An active account with this email already exists.';return;}
+    const existing_invite=await window._firebase.getInvite(email);
+    if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
+    await window._firebase.createInvite(email);
+    closeModal('modal-admin-invite');
+    showToast('Invite sent to '+email);
+    renderAdminPanel();
+  }catch(e){
+    errEl.textContent='Failed to send invite — make sure the app is hosted on a web server, not opened as a file.';
+    console.error(e);
+  }
 }
 
 async function renderAdminPanel(){
+  // Show file:// warning if Firestore unavailable
+  const warn=document.getElementById('admin-firestore-warn');
+  if(warn) warn.style.display=_firestoreAvailable?'none':'block';
   const allUsers=await window._firebase.getAllUsers();
   const allInvites=await window._firebase.getAllInvites();
   const userList=Object.values(allUsers);
@@ -1813,7 +1825,9 @@ async function doLogin(){
     if(DB.users[email]){
       errEl.textContent='Incorrect email or password.';
     } else {
-      errEl.textContent='Account not found locally. If this is a real account, host the app on a web server to connect to the database.';
+      errEl.textContent=_firestoreAvailable
+        ? 'Incorrect email or password.'
+        : 'Only demo accounts work when opened as a local file. Host this app on a web server to sign in with real accounts.';
     }
     resetBtn();
     console.error(e);
