@@ -1531,11 +1531,18 @@ async function loadDB(){
     // Merge demo users into local cache so login works even if not in Firestore yet
     Object.assign(DB.users, DEMO_USERS);
   } catch(e) {
-    console.warn('Firestore unavailable (file:// origin?), using demo data only:', e.message);
-    _firestoreAvailable = false;
-    // Fall back to demo-only mode
-    DB.users = {...DEMO_USERS};
-    DB.classes = {}; DB.lessons = {}; DB.completedLessons = {}; DB.tickets = [];
+    console.warn('loadDB error:', e.message);
+    // Only mark Firestore unavailable for file:// — on a hosted server it may just
+    // be a permissions issue on startup; individual calls will still work
+    if(window.location.protocol==='file:'){
+      _firestoreAvailable = false;
+    }
+    // Always ensure demo users are available
+    Object.assign(DB.users, DEMO_USERS);
+    if(!DB.classes) DB.classes={};
+    if(!DB.lessons) DB.lessons={};
+    if(!DB.completedLessons) DB.completedLessons={};
+    if(!DB.tickets) DB.tickets=[];
   }
 }
 function saveDB(){}
@@ -1583,10 +1590,7 @@ async function doAdminInvite(){
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
-  if(!_firestoreAvailable){
-    errEl.textContent='Invites require a hosted connection. Open this app via a web server (e.g. VS Code Live Server) for Firestore features to work.';
-    return;
-  }
+  if(!window._firebase){errEl.textContent='Firebase not loaded yet — please wait a moment.';return;}
   errEl.textContent='Sending invite…';
   try{
     const existing=await window._firebase.getUser(email);
@@ -1598,8 +1602,9 @@ async function doAdminInvite(){
     showToast('Invite sent to '+email);
     renderAdminPanel();
   }catch(e){
-    errEl.textContent='Failed to send invite — make sure the app is hosted on a web server, not opened as a file.';
-    console.error(e);
+    console.error('Invite error:',e);
+    const msg = e.message||'Unknown error';
+    errEl.textContent = 'Failed: '+msg;
   }
 }
 
@@ -1821,16 +1826,13 @@ async function doLogin(){
     DB.users[email]=u;
     login(u);
   }catch(e){
-    // Firestore blocked (file:// origin) — check if it was just a wrong password
-    if(DB.users[email]){
-      errEl.textContent='Incorrect email or password.';
+    console.error('Login error:',e);
+    if(window.location.protocol==='file:'){
+      errEl.textContent='Only demo accounts work when opening as a local file. Use a web server for real accounts.';
     } else {
-      errEl.textContent=_firestoreAvailable
-        ? 'Incorrect email or password.'
-        : 'Only demo accounts work when opened as a local file. Host this app on a web server to sign in with real accounts.';
+      errEl.textContent='Could not reach server — check your connection and try again.';
     }
     resetBtn();
-    console.error(e);
   }
 }
 async function doRegister(){
