@@ -14,7 +14,9 @@
     getFirestore, collection, addDoc, onSnapshot, query, orderBy,
     doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, getDocs
   } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged
+  } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
   const firebaseConfig = {
     apiKey:            "AIzaSyDu6Gv1SxGzUn0Xmj1w2Ozc8z9nNHRmIvM",
@@ -27,10 +29,18 @@
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
 
   let activeListener = null;
 
   window._firebase = {
+
+    // ── GOOGLE SIGN IN ──────────────────────────────────────────────────────
+    async signInWithGoogle() {
+      const result = await signInWithPopup(auth, googleProvider);
+      return result.user;
+    },
 
     // ── USERS ──────────────────────────────────────────────────────────────
     async getUser(email) {
@@ -271,6 +281,23 @@ a{cursor:pointer;}
 .btn-pill-lg{border-radius:999px;padding:11px 28px;font-size:14px;font-weight:600;}
 
 /* ── GOOGLE SIGN IN BUTTON ── */
+.btn-google{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:9px 16px;border-radius:var(--r);
+  font-size:13px;font-weight:500;
+  background:#fff;color:#3c4043;
+  border:1px solid #dadce0;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  cursor:pointer;width:100%;justify-content:center;
+  transition:box-shadow .12s,border-color .12s;
+}
+.btn-google:hover{box-shadow:0 2px 8px rgba(0,0,0,.12);border-color:#bbb;}
+.btn-google svg{width:18px;height:18px;flex-shrink:0;}
+.auth-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:1rem 0;color:var(--text-3);font-size:11px;font-weight:500;
+}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
 
 /* ── PAGES ── */
 .page{display:none;min-height:calc(100vh - 56px);}
@@ -697,104 +724,8 @@ body.dark .msg-input{background:#111;color:var(--text);}
 body.dark #page-info{background:#0d0d0d;}
 body.dark .landing-cta{background:#111;}
 body.dark .hero h1{color:#f0f0f0;}
-body.dark
-body.dark
-  /* btn-gold dark */
-  body.dark .btn-gold{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3);}
-  body.dark .btn-gold:hover{background:rgba(251,191,36,.2);}
-  /* modal dark */
-  body.dark .modal{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .modal-overlay{background:rgba(0,0,0,.7);}
-  body.dark .modal-close{background:#252525;border-color:#2d2d2d;color:#888;}
-  body.dark .modal-close:hover{background:#333;}
-  body.dark .modal-title{color:#ededed;}
-  body.dark .modal-footer{border-top-color:#2d2d2d;}
-  /* card / stat dark */
-  body.dark .card{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .stat-card{background:#1c1c1c;border-right-color:#2d2d2d;}
-  body.dark .stat-cards{border-color:#2d2d2d;}
-  /* inputs dark */
-  body.dark .field input,body.dark .field select,
-  body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{
-    background:#141414 !important;color:#ededed !important;border-color:#333 !important;}
-  body.dark .form-group input:focus,body.dark .form-group select:focus,body.dark .form-group textarea:focus{border-color:#888 !important;}
-  body.dark select option{background:#1c1c1c;color:#ededed;}
-  /* tab rows dark */
-  body.dark .tab-row{border-bottom-color:#2d2d2d;}
-  body.dark .tab-btn{color:#666;}
-  body.dark .tab-btn.active{color:#ededed;border-bottom-color:#ededed;}
-  /* app-nav dark */
-  body.dark .app-nav{background:rgba(15,15,15,.95);border-bottom-color:#2d2d2d;}
-  body.dark .app-nav-item{color:#666;}
-  body.dark .app-nav-item:hover{color:#ededed;}
-  body.dark .app-nav-item.active{color:#ededed;border-bottom-color:#ededed;}
-  /* class cards dark */
-  body.dark .class-card{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .class-card:hover{border-color:#444;}
-  /* shop dark */
-  body.dark .shop-item{background:#1c1c1c;}
-  body.dark .shop-item:hover{background:#242424;}
-  /* ticket dark */
-  body.dark .ticket-card{background:#1c1c1c;border-color:#2d2d2d;}
-  /* unit/lesson dark */
-  body.dark .unit-block{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .unit-header:hover{background:#222;}
-  body.dark .lesson-row:hover{background:#222;}
-  body.dark .lesson-content-panel{background:#181818;}
-  body.dark .track-summary{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .track-tab.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
-  /* messages dark */
-  body.dark .msg-area{background:#141414;border-color:#2d2d2d;}
-  body.dark .msg-bubble{background:#252525;border-color:#2d2d2d;}
-  body.dark .msg-input{background:#141414;border-color:#2d2d2d;color:#ededed;}
-  body.dark .msg-row.own .msg-bubble{background:#333;border-color:#444;}
-  /* landing dark */
-  body.dark #page-info,body.dark #page-features,body.dark #page-pricing,body.dark #page-cart{background:#0d0d0d;}
-  body.dark .feat-card{background:#1a1a1a;border-color:#2d2d2d;}
-  body.dark .feat-card:hover{background:#222;}
-  body.dark .feat-title{color:#ededed;}
-  body.dark .feat-desc{color:#555;}
-  body.dark .hero h1{color:#ededed;}
-  body.dark .hero-sub{color:#555;}
-  body.dark .landing-cta{background:#0d0d0d;border-top-color:#2d2d2d;}
-  /* auth dark */
-  body.dark .auth-card{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .auth-tabs{background:#141414;border-color:#2d2d2d;}
-  body.dark .auth-tab-btn{color:#666;}
-  body.dark .auth-tab-btn.active{background:#252525;color:#ededed;}
-  body.dark .auth-wordmark,body.dark .auth-title{color:#ededed;}
-  body.dark .auth-sub,body.dark .demo-links{color:#555;}
-  body.dark
-  body.dark .demo-links a{color:#aaa;}
-  body.dark .auth-footer a{color:#aaa;}
-  body.dark .auth-err{color:#f87171;}
-  /* teacher page dark */
-  body.dark #page-teacher.active{background:#0d0d0d;}
-  body.dark .t-nav{background:rgba(10,10,10,.95);border-bottom-color:#2d2d2d;}
-  body.dark .t-content{background:#0d0d0d;}
-  body.dark .t-class-card{background:#1a1a1a;border-color:#2d2d2d;}
-  body.dark .t-class-card:hover{border-color:#444;}
-  /* admin page dark */
-  body.dark .a-sidebar{background:#141414;border-right-color:#2d2d2d;}
-  body.dark .a-main{background:#0d0d0d;}
-  body.dark .a-card{background:#1a1a1a;border-color:#2d2d2d;}
-  body.dark .a-nav-item:hover,body.dark .a-nav-item.active{background:#1e1e1e;}
-  body.dark .a-table-wrap{border-color:#2d2d2d;}
-  body.dark .a-table th{background:#1a1a1a;border-bottom-color:#2d2d2d;color:#666;}
-  body.dark .a-table td{border-bottom-color:#2d2d2d;}
-  body.dark .a-table tbody tr:hover td{background:#1e1e1e;}
-  body.dark .pricing-card{background:#1a1a1a;border-color:#2d2d2d;}
-  /* member row dark */
-  body.dark .member-row{border-bottom-color:#2d2d2d;}
-  body.dark .member-name{color:#ededed;}
-  body.dark .member-email{color:#666;}
-  /* nav coins dark */
-  body.dark .nav-coins{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);}
-  /* progress dark */
-  body.dark .progress-bar-bg{background:#2d2d2d;}
-  /* empty state dark */
-  body.dark .empty-icon{background:#1c1c1c;border-color:#2d2d2d;}
-  body.dark .empty-title{color:#ededed;}
+body.dark .btn-google{background:#2a2a2a;color:#e0e0e0;border-color:#3a3a3a;}
+body.dark .btn-google:hover{background:#333;border-color:#555;}
 
 /* ── SMOOTH ANIMATIONS ── */
 :root{
@@ -891,73 +822,155 @@ body.dark
 .lesson-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .unit-header{transition:background-color var(--dur-fast) var(--ease-out) !important;}
 .member-row{transition:background-color var(--dur-fast) var(--ease-out) !important;}
-
-  /* Fix browser autofill blue background in dark mode */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus{
+  input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{
     -webkit-box-shadow:0 0 0 1000px var(--white) inset !important;
-    -webkit-text-fill-color:var(--text) !important;
-    transition:background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color:var(--text) !important;transition:background-color 5000s ease-in-out 0s;
   }
-  body.dark input:-webkit-autofill,
-  body.dark input:-webkit-autofill:hover,
-  body.dark input:-webkit-autofill:focus{
+  body.dark input:-webkit-autofill,body.dark input:-webkit-autofill:hover,body.dark input:-webkit-autofill:focus{
     -webkit-box-shadow:0 0 0 1000px #141414 inset !important;
     -webkit-text-fill-color:#ededed !important;
   }
 
   /* Full-page lesson overlay */
-  .lesson-page-overlay{
-    position:fixed;inset:0;z-index:200;
-    background:var(--white);
-    display:flex;flex-direction:column;
-    animation:fadeIn .15s ease;
-  }
+  .lesson-page-overlay{position:fixed;inset:0;z-index:200;background:var(--white);display:flex;flex-direction:column;animation:fadeIn .15s ease;}
   body.dark .lesson-page-overlay{background:#0d0d0d;}
-  .lesson-page-header{
-    display:flex;align-items:center;gap:12px;
-    padding:14px 20px;
-    border-bottom:1px solid var(--border);
-    background:var(--white);
-    position:sticky;top:0;z-index:10;
-  }
+  .lesson-page-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10;}
   body.dark .lesson-page-header{background:#141414;border-bottom-color:#2d2d2d;}
-  .lesson-page-back{
-    display:flex;align-items:center;gap:6px;
-    font-size:13px;font-weight:500;color:var(--text-2);
-    background:none;border:none;cursor:pointer;padding:6px 10px;
-    border-radius:var(--r);transition:background .15s;
-  }
+  .lesson-page-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-2);background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:var(--r);transition:background .15s;}
   .lesson-page-back:hover{background:var(--bg);}
   body.dark .lesson-page-back{color:#888;}
-  body.dark .lesson-page-back:hover{background:#1e1e1e;}
   .lesson-page-title{font-size:15px;font-weight:700;flex:1;}
   .lesson-page-coins{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#d97706;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:20px;padding:4px 10px;}
-  .lesson-page-body{
-    flex:1;overflow-y:auto;
-    max-width:720px;width:100%;
-    margin:0 auto;
-    padding:2rem 1.5rem 4rem;
-  }
-  .lesson-page-complete{
-    position:sticky;bottom:0;
-    background:var(--white);
-    border-top:1px solid var(--border);
-    padding:14px 20px;
-    display:flex;justify-content:flex-end;gap:10px;
-  }
+  .lesson-page-body{flex:1;overflow-y:auto;max-width:720px;width:100%;margin:0 auto;padding:2rem 1.5rem 4rem;}
+  .lesson-page-complete{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:14px 20px;display:flex;justify-content:flex-end;gap:10px;}
   body.dark .lesson-page-complete{background:#141414;border-top-color:#2d2d2d;}
-  .lc-intro{font-size:15px;color:var(--text-2);line-height:1.9;margin-bottom:1.5rem;}
-  .lc-section{margin-bottom:1.5rem;}
-  .lc-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:.75rem;}
-  .lc-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;}
-  .lc-list li{font-size:14px;color:var(--text-2);line-height:1.7;padding:.6rem .9rem;background:var(--bg);border-radius:var(--r);border-left:3px solid var(--accent);}
-  body.dark .lc-list li{background:#1a1a1a;}
-  .lc-tip{font-size:13px;color:var(--text-2);line-height:1.7;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:var(--r);padding:.9rem 1rem;margin-top:1.5rem;}
-  .lc-code{margin-top:1.5rem;}
-  .lc-code-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:.5rem;}
-  .lc-code pre{background:#1a1a1a;color:#e2e8f0;padding:1.125rem;border-radius:var(--r);font-size:12.5px;line-height:1.7;overflow-x:auto;white-space:pre-wrap;}
+
+  /* TEACHER SIDEBAR LAYOUT */
+  #page-teacher{padding:0!important;background:var(--bg);}
+  .t-layout{display:flex;height:100vh;overflow:hidden;}
+  .t-sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+  body.dark .t-sidebar{background:#111;border-right-color:#2d2d2d;}
+  .t-sidebar-header{padding:1.125rem 1rem .875rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+  body.dark .t-sidebar-header{border-bottom-color:#2d2d2d;}
+  .t-sidebar-logo{font-size:15px;font-weight:800;letter-spacing:-.04em;}
+  .t-sidebar-section{padding:.5rem 0;}
+  .t-sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-3);padding:.5rem 1rem .25rem;}
+  .t-nav-item{display:flex;align-items:center;gap:9px;padding:.5rem 1rem;margin:1px .5rem;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s,color .12s;}
+  .t-nav-item:hover{background:var(--bg);color:var(--text);}
+  .t-nav-item.active{background:var(--accent);color:#fff;}
+  body.dark .t-nav-item.active{background:#f0f0f0;color:#000;}
+  .t-nav-item svg{width:14px;height:14px;flex-shrink:0;}
+  .t-class-btn{display:flex;align-items:center;gap:8px;padding:.4rem 1rem;margin:1px .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s;border:none;background:none;width:100%;text-align:left;}
+  .t-class-btn:hover{background:var(--bg);}
+  .t-class-btn.active{background:var(--bg);color:var(--text);font-weight:600;}
+  .t-class-dot{width:6px;height:6px;border-radius:50%;background:#ddd;flex-shrink:0;}
+  body.dark .t-class-dot{background:#333;}
+  .t-class-btn.active .t-class-dot{background:var(--accent);}
+  .t-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
+  body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
+  .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
+  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+  .t-panel{display:none;}.t-panel.t-active{display:block;}
+  .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
+  body.dark .t-inner-tabs{background:#1a1a1a;}
+  .t-inner-tab{flex:1;text-align:center;padding:.45rem .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s;}
+  .t-inner-tab.active{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+  body.dark .t-inner-tab.active{background:#252525;color:#ededed;}
+
+  /* ADMIN SIDEBAR LAYOUT */
+  #page-admin-full{padding:0!important;}
+  .a-layout{display:flex;height:100vh;overflow:hidden;}
+  .a-sidebar{width:215px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:.5rem 0;}
+  body.dark .a-sidebar{background:#111;border-right-color:#2d2d2d;}
+  .a-sidebar-logo{padding:.75rem 1rem 1rem;font-size:15px;font-weight:800;letter-spacing:-.04em;display:flex;align-items:center;gap:8px;}
+  .a-sidebar-badge{font-size:9px;font-weight:700;background:#7c3aed;color:#fff;border-radius:4px;padding:1px 6px;letter-spacing:.5px;text-transform:uppercase;}
+  .a-nav-item{display:flex;align-items:center;gap:9px;padding:.5rem 1rem;margin:1px .5rem;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s,color .12s;}
+  .a-nav-item:hover{background:var(--bg);color:var(--text);}
+  .a-nav-item.active{background:var(--bg);color:var(--text);font-weight:600;}
+  body.dark .a-nav-item.active{background:#1e1e1e;}
+  .a-nav-item svg{width:14px;height:14px;flex-shrink:0;}
+  .a-nav-divider{height:1px;background:var(--border);margin:.5rem .75rem;}
+  body.dark .a-nav-divider{background:#2d2d2d;}
+  .a-main-area{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+  .a-topbar{display:flex;align-items:center;gap:12px;padding:0 1.5rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
+  body.dark .a-topbar{background:#111;border-bottom-color:#2d2d2d;}
+  .a-topbar-title{font-size:15px;font-weight:700;flex:1;}
+  .a-content{flex:1;overflow-y:auto;padding:1.5rem;}
+  .a-panel{display:none;}.a-panel.a-active{display:block;}
+  .a-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+  .a-stat-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.125rem;}
+  body.dark .a-stat-box{background:#1c1c1c;border-color:#2d2d2d;}
+  .a-stat-val{font-size:1.5rem;font-weight:800;letter-spacing:-.04em;margin-bottom:2px;}
+  .a-stat-lbl{font-size:11px;color:var(--text-3);}
+  .a-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1.5rem;}
+  body.dark .a-table-wrap{background:#1c1c1c;border-color:#2d2d2d;}
+  .a-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .a-table th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);background:var(--bg);border-bottom:1px solid var(--border);}
+  body.dark .a-table th{background:#161616;border-bottom-color:#2d2d2d;}
+  .a-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+  body.dark .a-table td{border-bottom-color:#222;}
+  .a-table tbody tr:hover td{background:var(--bg);}
+  body.dark .a-table tbody tr:hover td{background:#1e1e1e;}
+  .a-table tbody tr:last-child td{border-bottom:none;}
+  .a-sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;}
+  .a-sh-title{font-size:14px;font-weight:700;}
+  .settings-group{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;}
+  body.dark .settings-group{background:#1c1c1c;border-color:#2d2d2d;}
+  .settings-row{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.125rem;border-bottom:1px solid var(--border);}
+  body.dark .settings-row{border-bottom-color:#2d2d2d;}
+  .settings-row:last-child{border-bottom:none;}
+  .settings-row-label{font-size:13px;font-weight:500;}
+  .settings-row-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+
+  /* Dark mode comprehensive rules */
+  body.dark .btn-gold{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.3);}
+  body.dark .btn-gold:hover{background:rgba(251,191,36,.2);}
+  body.dark .modal{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .modal-overlay{background:rgba(0,0,0,.7);}
+  body.dark .modal-close{background:#252525;border-color:#2d2d2d;color:#888;}
+  body.dark .modal-title{color:#ededed;}
+  body.dark .modal-footer{border-top-color:#2d2d2d;}
+  body.dark .card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .stat-card{background:#1c1c1c;border-right-color:#2d2d2d;}
+  body.dark .stat-cards{border-color:#2d2d2d;}
+  body.dark .field input,body.dark .field select,body.dark .form-group input,body.dark .form-group select,body.dark .form-group textarea{background:#141414!important;color:#ededed!important;border-color:#333!important;}
+  body.dark select option{background:#1c1c1c;color:#ededed;}
+  body.dark .tab-row{border-bottom-color:#2d2d2d;}
+  body.dark .tab-btn{color:#666;}
+  body.dark .tab-btn.active{color:#ededed;border-bottom-color:#ededed;}
+  body.dark .app-nav{background:rgba(15,15,15,.95);border-bottom-color:#2d2d2d;}
+  body.dark .app-nav-item{color:#666;}
+  body.dark .app-nav-item.active{color:#ededed;border-bottom-color:#ededed;}
+  body.dark .class-card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .class-card:hover{border-color:#444;}
+  body.dark .shop-item{background:#1c1c1c;}
+  body.dark .ticket-card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .unit-block{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .unit-header:hover{background:#222;}
+  body.dark .lesson-row:hover{background:#222;}
+  body.dark .lesson-content-panel{background:#181818;}
+  body.dark .track-tab.active{background:#f0f0f0;color:#000;}
+  body.dark .msg-area{background:#141414;border-color:#2d2d2d;}
+  body.dark .msg-bubble{background:#252525;border-color:#2d2d2d;}
+  body.dark .msg-input{background:#141414;border-color:#2d2d2d;color:#ededed;}
+  body.dark .msg-row.own .msg-bubble{background:#333;border-color:#444;}
+  body.dark .auth-card{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .auth-tabs{background:#141414;border-color:#2d2d2d;}
+  body.dark .auth-tab-btn{color:#666;}
+  body.dark .auth-tab-btn.active{background:#252525;color:#ededed;}
+  body.dark .auth-wordmark,body.dark .auth-title{color:#ededed;}
+  body.dark .auth-sub{color:#555;}
+  body.dark .auth-divider{color:#444;}
+  body.dark .demo-links a{color:#aaa;}
+  body.dark .member-row{border-bottom-color:#2d2d2d;}
+  body.dark .member-name{color:#ededed;}
+  body.dark .member-email{color:#666;}
+  body.dark .nav-coins{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);}
+  body.dark .progress-bar-bg{background:#2d2d2d;}
+  body.dark .empty-icon{background:#1c1c1c;border-color:#2d2d2d;}
+  body.dark .empty-title{color:#ededed;}
+  body.dark .pricing-card{background:#1a1a1a;border-color:#2d2d2d;}
 
 </style>
 </head>
@@ -1065,6 +1078,7 @@ body.dark
     <div class="auth-title" id="auth-heading">Welcome back</div>
     <div class="auth-sub" id="auth-subhead">Sign in to your account to continue</div>
 
+    <!-- Google Sign In -->
 
     <div class="auth-tabs">
       <button class="auth-tab-btn active" id="tab-login" onclick="authSwitch('login')">Sign in</button>
@@ -1185,200 +1199,165 @@ body.dark
       <div id="shop-body"></div>
     </div>
     <!-- MANAGE -->
-    <div id="panel-manage" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Manage Classes</div><div class="panel-sub">Create classes and manage rosters</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>
-      </div>
-      <div id="manage-body"></div>
-    </div>
-    <!-- TEACHER SHOP MANAGER -->
-    <div id="panel-teacher-shop" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Shop Manager</div><div class="panel-sub">Add custom reward items students can buy with VCoins</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddShopItemModal()">+ Add Item</button>
-      </div>
-      <div id="teacher-shop-body"></div>
-    </div>
-    <!-- TEACHER LESSON BUILDER -->
-    <div id="panel-teacher-lessons" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Lesson Builder</div><div class="panel-sub">Create custom lessons that appear in the student Lessons tab</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddCustomLessonModal()">+ New Lesson</button>
-      </div>
-      <div id="teacher-lessons-body"></div>
-    </div>
-    <!-- ADMIN PANEL -->
-    <div id="panel-admin" class="panel hidden">
-      <div class="panel-header">
-        <div><div class="panel-title">Admin Dashboard</div><div class="panel-sub">Manage teacher invites and all platform users</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
-        <div class="card" id="admin-stats-users"></div>
-        <div class="card" id="admin-stats-invites"></div>
-      </div>
-      <div class="card" style="margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-          <div style="font-size:13px;font-weight:600;">Teacher Invites</div>
-          <button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button>
+    <div id="panel-teacher" class="panel hidden" style="position:fixed;inset:0;z-index:50;background:var(--white);">
+      <div class="t-layout">
+        <div class="t-sidebar">
+          <div class="t-sidebar-header">
+            <span class="t-sidebar-logo">Vexify</span>
+            <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;" title="Toggle dark mode">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+            </button>
+          </div>
+          <div class="t-sidebar-section">
+            <div class="t-sidebar-label">Menu</div>
+            <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+              Classes
+            </div>
+            <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Grading
+            </div>
+            <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Lessons
+            </div>
+            <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Help Tickets
+            </div>
+          </div>
+          <div class="t-sidebar-section">
+            <div class="t-sidebar-label">My Classes</div>
+            <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
+            <div style="padding:.25rem .75rem .5rem;">
+              <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button>
+            </div>
+          </div>
+          <div style="flex:1"></div>
+          <div style="padding:.5rem;border-top:1px solid var(--border);">
+            <div class="t-nav-item" onclick="signOut()" style="color:var(--red)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Sign Out
+            </div>
+          </div>
         </div>
-        <div id="admin-invites-body"></div>
+        <div class="t-main">
+          <div class="t-topbar">
+            <div class="t-topbar-title" id="t-topbar-title">Classes</div>
+            <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
+            <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
+              <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
+              <div style="font-size:12px;"><div style="font-weight:600;" id="t-user-name">Teacher</div><div style="color:var(--text-3);font-size:11px;">Teacher</div></div>
+            </div>
+          </div>
+          <div class="t-content-area">
+            <!-- Classes list -->
+            <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
+            <!-- Class detail with inner tabs -->
+            <div id="t-panel-class-detail" class="t-panel">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+                <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')" style="padding:4px 10px;">← Back</button>
+                <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;" id="t-detail-name"></div>
+              </div>
+              <div class="t-inner-tabs">
+                <div class="t-inner-tab active" data-dtab="overview" onclick="tDetailTab('overview')">Overview</div>
+                <div class="t-inner-tab" data-dtab="messages" onclick="tDetailTab('messages')">Messages</div>
+                <div class="t-inner-tab" data-dtab="members" onclick="tDetailTab('members')">Members</div>
+              </div>
+              <div id="t-detail-body"></div>
+            </div>
+            <!-- Grading -->
+            <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
+            <!-- Lessons (calendar) -->
+            <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
+            <!-- Tickets -->
+            <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
+          </div>
+        </div>
       </div>
-      <div class="card">
-        <div style="font-size:13px;font-weight:600;margin-bottom:1rem;">All Users</div>
-        <div id="admin-users-body"></div>
+    </div>
+    <div id="panel-admin" class="panel hidden" style="position:fixed;inset:0;z-index:50;background:var(--white);">
+      <div class="a-layout">
+        <div class="a-sidebar">
+          <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
+          <div class="a-nav-divider"></div>
+          <div class="a-nav-item active" data-apanel="overview" onclick="aNavTo('overview')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Overview
+          </div>
+          <div class="a-nav-item" data-apanel="users" onclick="aNavTo('users')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Users
+          </div>
+          <div class="a-nav-item" data-apanel="teachers" onclick="aNavTo('teachers')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M1 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Teachers
+          </div>
+          <div class="a-nav-divider"></div>
+          <div class="a-nav-item" data-apanel="settings" onclick="aNavTo('settings')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            Site Settings
+          </div>
+          <div style="flex:1"></div>
+          <div class="a-nav-divider"></div>
+          <div class="a-nav-item" onclick="signOut()" style="color:var(--red)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Sign Out
+          </div>
+        </div>
+        <div class="a-main-area">
+          <div class="a-topbar">
+            <div class="a-topbar-title" id="a-topbar-title">Overview</div>
+            <button class="btn btn-ghost btn-sm" onclick="toggleDark()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+            </button>
+          </div>
+          <div class="a-content">
+            <div id="a-warn" style="display:none;background:#7c3aed11;border:1px solid #7c3aed44;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:12px;color:#a78bfa;line-height:1.6"><strong>⚠️ Local file mode</strong> — Firestore is disabled. Host on a web server to enable real data.</div>
+
+            <!-- Overview -->
+            <div id="a-panel-overview" class="a-panel a-active">
+              <div class="a-stat-row" id="a-overview-stats"></div>
+              <div class="a-sh"><div class="a-sh-title">All Users</div></div>
+              <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th></tr></thead><tbody id="a-overview-tbody"></tbody></table></div>
+            </div>
+
+            <!-- Users -->
+            <div id="a-panel-users" class="a-panel">
+              <div class="a-sh">
+                <div class="a-sh-title">All Users</div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <input id="a-user-search" placeholder="Search…" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:150px;" oninput="aFilterUsers()">
+                  <select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);">
+                    <option value="">All roles</option><option value="student">Student</option><option value="teacher">Teacher</option><option value="removed">Removed</option>
+                  </select>
+                </div>
+              </div>
+              <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th><th>Actions</th></tr></thead><tbody id="a-users-tbody"></tbody></table></div>
+            </div>
+
+            <!-- Teachers -->
+            <div id="a-panel-teachers" class="a-panel">
+              <div class="a-sh"><div class="a-sh-title">Teacher Invites</div><button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button></div>
+              <div class="a-table-wrap" style="margin-bottom:1.5rem;"><table class="a-table"><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-invites-tbody"></tbody></table></div>
+              <div class="a-sh"><div class="a-sh-title">Active Teachers</div></div>
+              <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="a-teachers-tbody"></tbody></table></div>
+            </div>
+
+            <!-- Settings -->
+            <div id="a-panel-settings" class="a-panel">
+              <div class="a-sh-title" style="margin-bottom:1rem;">Site Settings</div>
+              <div class="settings-group">
+                <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle dark/light theme</div></div><button class="btn btn-ghost btn-sm" onclick="toggleDark()">Toggle</button></div>
+                <div class="settings-row"><div><div class="settings-row-label">Admin Account</div><div class="settings-row-sub" id="a-settings-email"></div></div><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign Out</button></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- Join with Code Modal -->
-<div class="modal-overlay hidden" id="modal-join-code">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">Join a Class</div>
-      <button class="modal-close" onclick="closeModal('modal-join-code')">✕</button>
-    </div>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:1rem;line-height:1.6;">Enter the 7-character code your teacher shared with you.</p>
-    <div class="form-group">
-      <label>Class Code</label>
-      <input type="text" id="join-code-input" placeholder="e.g. AB3XY7K" maxlength="7"
-        style="text-transform:uppercase;font-size:18px;font-weight:700;letter-spacing:.15em;text-align:center;"
-        oninput="this.value=this.value.toUpperCase()">
-    </div>
-    <div class="auth-err" id="join-code-err"></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-join-code')">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="doJoinWithCode()">Join Class</button>
-    </div>
-  </div>
-</div>
-<!-- Admin: Invite Teacher -->
-<div class="modal-overlay hidden" id="modal-admin-invite">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Invite a Teacher</div><button class="modal-close" onclick="closeModal('modal-admin-invite')">✕</button></div>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:1rem;line-height:1.6">Enter the teacher's email. They'll be able to register with that email address — teachers cannot sign up without a valid invite.</p>
-    <div class="form-group"><label>Teacher Email</label><input type="email" id="invite-email" placeholder="teacher@school.com"></div>
-    <div class="auth-err" id="invite-err"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-admin-invite')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAdminInvite()">Send Invite</button></div>
-  </div>
-</div>
-<!-- Teacher: Add Shop Item -->
-<div class="modal-overlay hidden" id="modal-add-shop-item">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add Shop Item</div><button class="modal-close" onclick="closeModal('modal-add-shop-item')">✕</button></div>
-    <div class="form-group"><label>Item Name</label><input type="text" id="si-name" placeholder="e.g. Extra Homework Pass"></div>
-    <div class="form-group"><label>Description</label><input type="text" id="si-desc" placeholder="What does this reward give the student?"></div>
-    <div class="form-group"><label>Icon (single emoji)</label><input type="text" id="si-icon" placeholder="🎁" maxlength="4" style="width:80px;text-align:center;font-size:20px;"></div>
-    <div class="form-group"><label>Price (VCoins)</label><input type="number" id="si-price" placeholder="50" min="1" max="9999"></div>
-    <div class="auth-err" id="si-err"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-shop-item')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAddShopItem()">Add to Shop</button></div>
-  </div>
-</div>
-<!-- Teacher: Add Custom Lesson -->
-<div class="modal-overlay hidden" id="modal-add-custom-lesson">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title" id="cl-modal-title">New Lesson</div><button class="modal-close" onclick="closeModal('modal-add-custom-lesson')">✕</button></div>
-    <div class="form-group"><label>Lesson Title</label><input type="text" id="cl-title" placeholder="e.g. Competition Scouting Strategy"></div>
-    <div class="form-group"><label>Track</label>
-      <select id="cl-track">
-        <option value="foundations">Foundations</option>
-        <option value="cad">Design & CAD</option>
-        <option value="programming">Programming</option>
-        <option value="custom">Custom Track</option>
-      </select>
-    </div>
-    <div class="form-group"><label>Short Description</label><input type="text" id="cl-desc" placeholder="One-line summary shown in the lesson list"></div>
-    <div class="form-group"><label>Lesson Content</label><textarea id="cl-content" placeholder="Write the full lesson content here. Students will read this before marking complete." style="min-height:140px;"></textarea></div>
-    <div class="form-group"><label>VCoins Reward</label><input type="number" id="cl-coins" value="15" min="1" max="500"></div>
-    <div class="auth-err" id="cl-err"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-custom-lesson')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doSaveCustomLesson()">Save Lesson</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-create-class">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Create New Class</div><button class="modal-close" onclick="closeModal('modal-create-class')">✕</button></div>
-    <div class="form-group"><label>Class Name</label><input type="text" id="cc-name" placeholder="e.g. VEX IQ Beginners"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Season</label><input type="text" id="cc-season" placeholder="e.g. 2024-25"></div>
-      <div class="form-group"><label>Room / Location</label><input type="text" id="cc-room" placeholder="e.g. Room 204"></div>
-    </div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-create-class')">Cancel</button><button class="btn btn-primary btn-sm" onclick="createClass()">Create Class</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-rename-class">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Rename Class</div><button class="modal-close" onclick="closeModal('modal-rename-class')">✕</button></div>
-    <div class="form-group"><label>New Class Name</label><input type="text" id="rename-class-input" placeholder="Class name"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-rename-class')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doRenameClass()">Save</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-add-member">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Add Member to Class</div><button class="modal-close" onclick="closeModal('modal-add-member')">✕</button></div>
-    <div class="form-group"><label>Email address</label><input type="email" id="as-email" placeholder="member@email.com"></div>
-    <div style="color:var(--red);font-size:13px;font-weight:500;min-height:18px;margin-bottom:8px" id="as-err"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-add-member')">Cancel</button><button class="btn btn-primary btn-sm" onclick="addMember()">Add Member</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-lesson">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title" id="lesson-modal-title">Add Lesson</div><button class="modal-close" onclick="closeModal('modal-lesson')">✕</button></div>
-    <div class="form-group"><label>Date</label><input type="date" id="lesson-date"></div>
-    <div class="form-group"><label>Topic / Title</label><input type="text" id="lesson-title" placeholder="e.g. Introduction to Sensors"></div>
-    <div class="form-group"><label>Description</label><textarea id="lesson-desc" placeholder="What will be covered?"></textarea></div>
-    <div class="form-group"><label>VCoin Reward</label><input type="number" id="lesson-coins" min="0" max="100" value="10" placeholder="Coins awarded on completion"></div>
-    <div style="color:var(--red);font-size:13px;font-weight:500;min-height:18px;margin-bottom:8px" id="lesson-err"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-lesson')">Cancel</button><button class="btn btn-primary btn-sm" onclick="saveLesson()">Save Lesson</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-ticket">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">New Help Ticket</div><button class="modal-close" onclick="closeModal('modal-ticket')">✕</button></div>
-    <div class="form-group"><label>Class</label><select id="ticket-class" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
-    <div class="form-group"><label>Subject</label><input type="text" id="ticket-title" placeholder="Brief description"></div>
-    <div class="form-group"><label>Priority</label><select id="ticket-priority" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
-    <div class="form-group"><label>Details</label><textarea id="ticket-desc" placeholder="Describe your problem..."></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-ticket')">Cancel</button><button class="btn btn-primary btn-sm" onclick="submitTicket()">Submit Ticket</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-give-coins">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Give VCoins</div><button class="modal-close" onclick="closeModal('modal-give-coins')">✕</button></div>
-    <div class="form-group"><label>Student</label><select id="gc-student" style="padding:10px 14px;border:1.5px solid var(--border2);border-radius:10px;width:100%;font-size:14px;background:#fff;color:var(--text)"></select></div>
-    <div class="form-group"><label>Amount of VCoins</label><input type="number" id="gc-amount" min="1" max="999" value="10" placeholder="How many coins?"></div>
-    <div class="form-group"><label>Reason (optional)</label><input type="text" id="gc-reason" placeholder="e.g. Great work today!"></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-give-coins')">Cancel</button><button class="btn btn-gold btn-sm" onclick="doGiveCoins()">Give Coins</button></div>
-  </div>
-</div>
-<div class="modal-overlay hidden" id="modal-edit-msg">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">Edit Message</div><button class="modal-close" onclick="closeModal('modal-edit-msg')">✕</button></div>
-    <div class="form-group"><label>Message</label><textarea id="edit-msg-input" style="min-height:80px"></textarea></div>
-    <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-edit-msg')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doEditMsg()">Save</button></div>
-  </div>
-</div>
-
-<!-- Google Role Selection Modal -->
-<div class="modal-overlay hidden" id="modal-google-role">
-  <div class="modal">
-    <div class="modal-header"><div class="modal-title">One more thing</div></div>
-    <p style="font-size:13px;color:var(--text-3);margin-bottom:1.25rem;line-height:1.6">Welcome! How will you be using Vexify?</p>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('student')">
-        <span style="font-size:20px">🎓</span>
-        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Student</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I'm here to learn and complete lessons</div></div>
-      </button>
-      <button class="btn btn-ghost" style="justify-content:flex-start;gap:12px;padding:14px 16px;" onclick="completeGoogleSignIn('teacher')">
-        <span style="font-size:20px">👩‍🏫</span>
-        <div style="text-align:left"><div style="font-weight:600;font-size:13px">Teacher / Coach</div><div style="font-size:11px;color:var(--text-3);margin-top:2px">I manage classes and students</div></div>
-      </button>
-    </div>
-    <p style="font-size:11px;color:var(--text-3);margin-top:1rem;line-height:1.5">Teachers require an admin invite to register. If you're a teacher without an invite, select Student and contact your admin.</p>
-  </div>
-</div>
-
-<script>
+    <script>
 // ═══════ STATE ═══════
 let DB={users:{},classes:{},messages:{},tickets:[],lessons:{},completedLessons:{},purchases:{}};
 let currentUser=null,calClassId=null,msgClassId=null;
@@ -1529,54 +1508,20 @@ function toggleUnit(unitId){
 }
 
 function toggleLesson(lessonId){
-  // Find this lesson's data from CURRICULUM
-  let lessonData=null, trackKey=null;
-  for(const [tk,track] of Object.entries(CURRICULUM)){
-    for(const unit of track.units){
-      const l=unit.lessons.find(x=>x.id===lessonId);
-      if(l){lessonData=l;trackKey=tk;break;}
-    }
-    if(lessonData) break;
+  const panel=document.getElementById('lcontent-'+lessonId);
+  const chev=document.getElementById('lchev-'+lessonId);
+  if(!panel) return;
+  const opening=panel.style.display==='none';
+  if(openLesson&&openLesson!==lessonId){
+    const prev=document.getElementById('lcontent-'+openLesson);
+    const prevC=document.getElementById('lchev-'+openLesson);
+    if(prev) prev.style.display='none';
+    if(prevC) prevC.classList.remove('open');
   }
-  if(!lessonData) return;
-  openLessonPage(lessonData);
-}
-
-function openLessonPage(lesson){
-  // Remove any existing overlay
-  document.getElementById('lesson-page-overlay')?.remove();
-  const isDone=!!DB.completedLessons['cl_'+lesson.id];
-  const overlay=document.createElement('div');
-  overlay.className='lesson-page-overlay';
-  overlay.id='lesson-page-overlay';
-  overlay.innerHTML=`
-    <div class="lesson-page-header">
-      <button class="lesson-page-back" id="lesson-page-back-btn">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
-        Back
-      </button>
-      <div class="lesson-page-title">${lesson.title}</div>
-      <div class="lesson-page-coins">🪙 ${lesson.coins} VCoins</div>
-    </div>
-    <div class="lesson-page-body">${lesson.content}</div>
-    <div class="lesson-page-complete">
-      ${isDone
-        ? '<span style="font-size:13px;color:var(--green);font-weight:600">✓ Completed</span>'
-        : `<button class="btn btn-primary btn-pill" id="lesson-complete-btn" style="min-width:160px">Mark Complete (+${lesson.coins} VC)</button>`
-      }
-    </div>`;
-  document.body.appendChild(overlay);
-  document.getElementById('lesson-page-back-btn').addEventListener('click',()=>{
-    overlay.remove();
-    openLesson=null;
-  });
-  if(!isDone){
-    document.getElementById('lesson-complete-btn')?.addEventListener('click',()=>{
-      completeCurriculumLesson(lesson.id, lesson.coins, null);
-      overlay.remove();
-    });
-  }
-  openLesson=lesson.id;
+  panel.style.display=opening?'':'none';
+  if(chev) chev.classList.toggle('open',opening);
+  openLesson=opening?lessonId:null;
+  if(opening) setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
 }
 
 async function completeCurriculumLesson(lessonId,coins,event){
@@ -1594,42 +1539,33 @@ async function completeCurriculumLesson(lessonId,coins,event){
   switchTrack(activeTrack);
 }
 
-// Hardcoded demo accounts that work offline / file:// without Firestore
-const DEMO_USERS = {
-  'teacher@demo.com': {name:'Demo Teacher',email:'teacher@demo.com',password:'demo',role:'teacher',coins:0,inventory:[]},
-  'student@demo.com': {name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]},
-  'admin@vexify.com': {name:'Vexify Admin',email:'admin@vexify.com',password:'vexify-admin-2024',role:'admin',coins:0,inventory:[]}
+const DEMO_USERS={
+  'teacher@demo.com':{name:'Demo Teacher',email:'teacher@demo.com',password:'demo',role:'teacher',coins:0,inventory:[]},
+  'student@demo.com':{name:'Alex Kim',email:'student@demo.com',password:'demo',role:'student',coins:50,inventory:[]},
+  'admin@vexify.com':{name:'Vexify Admin',email:'admin@vexify.com',password:'vexify-admin-2024',role:'admin',coins:0,inventory:[]}
 };
-let _firestoreAvailable = false;
-// Pre-seed demo accounts immediately — works even if Firebase never loads
-Object.assign(DB.users, DEMO_USERS);
-
+let _firestoreAvailable=false;
+Object.assign(DB.users,DEMO_USERS);
 async function loadDB(){
   if(!window._firebase) return;
-  try {
-    DB.users     = await window._firebase.getAllUsers();
-    DB.classes   = await window._firebase.getAllClasses();
-    DB.lessons   = await window._firebase.getAllLessons();
-    DB.completedLessons = await window._firebase.getAllCompleted();
-    DB.tickets   = await window._firebase.getAllTickets();
+  try{
+    DB.users=await window._firebase.getAllUsers();
+    DB.classes=await window._firebase.getAllClasses();
+    DB.lessons=await window._firebase.getAllLessons();
+    DB.completedLessons=await window._firebase.getAllCompleted();
+    DB.tickets=await window._firebase.getAllTickets();
     Object.values(DB.users).forEach(u=>{if(u.coins===undefined)u.coins=0;if(!u.inventory)u.inventory=[];});
     if(!DB.purchases)DB.purchases={};
-    _firestoreAvailable = true;
-    // Merge demo users into local cache so login works even if not in Firestore yet
-    Object.assign(DB.users, DEMO_USERS);
-  } catch(e) {
-    console.warn('loadDB error:', e.message);
-    // Only mark Firestore unavailable for file:// — on a hosted server it may just
-    // be a permissions issue on startup; individual calls will still work
-    if(window.location.protocol==='file:'){
-      _firestoreAvailable = false;
-    }
-    // Always ensure demo users are available
-    Object.assign(DB.users, DEMO_USERS);
-    if(!DB.classes) DB.classes={};
-    if(!DB.lessons) DB.lessons={};
-    if(!DB.completedLessons) DB.completedLessons={};
-    if(!DB.tickets) DB.tickets=[];
+    _firestoreAvailable=true;
+    Object.assign(DB.users,DEMO_USERS);
+  }catch(e){
+    console.warn('loadDB error:',e.message);
+    if(window.location.protocol==='file:') _firestoreAvailable=false;
+    Object.assign(DB.users,DEMO_USERS);
+    if(!DB.classes)DB.classes={};
+    if(!DB.lessons)DB.lessons={};
+    if(!DB.completedLessons)DB.completedLessons={};
+    if(!DB.tickets)DB.tickets=[];
   }
 }
 function saveDB(){}
@@ -1642,6 +1578,32 @@ if(window._firebaseReady){ boot(); }
 else { document.addEventListener('firebase-ready', boot); }
 
 // ═══════ GOOGLE SIGN IN ═══════
+async function doGoogleSignIn(){
+  try {
+    const firebaseUser = await window._firebase.signInWithGoogle();
+    const email = firebaseUser.email.toLowerCase();
+    // Check if user already exists in our DB
+    const existing = await window._firebase.getUser(email);
+    if(existing && existing.role && existing.role !== 'removed') {
+      DB.users[email] = existing;
+      login(existing);
+      return;
+    }
+    // New Google user — need to pick a role
+    _pendingGoogleUser = {
+      email,
+      name: firebaseUser.displayName || email.split('@')[0],
+      photoURL: firebaseUser.photoURL || null
+    };
+    openModal('modal-google-role');
+  } catch(e) {
+    if(e.code !== 'auth/popup-closed-by-user') {
+      showToast('Google sign-in failed. Try again.');
+      console.error(e);
+    }
+  }
+}
+
 async function completeGoogleSignIn(role){
   if(!_pendingGoogleUser) return;
   closeModal('modal-google-role');
@@ -1677,28 +1639,24 @@ async function doAdminInvite(){
   const email=document.getElementById('invite-email').value.trim().toLowerCase();
   const errEl=document.getElementById('invite-err');
   if(!email||!email.includes('@')){errEl.textContent='Please enter a valid email.';return;}
-  if(!window._firebase){errEl.textContent='Firebase not loaded yet — please wait a moment.';return;}
+  if(!window._firebase){errEl.textContent='Firebase not loaded yet.';return;}
   errEl.textContent='Sending invite…';
   try{
     const existing=await window._firebase.getUser(email);
-    if(existing && existing.role!=='removed'){errEl.textContent='An active account with this email already exists.';return;}
+    if(existing&&existing.role!=='removed'){errEl.textContent='An active account already exists for this email.';return;}
     const existing_invite=await window._firebase.getInvite(email);
-    if(existing_invite&&!existing_invite.used){errEl.textContent='An invite has already been sent to this email.';return;}
+    if(existing_invite&&!existing_invite.used){errEl.textContent='An invite was already sent to this email.';return;}
     await window._firebase.createInvite(email);
     closeModal('modal-admin-invite');
     showToast('Invite sent to '+email);
-    renderAdminPanel();
+    aRenderTeachers();
   }catch(e){
-    console.error('Invite error:',e);
-    const msg = e.message||'Unknown error';
-    errEl.textContent = 'Failed: '+msg;
+    errEl.textContent='Error: '+(e.message||'Could not send invite.');
+    console.error(e);
   }
 }
 
 async function renderAdminPanel(){
-  // Show file:// warning if Firestore unavailable
-  const warn=document.getElementById('admin-firestore-warn');
-  if(warn) warn.style.display=_firestoreAvailable?'none':'block';
   const allUsers=await window._firebase.getAllUsers();
   const allInvites=await window._firebase.getAllInvites();
   const userList=Object.values(allUsers);
@@ -1747,25 +1705,17 @@ async function renderAdminPanel(){
   if(!displayUsers.length){
     usersBody.innerHTML=`<div style="font-size:12px;color:var(--text-3)">No users yet.</div>`;
   } else {
-    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber',removed:'badge-red'};
-    const roleLabels={teacher:'Teacher',student:'Student',teacher_pending:'Pending',removed:'Removed'};
+    const roleColors={teacher:'badge-indigo',student:'badge-gray',teacher_pending:'badge-amber'};
     usersBody.innerHTML=displayUsers.map(u=>`
-      <div class="member-row" style="${u.role==='removed'?'opacity:.55':''}">
+      <div class="member-row">
         <div class="avatar">${initials(u.name)}</div>
         <div class="member-info">
           <div class="member-name">${esc(u.name)}</div>
           <div class="member-email">${u.email}</div>
         </div>
-        <span class="badge ${roleColors[u.role]||'badge-gray'}">${roleLabels[u.role]||u.role}</span>
+        <span class="badge ${roleColors[u.role]||'badge-gray'}">${u.role==='teacher_pending'?'Pending':u.role}</span>
         ${u.role==='teacher_pending'?`<button class="btn btn-primary btn-xs" onclick="adminApproveTeacher('${u.email}')">Approve</button>`:''}
-        ${u.role!=='removed'?`
-          <select onchange="adminChangeRole('${u.email}',this.value);this.value=''" style="font-size:11px;padding:3px 8px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;height:26px;">
-            <option value="">Change role…</option>
-            <option value="student">→ Student</option>
-            <option value="teacher">→ Teacher</option>
-          </select>
-          <button class="btn btn-ghost btn-xs" onclick="openAdminResetPassword('${u.email}')" style="margin-right:4px">Reset PW</button><button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
-        `:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}
+        <button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>
       </div>`).join('');
   }
 }
@@ -1785,58 +1735,57 @@ async function adminRevokeInvite(email){
 
 
 async function openAdminResetPassword(email){
-  document.getElementById('reset-pw-email-label').textContent = email;
-  document.getElementById('reset-pw-input').value = '';
-  document.getElementById('reset-pw-err').textContent = '';
-  document.getElementById('reset-pw-input').dataset.email = email;
+  document.getElementById('reset-pw-email-label').textContent=email;
+  document.getElementById('reset-pw-input').value='';
+  document.getElementById('reset-pw-err').textContent='';
+  document.getElementById('reset-pw-input').dataset.email=email;
   openModal('modal-admin-reset');
 }
-
 async function doAdminResetPassword(){
-  const input = document.getElementById('reset-pw-input');
-  const errEl = document.getElementById('reset-pw-err');
-  const email = input.dataset.email;
-  const pw = input.value.trim();
-  if(!pw || pw.length < 4){ errEl.textContent = 'Password must be at least 4 characters.'; return; }
-  errEl.textContent = 'Saving…';
+  const input=document.getElementById('reset-pw-input');
+  const errEl=document.getElementById('reset-pw-err');
+  const email=input.dataset.email;
+  const pw=input.value.trim();
+  if(!pw||pw.length<4){errEl.textContent='Password must be at least 4 characters.';return;}
+  errEl.textContent='Saving…';
   try{
-    await window._firebase.updateUser(email, {password: pw});
-    if(DB.users[email]) DB.users[email].password = pw;
-    closeModal('modal-admin-reset');
-    showToast('Password updated for '+email);
-  }catch(e){
-    errEl.textContent = 'Error: '+(e.message||'Could not update password.');
-    console.error(e);
-  }
+    await window._firebase.updateUser(email,{password:pw});
+    if(DB.users[email])DB.users[email].password=pw;
+    closeModal('modal-admin-reset');showToast('Password updated for '+email);
+  }catch(e){errEl.textContent='Error: '+(e.message||'Could not update.');console.error(e);}
 }
-
 async function adminDeleteUser(email){
-  if(!confirm(`Remove ${email} from Vexify? They will be marked as removed and can be re-invited later.`)) return;
+  if(!confirm(`Remove ${email}? They will be marked removed and can be re-invited later.`)) return;
   await window._firebase.updateUser(email,{role:'removed'});
   if(DB.users[email]) DB.users[email].role='removed';
-  showToast('User removed — you can re-invite them as a teacher anytime.');
-  renderAdminPanel();
+  showToast('User removed.');
+  await aRenderUsers();
 }
-
 async function adminRestoreUser(email){
   await window._firebase.updateUser(email,{role:'student'});
   if(DB.users[email]) DB.users[email].role='student';
-  showToast(`${email} restored as student`);
-  renderAdminPanel();
+  showToast(email+' restored as student');
+  aRenderUsers();
 }
-
-async function adminChangeRole(email, newRole){
+async function adminChangeRole(email,newRole){
   if(!newRole) return;
   await window._firebase.updateUser(email,{role:newRole});
   if(DB.users[email]) DB.users[email].role=newRole;
-  showToast(`${email} is now a ${newRole}`);
-  renderAdminPanel();
+  showToast(email+' is now a '+newRole);
+  aRenderUsers();
 }
 
 function copyInviteLink(email){
   const msg=`You've been invited to Vexify as a teacher! Sign up at this site and register with your email address: ${email}`;
   navigator.clipboard.writeText(msg).then(()=>showToast('Invite message copied!')).catch(()=>prompt('Copy this invite:',msg));
 }
+
+
+// Legacy stubs (functionality moved to new teacher/admin panels)
+function renderManage(){}
+function renderSidebarClasses(){}
+function renderAdminPanel(){}
+function aRenderUsers_legacy(){}
 
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
@@ -1876,6 +1825,8 @@ function _noClassHTML(){
 }
 
 function showPanel(p){
+  // Teachers and admins have their own full-page layout, skip standard panel routing
+  if(currentUser&&(currentUser.role==='teacher'||currentUser.role==='admin')) return;
   document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('active'));
   document.querySelector(`.app-nav-item[data-panel="${p}"]`)?.classList.add('active');
   document.querySelectorAll('.main-content > .panel').forEach(el=>el.classList.add('hidden'));
@@ -1920,32 +1871,21 @@ async function doLogin(){
   if(!email||!pw){errEl.textContent='Please enter your email and password.';return;}
   errEl.textContent='';
   if(btn){btn.textContent='Signing in…';btn.disabled=true;}
-
   function resetBtn(){if(btn){btn.textContent='Continue';btn.disabled=false;}}
-
-  // 1. Check local cache first (always populated, even in offline/file:// mode)
-  let u = DB.users[email];
-  if(u && u.password===pw){
+  let u=DB.users[email];
+  if(u&&u.password===pw){
     if(u.role==='removed'){errEl.textContent='This account has been removed.';resetBtn();return;}
-    login(u);
-    return;
+    login(u);return;
   }
-
-  // 2. If not in local cache, try Firestore
-  if(!window._firebase){errEl.textContent='Still connecting — please wait a moment.';resetBtn();return;}
+  if(!window._firebase){errEl.textContent='Still connecting — please wait.';resetBtn();return;}
   try{
-    u = await window._firebase.getUser(email);
+    u=await window._firebase.getUser(email);
     if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';resetBtn();return;}
-    if(u.role==='removed'){errEl.textContent='This account has been removed. Contact your admin.';resetBtn();return;}
-    DB.users[email]=u;
-    login(u);
+    if(u.role==='removed'){errEl.textContent='This account has been removed.';resetBtn();return;}
+    DB.users[email]=u;login(u);
   }catch(e){
     console.error('Login error:',e);
-    if(window.location.protocol==='file:'){
-      errEl.textContent='Only demo accounts work when opening as a local file. Use a web server for real accounts.';
-    } else {
-      errEl.textContent='Could not reach server — check your connection and try again.';
-    }
+    errEl.textContent=window.location.protocol==='file:'?'Only demo accounts work as a local file.':'Could not reach server — check your connection.';
     resetBtn();
   }
 }
@@ -1977,20 +1917,12 @@ async function doRegister(){
   login(userData);
 }
 async function demoLogin(r){
-  const email = r+'@demo.com';
-  // Always available from local cache — works even without Firestore
-  const u = DB.users[email] || DEMO_USERS[email];
-  if(u){ DB.users[email]=u; login(u); return; }
-  // Fallback: try Firestore
-  if(!window._firebase){showToast('Demo account not available offline.');return;}
-  try{
-    const fu=await window._firebase.getUser(email);
-    if(fu){DB.users[fu.email]=fu;login(fu);}
-    else{showToast('Demo account not found.');}
-  }catch(e){
-    showToast('Cannot reach server — demo account unavailable.');
-    console.error(e);
-  }
+  const email=r+'@demo.com';
+  const u=DB.users[email]||DEMO_USERS[email];
+  if(u){DB.users[email]=u;login(u);return;}
+  if(!window._firebase){showToast('Demo account unavailable offline.');return;}
+  try{const fu=await window._firebase.getUser(email);if(fu){DB.users[fu.email]=fu;login(fu);}else{showToast('Demo account not found.');}}
+  catch(e){showToast('Cannot reach server.');}
 }
 function login(u){
   currentUser=u;
@@ -2011,12 +1943,31 @@ function login(u){
     return;
   }
   showPage('dashboard');
+  // Hide top app-nav for teacher/admin - they use sidebar
+  const appNav=document.getElementById('app-nav');
+  if(appNav){
+    if(currentUser.role==='teacher'||currentUser.role==='admin'){
+      appNav.style.display='none';
+    } else {
+      appNav.style.display='';
+    }
+  }
 }
 function signOut(){
   currentUser=null;calClassId=null;msgClassId=null;
+  if(window._firebase)window._firebase.stopListening();
+  // Hide teacher/admin panels
+  const tp=document.getElementById('panel-teacher');
+  if(tp){tp.classList.add('hidden');tp.style.display='';}
+  const ap=document.getElementById('panel-admin');
+  if(ap){ap.classList.add('hidden');ap.style.display='';}
+  // Restore dashboard visibility
+  const dash=document.getElementById('page-dashboard');
+  if(dash)dash.style.display='';
   document.getElementById('nav-signin-btn').classList.remove('hidden');
   document.getElementById('nav-user').classList.add('hidden');
   document.getElementById('nav-coins').classList.add('hidden');
+  const an=document.getElementById('app-nav');if(an)an.style.display='';
   showPage('info');
 }
 function updateCoinDisplay(){
@@ -2051,10 +2002,273 @@ function doSaveCustomLesson(){closeModal('modal-add-custom-lesson');}
 function renderDashboard(){
   const isT=currentUser.role==='teacher';
   const isA=currentUser.role==='admin';
-  document.getElementById('sidebar-manage').classList.toggle('hidden',!isT);
-  document.getElementById('nav-admin').classList.toggle('hidden',!isA);
+  const isS=currentUser.role==='student'||currentUser.role==='personal';
+
+  // Show/hide nav items for students only
+  document.querySelectorAll('.app-nav-item').forEach(el=>el.classList.remove('hidden'));
+  // Hide teacher/admin specific nav items from students
+  const manageNav=document.getElementById('sidebar-manage');
+  const adminNav=document.getElementById('nav-admin');
+  if(manageNav) manageNav.classList.add('hidden');
+  if(adminNav) adminNav.classList.add('hidden');
+
+  if(isT){
+    // Show teacher full-page panel, hide student dashboard
+    document.getElementById('page-dashboard').style.display='none';
+    const tp=document.getElementById('panel-teacher');
+    tp.classList.remove('hidden');
+    tp.style.display='';
+    // Populate teacher UI
+    document.getElementById('t-user-name').textContent=currentUser.name;
+    document.getElementById('t-avatar').textContent=initials(currentUser.name);
+    tRefreshClassList();
+    tNavTo('classes');
+    return;
+  }
+  if(isA){
+    // Show admin full-page panel, hide student dashboard
+    document.getElementById('page-dashboard').style.display='none';
+    const ap=document.getElementById('panel-admin');
+    ap.classList.remove('hidden');
+    ap.style.display='';
+    document.getElementById('a-settings-email').textContent=currentUser.email;
+    const warn=document.getElementById('a-warn');
+    if(warn) warn.style.display=window.location.protocol==='file:'?'block':'none';
+    aNavTo('overview');
+    aLoadData();
+    return;
+  }
+  // Student: show normal dashboard
+  document.getElementById('page-dashboard').style.display='';
   _updateNavLockState();
   renderHome();
+}
+
+// ── TEACHER JS ────────────────────────────────────────────────────────
+let tActiveClassId=null;
+
+function tRefreshClassList(){
+  const classes=getMyClasses();
+  const listEl=document.getElementById('t-class-list');
+  if(!listEl)return;
+  if(!classes.length){
+    listEl.innerHTML='<div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div>';
+    return;
+  }
+  listEl.innerHTML=classes.map(([id,c])=>`
+    <button class="t-class-btn${tActiveClassId===id?' active':''}" onclick="tOpenClass('${id}')">
+      <span class="t-class-dot"></span>${c.name}
+    </button>`).join('');
+}
+
+function tNavTo(panel){
+  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.tpanel===panel));
+  document.querySelectorAll('.t-panel').forEach(el=>el.classList.remove('t-active'));
+  // Map nav items to panels
+  const panelMap={classes:'classes',grading:'grading',lessons:'lessons',tickets:'tickets'};
+  const targetId='t-panel-'+(panelMap[panel]||panel);
+  const el=document.getElementById(targetId);
+  if(el) el.classList.add('t-active');
+  // Update topbar
+  const titles={classes:'Classes',grading:'Grading',lessons:'Lessons',tickets:'Help Tickets'};
+  document.getElementById('t-topbar-title').textContent=titles[panel]||panel;
+  const actionsEl=document.getElementById('t-topbar-actions');
+  actionsEl.innerHTML='';
+  if(panel==='classes'){
+    actionsEl.innerHTML='<button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>';
+  }
+  // Render content
+  if(panel==='classes') tRenderClasses();
+  if(panel==='grading') tRenderGrading();
+  if(panel==='lessons') tRenderLessons();
+  if(panel==='tickets') tRenderTickets();
+  tActiveClassId=null;
+  tRefreshClassList();
+}
+
+function tOpenClass(classId){
+  tActiveClassId=classId;
+  tRefreshClassList();
+  document.querySelectorAll('.t-nav-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.t-panel').forEach(el=>el.classList.remove('t-active'));
+  document.getElementById('t-panel-class-detail').classList.add('t-active');
+  const c=DB.classes[classId];
+  document.getElementById('t-detail-name').textContent=c?.name||'Class';
+  document.getElementById('t-topbar-title').textContent=c?.name||'Class';
+  const actionsEl=document.getElementById('t-topbar-actions');
+  actionsEl.innerHTML='<button class="btn btn-ghost btn-sm" onclick="tNavTo(\'classes\')">← All Classes</button>';
+  tDetailTab('overview');
+}
+
+function tDetailTab(tab){
+  document.querySelectorAll('.t-inner-tab').forEach(el=>el.classList.toggle('active',el.dataset.dtab===tab));
+  const body=document.getElementById('t-detail-body');
+  if(!body||!tActiveClassId)return;
+  const c=DB.classes[tActiveClassId];
+  const members=c?.members||[];
+  const students=members.map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+  const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(tActiveClassId+'_'));
+  if(tab==='overview'){
+    const memberRows=students.length
+      ?students.map(u=>`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`).join('')
+      :'<div style="font-size:12px;color:var(--text-3)">No students yet.</div>';
+    body.innerHTML=`<div class="stat-cards" style="margin-bottom:1.25rem"><div class="stat-card"><div class="stat-val">${students.length}</div><div class="stat-lbl2">Students</div></div><div class="stat-card"><div class="stat-val">${allLessons.length}</div><div class="stat-lbl2">Lessons</div></div><div class="stat-card"><div class="stat-val">${c?.code||'—'}</div><div class="stat-lbl2">Join Code</div></div></div><div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClassId}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClassId}')">Give Coins</button><button class="btn btn-ghost btn-sm" onclick="copyClassCode('${c?.code||''}')">Copy Join Code</button></div><div class="card">${memberRows}</div>`;
+  } else if(tab==='messages'){
+    msgClassId=tActiveClassId;
+    if(window._firebase)window._firebase.stopListening();
+    body.innerHTML='<div class="card"><div class="msg-area" id="msg-list" style="height:380px"><div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">Loading…</div></div><div class="msg-input-bar"><input class="msg-input" id="msg-input" placeholder="Type a message…"><button class="btn btn-primary btn-sm btn-pill" style="padding:10px 20px" onclick="sendMsg()">Send</button></div></div>';
+    document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
+    if(window._firebase){window._firebase.listenMessages(tActiveClassId,msgs=>{_liveMessages=msgs;_renderMsgList(msgs);});}
+  } else if(tab==='members'){
+    const code=c?.code||'—';
+    const rows=members.length
+      ?members.map(email=>{const u=DB.users[email];return u?`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)} <span class="badge badge-gray" style="font-size:10px">${u.role}</span></div><div class="member-email">${email}</div></div>${u.role==='student'?`<span class="badge badge-gold" style="margin-right:4px">${u.coins||0} VC</span>`:''}<button class="btn btn-danger btn-sm" onclick="removeMember('${tActiveClassId}','${email}')">Remove</button></div>`:''}).join('')
+      :'<div style="font-size:12px;color:var(--text-3)">No members yet.</div>';
+    body.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClassId}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClassId}')">Give Coins</button><div style="display:flex;align-items:center;gap:6px;margin-left:auto"><span style="font-size:11px;color:var(--text-3)">Join code:</span><span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.12em;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:2px 9px">${code}</span><button class="btn btn-xs btn-ghost" onclick="copyClassCode('${code}')">Copy</button></div></div><div class="card">${rows}</div>`;
+  }
+}
+
+function tRenderClasses(){
+  const classes=getMyClasses();
+  const body=document.getElementById('t-classes-body');if(!body)return;
+  if(!classes.length){
+    body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div><div class="empty-desc">Create your first class to get started.</div></div>';
+    return;
+  }
+  body.innerHTML=classes.map(([id,c])=>{
+    const students=(c.members||[]).filter(e=>DB.users[e]?.role==='student').length;
+    const lessons=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
+    return`<div class="card" style="cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;gap:12px;padding:1rem 1.125rem;" onclick="tOpenClass('${id}')">
+      <div class="avatar" style="width:40px;height:40px;font-size:14px;flex-shrink:0;">${initials(c.name)}</div>
+      <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;margin-bottom:2px;">${esc(c.name)}</div><div style="font-size:12px;color:var(--text-3);">${c.season||''}${c.room?' · '+c.room:''}</div></div>
+      <span class="badge badge-gray" style="margin-right:4px;">${students} student${students!==1?'s':''}</span>
+      <span class="badge badge-gray" style="margin-right:8px;">${lessons} lesson${lessons!==1?'s':''}</span>
+      <span style="color:var(--text-3);font-size:18px;">›</span>
+    </div>`;
+  }).join('');
+}
+
+function tRenderGrading(){
+  const classes=getMyClasses();
+  const body=document.getElementById('t-grading-body');if(!body)return;
+  if(!classes.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div></div>';return;}
+  body.innerHTML=classes.map(([cid,c])=>{
+    const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+    const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));
+    return`<div class="card" style="margin-bottom:1rem;"><div style="font-size:15px;font-weight:700;margin-bottom:1rem;">${c.name}</div>
+      ${students.length?students.map(u=>{
+        const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+        const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
+        return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${u.name}</span><span style="font-size:12px;color:var(--text-3)">${done}/${allLessons.length} · ${pct}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`;
+      }).join(''):'<div style="font-size:13px;color:var(--text-3)">No students yet.</div>'}
+    </div>`;
+  }).join('');
+}
+
+function tRenderLessons(){
+  const classes=getMyClasses();
+  const body=document.getElementById('t-lessons-body');if(!body)return;
+  if(!classes.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div></div>';return;}
+  // Collect all lessons across all classes
+  const allLessons=[];
+  classes.forEach(([cid,c])=>{
+    Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_')).forEach(([k,l])=>{
+      allLessons.push({...l,classId:cid,className:c.name,key:k});
+    });
+  });
+  allLessons.sort((a,b)=>a.date.localeCompare(b.date));
+  if(!allLessons.length){
+    body.innerHTML='<div class="empty-state"><div class="empty-title">No lessons yet</div><div class="empty-desc">Open a class and go to Calendar to add lessons.</div></div>';
+    return;
+  }
+  body.innerHTML='<div class="a-table-wrap"><table class="a-table"><thead><tr><th>Date</th><th>Title</th><th>Class</th><th>Coins</th><th>Actions</th></tr></thead><tbody>'+
+    allLessons.map(l=>`<tr><td>${fmtDate(l.date)}</td><td style="font-weight:500">${esc(l.title)}</td><td>${esc(l.className)}</td><td>${l.coins||10}</td><td><button class="btn btn-danger btn-xs" onclick="calClassId='${l.classId}';deleteLesson('${l.date}');tRenderLessons();">Delete</button></td></tr>`).join('')+
+    '</tbody></table></div>';
+}
+
+function tRenderTickets(){
+  const body=document.getElementById('t-tickets-body');if(!body)return;
+  const myIds=getMyClasses().map(([id])=>id);
+  const tickets=DB.tickets.filter(t=>myIds.includes(t.classId));
+  if(!tickets.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No tickets</div><div class="empty-desc">Student help requests will appear here.</div></div>';return;}
+  const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};
+  const sc={open:'badge-orange',resolved:'badge-green'};
+  body.innerHTML=[...tickets].reverse().map(t=>`<div class="ticket-card"><div style="display:flex;flex-direction:column;gap:6px;min-width:80px"><span class="badge ${pc[t.priority]||'badge-blue'}">${t.priority}</span><span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span></div><div class="ticket-body"><div class="ticket-title">${esc(t.title)}</div><div class="ticket-desc">${esc(t.desc)}</div><div class="ticket-meta"><span>${esc(t.userName)}</span><span>${DB.classes[t.classId]?.name||''}</span><span>${t.date}</span></div></div>${(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" style="white-space:nowrap;align-self:center" onclick="resolveTicket('${t._id}');tRenderTickets();">✓ Resolve</button>`:''}</div>`).join('');
+}
+
+// ── ADMIN JS ────────────────────────────────────────────────────────
+let _aAllUsers=[];
+
+function aNavTo(panel){
+  document.querySelectorAll('.a-nav-item[data-apanel]').forEach(el=>el.classList.toggle('active',el.dataset.apanel===panel));
+  document.querySelectorAll('.a-panel').forEach(el=>el.classList.remove('a-active'));
+  const el=document.getElementById('a-panel-'+panel);
+  if(el)el.classList.add('a-active');
+  const titles={overview:'Overview',users:'Users',teachers:'Teachers',settings:'Site Settings'};
+  document.getElementById('a-topbar-title').textContent=titles[panel]||panel;
+  if(panel==='users')aRenderUsers();
+  if(panel==='teachers')aRenderTeachers();
+  if(panel==='overview')aRenderOverview();
+}
+
+async function aLoadData(){
+  if(!window._firebase)return;
+  try{
+    const allUsers=await window._firebase.getAllUsers();
+    _aAllUsers=Object.values(allUsers);
+    aRenderOverview();
+  }catch(e){console.warn('Admin load error:',e.message);}
+}
+
+function aRenderOverview(){
+  const users=_aAllUsers.filter(u=>u.role!=='admin');
+  const teachers=users.filter(u=>u.role==='teacher');
+  const students=users.filter(u=>u.role==='student');
+  const removed=users.filter(u=>u.role==='removed');
+  const statsEl=document.getElementById('a-overview-stats');
+  if(statsEl) statsEl.innerHTML=`<div class="a-stat-box"><div class="a-stat-val">${users.length-removed.length}</div><div class="a-stat-lbl">Active Users</div></div><div class="a-stat-box"><div class="a-stat-val">${teachers.length}</div><div class="a-stat-lbl">Teachers</div></div><div class="a-stat-box"><div class="a-stat-val">${students.length}</div><div class="a-stat-lbl">Students</div></div><div class="a-stat-box"><div class="a-stat-val">${Object.keys(DB.classes).length}</div><div class="a-stat-lbl">Classes</div></div>`;
+  const tbody=document.getElementById('a-overview-tbody');
+  if(tbody) tbody.innerHTML=users.slice(0,10).map(u=>`<tr><td style="font-weight:500">${esc(u.name)}</td><td style="color:var(--text-3);font-size:12px">${u.email}</td><td><span class="badge ${u.role==='teacher'?'badge-indigo':u.role==='removed'?'badge-red':'badge-gray'}">${u.role}</span></td><td>${u.coins||0}</td></tr>`).join('');
+}
+
+async function aRenderUsers(){
+  if(!_aAllUsers.length&&window._firebase){
+    try{const d=await window._firebase.getAllUsers();_aAllUsers=Object.values(d);}catch(e){}
+  }
+  aFilterUsers();
+}
+
+function aFilterUsers(){
+  const search=(document.getElementById('a-user-search')?.value||'').toLowerCase();
+  const role=document.getElementById('a-user-role-filter')?.value||'';
+  const tbody=document.getElementById('a-users-tbody');if(!tbody)return;
+  const roleColors={teacher:'badge-indigo',student:'badge-gray',removed:'badge-red',personal:'badge-green'};
+  const filtered=_aAllUsers.filter(u=>u.role!=='admin'&&(!role||u.role===role)&&(!search||u.name.toLowerCase().includes(search)||u.email.toLowerCase().includes(search)));
+  tbody.innerHTML=filtered.length
+    ?filtered.map(u=>`<tr style="${u.role==='removed'?'opacity:.5':''}"><td style="font-weight:500">${esc(u.name)}</td><td style="font-size:12px;color:var(--text-3)">${u.email}</td><td><span class="badge ${roleColors[u.role]||'badge-gray'}">${u.role}</span></td><td>${u.coins||0}</td><td style="display:flex;gap:6px;flex-wrap:wrap;">${u.role!=='removed'?`<select onchange="adminChangeRole('${u.email}',this.value);this.value=''" style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--r);background:var(--white);color:var(--text);cursor:pointer;"><option value="">Role…</option><option value="student">Student</option><option value="teacher">Teacher</option></select><button class="btn btn-ghost btn-xs" onclick="openAdminResetPassword('${u.email}')">Reset PW</button><button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button>`:`<button class="btn btn-ghost btn-xs" onclick="adminRestoreUser('${u.email}')">Restore</button>`}</td></tr>`).join('')
+    :'<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:1.5rem;font-size:12px;">No users found.</td></tr>';
+}
+
+async function aRenderTeachers(){
+  if(!_aAllUsers.length&&window._firebase){
+    try{const d=await window._firebase.getAllUsers();_aAllUsers=Object.values(d);}catch(e){}
+  }
+  const allInvites=window._firebase?await window._firebase.getAllInvites().catch(()=>[]):[];
+  const teachers=_aAllUsers.filter(u=>u.role==='teacher');
+  const invTbody=document.getElementById('a-invites-tbody');
+  if(invTbody) invTbody.innerHTML=allInvites.length
+    ?allInvites.map(inv=>`<tr><td style="font-weight:500">${inv.email}</td><td><span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span></td><td><button class="btn btn-danger btn-xs" onclick="adminRevokeInvite('${inv.email}');aRenderTeachers();">Revoke</button></td></tr>`).join('')
+    :'<tr><td colspan="3" style="text-align:center;color:var(--text-3);padding:1rem;font-size:12px;">No invites yet.</td></tr>';
+  const tTbody=document.getElementById('a-teachers-tbody');
+  if(tTbody) tTbody.innerHTML=teachers.length
+    ?teachers.map(u=>`<tr><td style="font-weight:500">${esc(u.name)}</td><td style="font-size:12px;color:var(--text-3)">${u.email}</td><td><button class="btn btn-ghost btn-xs" onclick="openAdminResetPassword('${u.email}')">Reset PW</button><button class="btn btn-danger btn-xs" onclick="adminDeleteUser('${u.email}')">Remove</button></td></tr>`).join('')
+    :'<tr><td colspan="3" style="text-align:center;color:var(--text-3);padding:1rem;font-size:12px;">No teachers yet.</td></tr>';
+}
+
+async function adminRevokeInvite(email){
+  if(!window._firebase)return;
+  try{await window._firebase.deleteInvite(email);showToast('Invite revoked for '+email);}
+  catch(e){showToast('Error: '+(e.message||'Could not revoke'));}
 }
 function renderSidebarClasses(){}
 
@@ -2403,7 +2617,9 @@ async function submitTicket(){
 }
 async function resolveTicket(ticketId){
   const t=DB.tickets.find(t=>t._id===ticketId);
-  if(t){t.status='resolved';await window._firebase.resolveTicket(ticketId);renderTickets();}
+  if(t){t.status='resolved';await window._firebase.resolveTicket(ticketId);
+    if(currentUser.role==='teacher')tRenderTickets();else renderTickets();
+  }
 }
 
 // ═══════ PROGRESS ═══════
@@ -2544,7 +2760,9 @@ async function createClass(){
   const classData={id,name,season:document.getElementById('cc-season').value.trim(),room:document.getElementById('cc-room').value.trim(),teacherEmail:currentUser.email,members:[],code};
   DB.classes[id]=classData;
   await window._firebase.saveClass(id,classData);
-  closeModal('modal-create-class');renderManage();renderSidebarClasses();renderHome();_updateNavLockState();
+  closeModal('modal-create-class');
+  if(currentUser.role==='teacher'){tRefreshClassList();tNavTo('classes');}
+  else{renderHome();_updateNavLockState();}
 }
 
 async function doJoinWithCode(){
@@ -2597,12 +2815,12 @@ async function addMember(){
   c.members.push(email);
   await window._firebase.saveClass(addMemberClassId,c);
   errEl.textContent='';
-  closeModal('modal-add-member');renderManage();renderSidebarClasses();
+  closeModal('modal-add-member');if(currentUser.role==='teacher'&&tActiveClassId)tDetailTab('members');else renderManage();
 }
 async function removeMember(classId,email){
   DB.classes[classId].members=(DB.classes[classId].members||[]).filter(e=>e!==email);
   await window._firebase.saveClass(classId,DB.classes[classId]);
-  renderManage();renderSidebarClasses();
+  if(currentUser.role==='teacher')tDetailTab('members');else renderManage();
 }
 function openGiveCoins(classId){
   giveCoinClassId=classId;
@@ -2648,19 +2866,12 @@ function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
 </script>
 
-  <!-- Reset Password Modal -->
   <div class="modal-overlay" id="overlay-admin-reset" onclick="closeModal('modal-admin-reset')"></div>
   <div class="modal" id="modal-admin-reset" style="max-width:400px">
-    <div class="modal-header">
-      <div class="modal-title">Reset Password</div>
-      <button class="modal-close" onclick="closeModal('modal-admin-reset')">✕</button>
-    </div>
+    <div class="modal-header"><div class="modal-title">Reset Password</div><button class="modal-close" onclick="closeModal('modal-admin-reset')">✕</button></div>
     <div class="modal-body">
-      <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem">Set a new password for <strong id="reset-pw-email-label"></strong></p>
-      <div class="form-group">
-        <label>New Password</label>
-        <input type="password" id="reset-pw-input" placeholder="Enter new password" autocomplete="new-password">
-      </div>
+      <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem">New password for <strong id="reset-pw-email-label"></strong></p>
+      <div class="form-group"><label>New Password</label><input type="password" id="reset-pw-input" placeholder="Enter new password" autocomplete="new-password"></div>
       <div class="auth-err" id="reset-pw-err"></div>
     </div>
     <div class="modal-footer">
