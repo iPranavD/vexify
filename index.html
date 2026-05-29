@@ -844,9 +844,6 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .lesson-page-body{flex:1;overflow-y:auto;max-width:720px;width:100%;margin:0 auto;padding:2rem 1.5rem 4rem;}
   .lesson-page-complete{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:14px 20px;display:flex;justify-content:flex-end;gap:10px;}
   body.dark .lesson-page-complete{background:#141414;border-top-color:#2d2d2d;}
-
-  /* TEACHER SIDEBAR LAYOUT */
-  #page-teacher{padding:0!important;background:var(--bg);}
   .t-layout{display:flex;height:100vh;overflow:hidden;}
   .t-sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
   body.dark .t-sidebar{background:#111;border-right-color:#2d2d2d;}
@@ -877,9 +874,6 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .t-inner-tab{flex:1;text-align:center;padding:.45rem .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s;}
   .t-inner-tab.active{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08);}
   body.dark .t-inner-tab.active{background:#252525;color:#ededed;}
-
-  /* ADMIN SIDEBAR LAYOUT */
-  #page-admin-full{padding:0!important;}
   .a-layout{display:flex;height:100vh;overflow:hidden;}
   .a-sidebar{width:215px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;padding:.5rem 0;}
   body.dark .a-sidebar{background:#111;border-right-color:#2d2d2d;}
@@ -1091,9 +1085,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 
 
 
-  #page-teacher.active ~ #nav, #page-admin.active ~ #nav { display:none; }
-  #page-teacher.active { display:flex !important; }
-  #page-admin.active { display:flex !important; }
+
 </style>
 </head>
 <body>
@@ -1227,7 +1219,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 </div>
 
 <!-- DASHBOARD -->
-<div id="page-teacher" class="page" style="padding:0;min-height:100vh;">
+<div id="page-teacher" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
   <div class="t-layout">
     <div class="t-sidebar">
       <div class="t-sidebar-header">
@@ -1284,7 +1276,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   </div>
 </div>
 
-<div id="page-admin" class="page" style="padding:0;min-height:100vh;">
+<div id="page-admin" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
   <div class="a-layout">
     <div class="a-sidebar">
       <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
@@ -1865,13 +1857,24 @@ function toggleDark(){
 })();
 
 function showPage(p){
+  // 1. Hide all .page elements
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  const pageEl=document.getElementById('page-'+p);
-  if(pageEl){pageEl.classList.add('active');pageEl.style.visibility='';}
-  // Hide global nav + app-nav for teacher/admin pages (they have their own sidebar)
-  const nav=document.getElementById('nav');
-  if(nav) nav.style.display=(p==='teacher'||p==='admin')?'none':'';
-  if(p==='dashboard')renderDashboard();
+  // 2. Always hide teacher & admin panels
+  document.getElementById('page-teacher').style.display='none';
+  document.getElementById('page-admin').style.display='none';
+  // 3. Show the requested page
+  if(p==='teacher'){
+    document.getElementById('page-teacher').style.display='flex';
+  } else if(p==='admin'){
+    document.getElementById('page-admin').style.display='flex';
+  } else {
+    const el=document.getElementById('page-'+p);
+    if(el) el.classList.add('active');
+  }
+  // 4. Nav: hide for teacher/admin, show for everything else
+  document.getElementById('nav').style.display=(p==='teacher'||p==='admin')?'none':'';
+  // 5. Render dashboard content if needed
+  if(p==='dashboard') renderDashboard();
 }
 function goHome(){currentUser?showPage('dashboard'):showPage('info');}
 
@@ -2013,9 +2016,6 @@ function login(u){
 function signOut(){
   currentUser=null;calClassId=null;msgClassId=null;
   if(window._firebase)window._firebase.stopListening();
-  // Restore page-dashboard
-  const dash=document.getElementById('page-dashboard');
-  if(dash){dash.style.visibility='';dash.classList.remove('active');}
   document.getElementById('nav-signin-btn').classList.remove('hidden');
   document.getElementById('nav-user').classList.add('hidden');
   document.getElementById('nav-coins').classList.add('hidden');
@@ -2825,8 +2825,8 @@ function closeModal(id){document.getElementById(id).classList.add('hidden');}
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
 </script>
 
-  <div class="modal-overlay" id="overlay-admin-reset" onclick="closeModal('modal-admin-reset')"></div>
-  <div class="modal" id="modal-admin-reset" style="max-width:400px">
+  <div class="modal-overlay hidden" id="overlay-admin-reset" onclick="closeModal('modal-admin-reset')"></div>
+  <div class="modal hidden" id="modal-admin-reset" style="max-width:400px">
     <div class="modal-header"><div class="modal-title">Reset Password</div><button class="modal-close" onclick="closeModal('modal-admin-reset')">✕</button></div>
     <div class="modal-body">
       <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem">New password for <strong id="reset-pw-email-label"></strong></p>
