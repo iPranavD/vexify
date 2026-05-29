@@ -1086,6 +1086,11 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 
 
 
+
+  .lc-section{margin-bottom:2rem;}
+  .lc-list li{font-size:15px;line-height:1.8;padding:.75rem 1rem;}
+  .lc-tip{font-size:14px;line-height:1.8;padding:1rem 1.25rem;margin-top:2rem;}
+  .lc-code pre{font-size:13px;line-height:1.8;padding:1.25rem;}
 </style>
 </head>
 <body>
@@ -1571,20 +1576,58 @@ function toggleUnit(unitId){
 }
 
 function toggleLesson(lessonId){
-  const panel=document.getElementById('lcontent-'+lessonId);
-  const chev=document.getElementById('lchev-'+lessonId);
-  if(!panel) return;
-  const opening=panel.style.display==='none';
-  if(openLesson&&openLesson!==lessonId){
-    const prev=document.getElementById('lcontent-'+openLesson);
-    const prevC=document.getElementById('lchev-'+openLesson);
-    if(prev) prev.style.display='none';
-    if(prevC) prevC.classList.remove('open');
+  // Find lesson data from CURRICULUM
+  let lesson=null;
+  for(const track of Object.values(CURRICULUM)){
+    for(const unit of track.units){
+      const found=unit.lessons.find(l=>l.id===lessonId);
+      if(found){lesson=found;break;}
+    }
+    if(lesson)break;
   }
-  panel.style.display=opening?'':'none';
-  if(chev) chev.classList.toggle('open',opening);
-  openLesson=opening?lessonId:null;
-  if(opening) setTimeout(()=>panel.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+  if(!lesson) return;
+
+  // Create full-page overlay (Khan Academy style)
+  document.getElementById('lesson-page-overlay')?.remove();
+  const isDone=!!DB.completedLessons['cl_'+lesson.id];
+  const isStudent=currentUser.role==='student';
+  const overlay=document.createElement('div');
+  overlay.className='lesson-page-overlay';
+  overlay.id='lesson-page-overlay';
+  overlay.innerHTML=
+    '<div class="lesson-page-header">'+
+      '<button class="lesson-page-back" id="lp-back">'+
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>'+
+        'Back to lessons'+
+      '</button>'+
+      '<div class="lesson-page-title">'+esc(lesson.title)+'</div>'+
+      '<div class="lesson-page-coins">\ud83e\ude99 '+lesson.coins+' VCoins</div>'+
+    '</div>'+
+    '<div class="lesson-page-body">'+
+      '<div style="margin-bottom:1.5rem"><div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">'+lesson.desc+'</div></div>'+
+      lesson.content+
+    '</div>'+
+    '<div class="lesson-page-complete">'+
+      (isDone
+        ? '<span style="font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>'
+        : (isStudent
+          ? '<button class="btn btn-primary btn-pill" id="lp-complete" style="min-width:180px;justify-content:center">Mark Complete &mdash; Earn '+lesson.coins+' VCoins</button>'
+          : '')
+      )+
+    '</div>';
+
+  document.body.appendChild(overlay);
+  document.getElementById('lp-back').addEventListener('click',function(){
+    overlay.remove();
+    openLesson=null;
+  });
+  if(!isDone && isStudent){
+    document.getElementById('lp-complete')?.addEventListener('click',function(){
+      completeCurriculumLesson(lesson.id, lesson.coins, null);
+      overlay.remove();
+    });
+  }
+  openLesson=lessonId;
 }
 
 async function completeCurriculumLesson(lessonId,coins,event){
