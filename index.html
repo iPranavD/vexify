@@ -1416,6 +1416,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
         <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading</div>
         <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons</div>
         <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets</div>
+        <div class="t-nav-item" data-tpanel="shop" onclick="tNavTo('shop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Shop</div>
       </div>
       <div class="t-sidebar-section">
         <div class="t-sidebar-label">My Classes</div>
@@ -1453,6 +1454,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
         <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
         <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
         <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
+        <div id="t-panel-shop" class="t-panel"><div id="t-shop-body"></div></div>
       </div>
     </div>
   </div>
@@ -2328,14 +2330,16 @@ function tNavTo(panel){
   document.querySelectorAll('.t-panel').forEach(el=>el.classList.remove('t-active'));
   const pEl=document.getElementById('t-panel-'+panel);
   if(pEl)pEl.classList.add('t-active');
-  const titles={classes:'Classes',grading:'Grading',lessons:'Lessons',tickets:'Help Tickets'};
+  const titles={classes:'Classes',grading:'Grading',lessons:'Lessons',tickets:'Help Tickets',shop:'Shop'};
   document.getElementById('t-topbar-title').textContent=titles[panel]||panel;
   const act=document.getElementById('t-topbar-actions');act.innerHTML='';
   if(panel==='classes')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>';
+  if(panel==='shop')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openAddShopItem()">+ Add Item</button>';
   if(panel==='classes')tRenderClasses();
   if(panel==='grading')tRenderGrading();
   if(panel==='lessons')tRenderLessons();
   if(panel==='tickets')tRenderTickets();
+  if(panel==='shop')tRenderShop();
   tActiveClassId=null;tRefreshClassList();
 }
 
@@ -2376,19 +2380,61 @@ function tDetailTab(tab){
 
 function tRenderClasses(){
   const classes=getMyClasses();const body=document.getElementById('t-classes-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div><div class="empty-desc">Create your first class to get started.</div></div>';return;}
+  if(!classes.length){body.innerHTML=`
+      <div style="margin-bottom:1.5rem;">
+        <div style="font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Welcome, ${esc(currentUser.name)}</div>
+        <div style="font-size:13px;color:var(--text-3);">Here's your teacher dashboard. Get started by creating a class.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:2rem;">
+        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="openCreateClassModal()">
+          <div style="font-size:32px;margin-bottom:.5rem;">📚</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Create a Class</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Set up your first class, invite students, and start teaching.</div>
+        </div>
+        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="tNavTo('shop')">
+          <div style="font-size:32px;margin-bottom:.5rem;">🛒</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Set Up Shop</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Create items students can buy with VCoins they earn from lessons.</div>
+        </div>
+        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="tNavTo('lessons')">
+          <div style="font-size:32px;margin-bottom:.5rem;">📅</div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">View Lessons</div>
+          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Browse and schedule lessons from the VEX curriculum for your classes.</div>
+        </div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;">
+        <div style="font-size:13px;font-weight:700;margin-bottom:.75rem;">🚀 Getting Started</div>
+        <div style="font-size:13px;color:var(--text-2);line-height:1.8;">
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
+            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span>
+            <span><strong>Create a class</strong> — give it a name, season, and room number. You'll get a join code students can use.</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
+            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span>
+            <span><strong>Add students</strong> — share the join code or manually add them by email from the class Members tab.</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
+            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span>
+            <span><strong>Schedule lessons</strong> — assign curriculum lessons to dates. Students complete them to earn VCoins.</span>
+          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</span>
+            <span><strong>Track progress</strong> — use Grading to see completion rates and award bonus VCoins.</span>
+          </div>
+        </div>
+      </div>`;return;}
   body.innerHTML=classes.map(([id,c])=>{const s=(c.members||[]).filter(e=>DB.users[e]?.role==='student').length;const l=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;return`<div class="card" style="cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;gap:12px;padding:1rem 1.125rem;" onclick="tOpenClass('${id}')"><div class="avatar" style="width:40px;height:40px;font-size:14px;flex-shrink:0;">${initials(c.name)}</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;margin-bottom:2px;">${esc(c.name)}</div><div style="font-size:12px;color:var(--text-3);">${c.season||''}${c.room?' · '+c.room:''}</div></div><span class="badge badge-gray" style="margin-right:4px;">${s} student${s!==1?'s':''}</span><span class="badge badge-gray" style="margin-right:8px;">${l} lesson${l!==1?'s':''}</span><span style="color:var(--text-3);font-size:18px;">›</span></div>`;}).join('');
 }
 
 function tRenderGrading(){
   const classes=getMyClasses();const body=document.getElementById('t-grading-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div></div>';return;}
+  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">📊</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Grading Data Yet</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class and add students to start tracking their lesson completion and progress.</div></div>';return;}
   body.innerHTML=classes.map(([cid,c])=>{const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));return`<div class="card" style="margin-bottom:1rem;"><div style="font-size:15px;font-weight:700;margin-bottom:1rem;">${esc(c.name)}</div>${students.length?students.map(u=>{const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;const pct=allLessons.length?Math.round(done/allLessons.length*100):0;return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${esc(u.name)}</span><span style="font-size:12px;color:var(--text-3)">${done}/${allLessons.length} · ${pct}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`;}).join(''):'<div style="font-size:13px;color:var(--text-3)">No students yet.</div>'}</div>`;}).join('');
 }
 
 function tRenderLessons(){
   const classes=getMyClasses();const body=document.getElementById('t-lessons-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No classes yet</div></div>';return;}
+  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">📅</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Lessons Scheduled</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class first, then schedule lessons from the calendar inside each class.</div></div>';return;}
   const all=[];classes.forEach(([cid,c])=>{Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_')).forEach(([k,l])=>{all.push({...l,classId:cid,className:c.name,key:k});});});
   all.sort((a,b)=>a.date.localeCompare(b.date));
   if(!all.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No lessons yet</div><div class="empty-desc">Open a class and click Calendar to add lessons.</div></div>';return;}
@@ -2399,7 +2445,7 @@ function tRenderTickets(){
   const body=document.getElementById('t-tickets-body');if(!body)return;
   const myIds=getMyClasses().map(([id])=>id);
   const tickets=DB.tickets.filter(t=>myIds.includes(t.classId));
-  if(!tickets.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No tickets yet</div><div class="empty-desc">Student help requests will appear here.</div></div>';return;}
+  if(!tickets.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">🎫</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Help Tickets</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">When students submit help requests, they will appear here for you to review and resolve.</div></div>';return;}
   const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};const sc={open:'badge-orange',resolved:'badge-green'};
   body.innerHTML=[...tickets].reverse().map(t=>`<div class="ticket-card"><div style="display:flex;flex-direction:column;gap:6px;min-width:80px"><span class="badge ${pc[t.priority]||'badge-blue'}">${t.priority}</span><span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span></div><div class="ticket-body"><div class="ticket-title">${esc(t.title)}</div><div class="ticket-desc">${esc(t.desc)}</div><div class="ticket-meta"><span>${esc(t.userName)}</span><span>${DB.classes[t.classId]?.name||''}</span><span>${t.date}</span></div></div>${(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" style="white-space:nowrap;align-self:center" onclick="resolveTicket('${t._id}');tRenderTickets();">✓ Resolve</button>`:''}</div>`).join('');
 }
