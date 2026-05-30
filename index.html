@@ -832,18 +832,67 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   }
 
   /* Full-page lesson overlay */
-  .lesson-page-overlay{position:fixed;inset:0;z-index:200;background:var(--white);display:flex;flex-direction:column;animation:fadeIn .15s ease;}
+  /* ── LESSON PAGE SIDEBAR LAYOUT ─────────────────────────────────── */
+  .lesson-page-overlay{position:fixed;inset:0;z-index:200;background:var(--white);display:flex;flex-direction:column;}
   body.dark .lesson-page-overlay{background:#0d0d0d;}
-  .lesson-page-header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--white);position:sticky;top:0;z-index:10;}
+  .lesson-page-inner{flex:1;display:flex;overflow:hidden;}
+
+  /* Progress sidebar */
+  .lesson-sidebar{
+    width:260px;flex-shrink:0;overflow-y:auto;
+    border-right:1px solid var(--border);
+    background:var(--bg);padding:.75rem 0;
+  }
+  body.dark .lesson-sidebar{background:#111;border-right-color:#2d2d2d;}
+  .ls-track-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;
+    color:var(--text-3);padding:.5rem 1rem .25rem;}
+  .ls-unit{margin-bottom:.25rem;}
+  .ls-unit-header{font-size:12px;font-weight:600;color:var(--text-2);
+    padding:.4rem 1rem;cursor:pointer;display:flex;align-items:center;gap:6px;}
+  .ls-unit-header:hover{color:var(--text);}
+  .ls-unit-bar{height:3px;background:var(--border);border-radius:2px;margin:0 1rem .25rem;overflow:hidden;}
+  body.dark .ls-unit-bar{background:#2d2d2d;}
+  .ls-unit-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s;}
+  .ls-lesson-item{
+    display:flex;align-items:center;gap:8px;
+    padding:.45rem 1rem .45rem 1.5rem;
+    font-size:12.5px;font-weight:500;color:var(--text-2);
+    cursor:pointer;transition:background .1s;border-radius:0;
+  }
+  .ls-lesson-item:hover{background:rgba(0,0,0,.04);}
+  body.dark .ls-lesson-item:hover{background:rgba(255,255,255,.04);}
+  .ls-lesson-item.active{color:var(--accent);font-weight:600;}
+  body.dark .ls-lesson-item.active{color:#a78bfa;}
+  .ls-lesson-item.done{color:var(--text-3);}
+  .ls-check{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);
+    flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+  .ls-check.done{background:var(--green);border-color:var(--green);color:#fff;}
+  .ls-check.active{border-color:var(--accent);background:var(--accent);color:#fff;}
+  body.dark .ls-check.active{border-color:#a78bfa;background:#a78bfa;}
+
+  /* Lesson main content */
+  .lesson-main{flex:1;overflow-y:auto;}
+  .lesson-page-body{max-width:740px;width:100%;margin:0 auto;padding:2.5rem 2rem 5rem;}
+  .lesson-page-header{
+    display:flex;align-items:center;gap:12px;padding:12px 20px;
+    border-bottom:1px solid var(--border);background:var(--white);
+    position:sticky;top:0;z-index:10;flex-shrink:0;
+  }
   body.dark .lesson-page-header{background:#141414;border-bottom-color:#2d2d2d;}
-  .lesson-page-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--text-2);background:none;border:none;cursor:pointer;padding:6px 10px;border-radius:var(--r);transition:background .15s;}
+  .lesson-page-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;
+    color:var(--text-2);background:none;border:none;cursor:pointer;
+    padding:6px 10px;border-radius:var(--r);transition:background .15s;}
   .lesson-page-back:hover{background:var(--bg);}
-  body.dark .lesson-page-back{color:#888;}
   .lesson-page-title{font-size:15px;font-weight:700;flex:1;}
-  .lesson-page-coins{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:#d97706;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:20px;padding:4px 10px;}
-  .lesson-page-body{flex:1;overflow-y:auto;max-width:720px;width:100%;margin:0 auto;padding:2rem 1.5rem 4rem;}
-  .lesson-page-complete{position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);padding:14px 20px;display:flex;justify-content:flex-end;gap:10px;}
+  .lesson-page-coins{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;
+    color:#d97706;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);
+    border-radius:20px;padding:4px 10px;}
+  .lesson-page-complete{
+    position:sticky;bottom:0;background:var(--white);border-top:1px solid var(--border);
+    padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
   body.dark .lesson-page-complete{background:#141414;border-top-color:#2d2d2d;}
+  .lp-nav-btns{display:flex;gap:8px;}
   .t-layout{display:flex;height:100vh;overflow:hidden;}
   .t-sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
   body.dark .t-sidebar{background:#111;border-right-color:#2d2d2d;}
@@ -868,6 +917,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
   .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+  .t-content-inner{max-width:900px;margin:0 auto;width:100%;}
   .t-panel{display:none;}.t-panel.t-active{display:block;}
   .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
   body.dark .t-inner-tabs{background:#1a1a1a;}
@@ -891,6 +941,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .a-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .a-topbar-title{font-size:15px;font-weight:700;flex:1;}
   .a-content{flex:1;overflow-y:auto;padding:1.5rem;}
+  .a-content-inner{max-width:960px;margin:0 auto;width:100%;}
   .a-panel{display:none;}.a-panel.a-active{display:block;}
   .a-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin-bottom:1.5rem;}
   .a-stat-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.125rem;}
@@ -992,6 +1043,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
   .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+  .t-content-inner{max-width:900px;margin:0 auto;width:100%;}
   .t-panel{display:none;}.t-panel.t-active{display:block;}
   .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
   body.dark .t-inner-tabs{background:#1a1a1a;}
@@ -1017,6 +1069,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .a-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .a-topbar-title{font-size:15px;font-weight:700;flex:1;}
   .a-content{flex:1;overflow-y:auto;padding:1.5rem;}
+  .a-content-inner{max-width:960px;margin:0 auto;width:100%;}
   .a-panel{display:none;}.a-panel.a-active{display:block;}
   .a-stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.75rem;margin-bottom:1.5rem;}
   .a-stat-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.125rem;}
@@ -1091,6 +1144,32 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .lc-list li{font-size:15px;line-height:1.8;padding:.75rem 1rem;}
   .lc-tip{font-size:14px;line-height:1.8;padding:1rem 1.25rem;margin-top:2rem;}
   .lc-code pre{font-size:13px;line-height:1.8;padding:1.25rem;}
+
+  /* Expanded lesson content */
+  .lc-objectives{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.5rem;}
+  body.dark .lc-objectives{background:#1a1a1a;border-color:#2d2d2d;}
+  .lc-obj-list{display:flex;flex-direction:column;gap:.6rem;margin-top:.75rem;}
+  .lc-obj-item{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2);line-height:1.6;}
+  .lc-obj-num{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  body.dark .lc-obj-num{background:#f0f0f0;color:#000;}
+  .lc-divider{height:1px;background:var(--border);margin:2rem 0;}
+  body.dark .lc-divider{background:#2d2d2d;}
+  .lc-intro{font-size:16px;color:var(--text);line-height:2;margin-bottom:1.5rem;}
+  .lc-section{margin-bottom:2.5rem;}
+  .lc-section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:1rem;}
+  .lc-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:.75rem;}
+  .lc-list li{font-size:15px;color:var(--text);line-height:1.9;padding:1rem 1.25rem;background:var(--bg);border-radius:var(--r);border-left:3px solid var(--accent);}
+  .lc-list li strong{color:var(--accent);margin-right:4px;}
+  body.dark .lc-list li{background:#1a1a1a;border-left-color:#7c3aed;}
+  body.dark .lc-list li strong{color:#a78bfa;}
+  .lc-tip{font-size:15px;color:var(--text);line-height:1.9;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:var(--r);padding:1.25rem 1.5rem;margin:2rem 0;}
+  body.dark .lc-tip{background:rgba(251,191,36,.06);border-color:rgba(251,191,36,.15);}
+  .lc-code{margin:2rem 0;}
+  .lc-code-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text-3);margin-bottom:.75rem;}
+  .lc-code pre{background:#1e1e2e;color:#cdd6f4;padding:1.5rem;border-radius:var(--r);font-size:13px;line-height:1.8;overflow-x:auto;white-space:pre-wrap;font-family:'JetBrains Mono',Consolas,monospace;}
+  .lc-check{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:2rem;}
+  body.dark .lc-check{background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.15);}
+  .lc-check-text{font-size:14px;color:var(--text-2);line-height:1.8;margin-top:.5rem;}
 </style>
 </head>
 <body>
@@ -1204,8 +1283,8 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
       <button class="auth-tab-btn" id="tab-register" onclick="authSwitch('register')">Register</button>
     </div>
     <div id="form-login">
-      <div class="field"><label>Email address</label><div class="input-wrap"><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email"></div></div>
-      <div class="field"><label>Password</label><div class="input-wrap"><input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div></div>
+      <div class="field"><label>Email address</label><div class="input-wrap"><input type="email" id="login-email" oninput="resetLoginBtn()" placeholder="you@example.com" autocomplete="email"></div></div>
+      <div class="field"><label>Password</label><div class="input-wrap"><input type="password" id="login-password" oninput="resetLoginBtn()" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div></div>
       <div class="auth-err" id="login-err"></div>
       <button class="btn btn-dark" style="width:100%;justify-content:center;padding:9px" onclick="doLogin()">Continue</button>
       <div class="auth-footer"><span></span><span>No account? <a onclick="authSwitch('register')">Sign up</a></span></div>
@@ -1224,110 +1303,6 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 </div>
 
 <!-- DASHBOARD -->
-<div id="page-teacher" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
-  <div class="t-layout">
-    <div class="t-sidebar">
-      <div class="t-sidebar-header">
-        <span class="t-sidebar-logo">Vexify</span>
-        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
-        </button>
-      </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">Menu</div>
-        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes</div>
-        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading</div>
-        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons</div>
-        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets</div>
-      </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">My Classes</div>
-        <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
-        <div style="padding:.25rem .75rem .5rem;"><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button></div>
-      </div>
-      <div style="flex:1"></div>
-      <div style="padding:.5rem;border-top:1px solid var(--border);">
-        <div class="t-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
-      </div>
-    </div>
-    <div class="t-main">
-      <div class="t-topbar">
-        <div class="t-topbar-title" id="t-topbar-title">Classes</div>
-        <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
-          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
-          <div><div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div><div style="font-size:11px;color:var(--text-3);">Teacher</div></div>
-        </div>
-      </div>
-      <div class="t-content-area">
-        <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
-        <div id="t-panel-class-detail" class="t-panel">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
-            <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')">&#8592; Back</button>
-            <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;" id="t-detail-name"></div>
-          </div>
-          <div class="t-inner-tabs">
-            <div class="t-inner-tab active" data-dtab="overview" onclick="tDetailTab('overview')">Overview</div>
-            <div class="t-inner-tab" data-dtab="messages" onclick="tDetailTab('messages')">Messages</div>
-            <div class="t-inner-tab" data-dtab="members" onclick="tDetailTab('members')">Members</div>
-          </div>
-          <div id="t-detail-body"></div>
-        </div>
-        <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
-        <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
-        <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div id="page-admin" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
-  <div class="a-layout">
-    <div class="a-sidebar">
-      <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item active" data-apanel="overview" onclick="aNavTo('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</div>
-      <div class="a-nav-item" data-apanel="users" onclick="aNavTo('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</div>
-      <div class="a-nav-item" data-apanel="teachers" onclick="aNavTo('teachers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M1 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/></svg>Teachers</div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item" data-apanel="settings" onclick="aNavTo('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Site Settings</div>
-      <div style="flex:1"></div>
-      <div class="a-nav-divider"></div>
-      <div class="a-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
-    </div>
-    <div class="a-main-area">
-      <div class="a-topbar">
-        <div class="a-topbar-title" id="a-topbar-title">Overview</div>
-        <button class="btn btn-ghost btn-sm" onclick="toggleDark()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg></button>
-      </div>
-      <div class="a-content">
-        <div id="a-panel-overview" class="a-panel a-active">
-          <div class="a-stat-row" id="a-overview-stats"></div>
-          <div class="a-sh"><div class="a-sh-title">All Users</div></div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th></tr></thead><tbody id="a-overview-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-users" class="a-panel">
-          <div class="a-sh"><div class="a-sh-title">All Users</div><div style="display:flex;gap:8px;"><input id="a-user-search" placeholder="Search…" oninput="aFilterUsers()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:150px;"><select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);"><option value="">All</option><option value="student">Student</option><option value="teacher">Teacher</option><option value="removed">Removed</option></select></div></div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th><th>Actions</th></tr></thead><tbody id="a-users-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-teachers" class="a-panel">
-          <div class="a-sh"><div class="a-sh-title">Teacher Invites</div><button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite Teacher</button></div>
-          <div class="a-table-wrap" style="margin-bottom:1.5rem;"><table class="a-table"><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-invites-tbody"></tbody></table></div>
-          <div class="a-sh"><div class="a-sh-title">Active Teachers</div></div>
-          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="a-teachers-tbody"></tbody></table></div>
-        </div>
-        <div id="a-panel-settings" class="a-panel">
-          <div class="a-sh-title" style="margin-bottom:1rem;">Site Settings</div>
-          <div class="settings-group">
-            <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle theme</div></div><button class="btn btn-ghost btn-sm" onclick="toggleDark()">Toggle</button></div>
-            <div class="settings-row"><div><div class="settings-row-label">Admin Account</div><div class="settings-row-sub" id="a-settings-email"></div></div><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign Out</button></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div id="page-dashboard" class="page">
   <nav class="app-nav" id="app-nav">
     <div class="app-nav-item active" data-panel="home" onclick="showPanel('home')">
@@ -1422,6 +1397,118 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
       <div id="shop-body"></div>
     </div>
     <!-- MANAGE -->
+    </div>
+  </div>
+
+
+<div id="page-teacher" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
+  <div class="t-layout">
+    <div class="t-sidebar">
+      <div class="t-sidebar-header">
+        <span class="t-sidebar-logo">Vexify</span>
+        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+        </button>
+      </div>
+      <div class="t-sidebar-section">
+        <div class="t-sidebar-label">Menu</div>
+        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes</div>
+        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading</div>
+        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons</div>
+        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets</div>
+      </div>
+      <div class="t-sidebar-section">
+        <div class="t-sidebar-label">My Classes</div>
+        <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
+        <div style="padding:.25rem .75rem .5rem;"><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button></div>
+      </div>
+      <div style="flex:1"></div>
+      <div style="padding:.5rem;border-top:1px solid var(--border);">
+        <div class="t-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
+      </div>
+    </div>
+    <div class="t-main">
+      <div class="t-topbar">
+        <div class="t-topbar-title" id="t-topbar-title">Classes</div>
+        <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
+          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
+          <div><div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div><div style="font-size:11px;color:var(--text-3);">Teacher</div></div>
+        </div>
+      </div>
+      <div class="t-content-area">
+        <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
+        <div id="t-panel-class-detail" class="t-panel">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;">
+            <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')">&#8592; Back</button>
+            <div style="font-size:18px;font-weight:800;letter-spacing:-.03em;" id="t-detail-name"></div>
+          </div>
+          <div class="t-inner-tabs">
+            <div class="t-inner-tab active" data-dtab="overview" onclick="tDetailTab('overview')">Overview</div>
+            <div class="t-inner-tab" data-dtab="messages" onclick="tDetailTab('messages')">Messages</div>
+            <div class="t-inner-tab" data-dtab="members" onclick="tDetailTab('members')">Members</div>
+          </div>
+          <div id="t-detail-body"></div>
+        </div>
+        <div id="t-panel-grading" class="t-panel"><div id="t-grading-body"></div></div>
+        <div id="t-panel-lessons" class="t-panel"><div id="t-lessons-body"></div></div>
+        <div id="t-panel-tickets" class="t-panel"><div id="t-tickets-body"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="page-admin" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
+  <div class="a-layout">
+    <div class="a-sidebar">
+      <div class="a-sidebar-logo">Vexify <span class="a-sidebar-badge">Admin</span></div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item active" data-apanel="overview" onclick="aNavTo('overview')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview</div>
+      <div class="a-nav-item" data-apanel="users" onclick="aNavTo('users')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Users</div>
+      <div class="a-nav-item" data-apanel="teachers" onclick="aNavTo('teachers')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M1 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/></svg>Teachers</div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item" data-apanel="settings" onclick="aNavTo('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Site Settings</div>
+      <div style="flex:1"></div>
+      <div class="a-nav-divider"></div>
+      <div class="a-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
+    </div>
+    <div class="a-main-area">
+      <div class="a-topbar">
+        <div class="a-topbar-title" id="a-topbar-title">Overview</div>
+        <button class="btn btn-ghost btn-sm" onclick="toggleDark()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg></button>
+      </div>
+      <div class="a-content">
+        <!-- Overview -->
+        <div id="a-panel-overview" class="a-panel a-active">
+          <div class="a-stat-row" id="a-overview-stats"></div>
+          <div class="a-sh"><div class="a-sh-title">All Users</div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th></tr></thead><tbody id="a-overview-tbody"></tbody></table></div>
+        </div>
+        <!-- Users -->
+        <div id="a-panel-users" class="a-panel">
+          <div class="a-sh"><div class="a-sh-title">All Users</div><div style="display:flex;gap:8px;"><input id="a-user-search" placeholder="Search…" oninput="aFilterUsers()" style="padding:6px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);width:150px;"><select id="a-user-role-filter" onchange="aFilterUsers()" style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);"><option value="">All</option><option value="student">Student</option><option value="teacher">Teacher</option><option value="removed">Removed</option></select></div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>VCoins</th><th>Actions</th></tr></thead><tbody id="a-users-tbody"></tbody></table></div>
+        </div>
+        <!-- Teachers -->
+        <div id="a-panel-teachers" class="a-panel">
+          <div class="a-sh"><div class="a-sh-title">Teacher Invites</div><button class="btn btn-primary btn-sm" onclick="openAdminInviteModal()">+ Invite</button></div>
+          <div class="a-table-wrap" style="margin-bottom:1.5rem;"><table class="a-table"><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-invites-tbody"></tbody></table></div>
+          <div class="a-sh"><div class="a-sh-title">Active Teachers</div></div>
+          <div class="a-table-wrap"><table class="a-table"><thead><tr><th>Name</th><th>Email</th><th>Actions</th></tr></thead><tbody id="a-teachers-tbody"></tbody></table></div>
+        </div>
+        <!-- Settings -->
+        <div id="a-panel-settings" class="a-panel">
+          <div class="a-sh"><div class="a-sh-title">Site Settings</div></div>
+          <div class="settings-group" style="margin-bottom:1.5rem;">
+            <div class="settings-row"><div><div class="settings-row-label">Dark Mode</div><div class="settings-row-sub">Toggle theme</div></div><button class="btn btn-ghost btn-sm" onclick="toggleDark()">Toggle</button></div>
+            <div class="settings-row"><div><div class="settings-row-label">Admin Account</div><div class="settings-row-sub" id="a-settings-email"></div></div><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign Out</button></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -1445,27 +1532,56 @@ const SHOP_ITEMS=[
 
 // ═══════ CURRICULUM ═══════
 function _lc(intro, concepts, tip, code=null){
-  return `<p class="lc-intro">${intro}</p>
-    <div class="lc-section"><div class="lc-section-title">📌 Key Concepts</div><ul class="lc-list">${concepts.map(c=>`<li>${c}</li>`).join('')}</ul></div>
-    ${code?`<div class="lc-code"><div class="lc-code-title">Code Example</div><pre>${code}</pre></div>`:''}
-    <div class="lc-tip">💡 <strong>Pro Tip:</strong> ${tip}</div>`;
+  // Split intro into paragraphs on \n\n
+  const introParagraphs = intro.split('\n\n').map(p=>`<p class="lc-intro">${p.trim()}</p>`).join('');
+  
+  // Split concepts into groups: first half as "Key Concepts", second half as "Deep Dive"
+  const mid = Math.ceil(concepts.length / 2);
+  const keyConcepts = concepts.slice(0, mid);
+  const deepDive = concepts.slice(mid);
+  
+  return `
+    <div class="lc-objectives">
+      <div class="lc-section-title">📋 In This Lesson</div>
+      <div class="lc-obj-list">${concepts.slice(0,4).map((_,i)=>{
+        const labels=['Understand the fundamentals','Learn key terminology','See real-world applications','Practice critical thinking'];
+        return `<div class="lc-obj-item"><span class="lc-obj-num">${i+1}</span>${labels[i]||'Build deeper knowledge'}</div>`;
+      }).join('')}</div>
+    </div>
+    <div class="lc-divider"></div>
+    ${introParagraphs}
+    <div class="lc-divider"></div>
+    <div class="lc-section">
+      <div class="lc-section-title">📌 Key Concepts</div>
+      <ul class="lc-list">${keyConcepts.map((c,i)=>`<li><strong>${i+1}.</strong> ${c}</li>`).join('')}</ul>
+    </div>
+    <div class="lc-section">
+      <div class="lc-section-title">🔬 Deep Dive</div>
+      <ul class="lc-list">${deepDive.map((c,i)=>`<li><strong>${mid+i+1}.</strong> ${c}</li>`).join('')}</ul>
+    </div>
+    ${code?`<div class="lc-code"><div class="lc-code-title">💻 Code Example</div><pre>${code}</pre></div>`:''}
+    <div class="lc-tip">💡 <strong>Pro Tip:</strong> ${tip}</div>
+    <div class="lc-check">
+      <div class="lc-section-title">✅ Self-Check</div>
+      <div class="lc-check-text">Before marking this lesson complete, make sure you can explain the key concepts above in your own words. Try teaching one concept to a teammate — if you can explain it clearly, you truly understand it.</div>
+    </div>`;
 }
 
 const CURRICULUM={
-  foundations:{label:'Foundations',icon:'🔧',units:[
-    {id:'f1',title:'VEX Parts & Hardware',lessons:[
-      {id:'f1l1',title:'Introduction to VEX Robotics',desc:'Competition formats, the V5 system, and how a VRC season works.',coins:10,content:_lc('VEX Robotics Competition (VRC) is one of the largest robotics programs in the world, with over 20,000 teams competing annually. The V5 system is the primary platform for high school teams, while VEX IQ is designed for middle school. Every year in late April, a new game is revealed — teams spend the full season designing, building, and competing with a robot built for that game.',['VRC uses the V5 system (high school). VEX IQ uses a simpler snap-together system (middle school).','A new game is revealed every April and played through the following April at World Championship.','Competitions: scrimmage → qualifier → state/regional → World Championship.','Each match is 2 min: 15 sec autonomous, then 1:45 of driver control.','Robots are inspected before every event — must meet 18"×18"×18" size, weight, and rules requirements.'],'Watch the game reveal video the day it drops. Understanding the game deeply is half the battle — teams that win usually master the strategy before they master their robot.')},
-      {id:'f1l2',title:'Structural Parts',desc:'C-channels, beams, plates, standoffs, and the 0.5" hole grid system.',coins:10,content:_lc('VEX V5 uses aluminum structural parts with holes spaced exactly 0.5 inches apart. This consistent spacing means almost everything lines up perfectly — a massive advantage when iterating quickly.',['C-channels are the backbone of most robots — strong in bending and torsion.','Beams are flat bars great for spanning gaps or connecting C-channels.','Plates are large flat sheets — ideal for mounting electronics or building walls.','Standoffs are threaded cylinders that create exact spacing between layers of metal.','All holes are spaced 0.5" apart — this grid system makes alignment predictable.'],'Always plan hole alignment on paper or in CAD before building.')},
-      {id:'f1l3',title:'Motors & the V5 Brain',desc:'Smart ports, V5 motors, the brain, and how power flows through your robot.',coins:15,content:_lc('The VEX V5 system is built around the V5 Brain — a powerful computer with 11 smart ports connecting motors, sensors, and devices using one cable type.',['The V5 Brain has 11 smart ports — all motors and sensors share the same port and cable type.','V5 motors include built-in encoders measuring rotation in degrees.','Motor power is 0–100%. You can also set a torque limit in code to protect mechanisms.','The V5 Battery connects to the brain and powers everything.','The brain runs two programs: autonomous() for 15 sec, and usercontrol() for driver control.'],'Label all motor ports in both the brain\'s Device screen and your code comments.')},
-      {id:'f1l4',title:'Sensors Overview',desc:'Inertial, rotation, distance, and optical sensors.',coins:15,content:_lc('Sensors give your robot information about the world.',['Inertial Sensor: measures heading and acceleration. Essential for autonomous.','Rotation Sensor: higher-precision position tracking — great for mechanisms.','Distance Sensor: uses ultrasound to measure object distance. Range: 20mm–2,000mm.','Optical Sensor: detects color and proximity — identifies and sorts game objects.','Vision Sensor: a camera that tracks colored objects — complex but powerful.'],'Mount your Inertial Sensor as close to the robot\'s center of gravity as possible, and perfectly level.')},
-      {id:'f1l5',title:'Connectors & Cables',desc:'Smart cables, power cables, and best practices for reliable wiring.',coins:10,content:_lc('A robot with wiring problems is much harder to diagnose under time pressure.',['Smart cables carry both power and data — one cable type fits all V5 smart devices.','Power cables (red/black) only connect battery to brain.','Route cables away from all moving parts.','Use cable anchors or zip ties every 3–4 inches to firmly secure cables.','Use the shortest cable that reaches comfortably with a small amount of slack.'],'Label both ends of every cable with tape and a marker.')},
+  "foundations":{label:"Foundations",icon:"\ud83d\udd27",units:[
+    {id:"f1",title:"VEX Parts & Hardware",lessons:[
+      {id:"f1l1",title:"Introduction to VEX Robotics",desc:"Competition formats, the V5 system, and how a VRC season works.",coins:10,content:_lc("VEX Robotics Competition (VRC) is one of the largest and most prestigious competitive robotics programs in the world, with over 20,000 teams from 50+ countries competing each year. The program is designed to give students hands-on experience in engineering, programming, teamwork, and project management \u2014 skills that directly transfer to STEM careers.\n\nThe V5 system is the primary hardware platform for high school VRC teams, while VEX IQ serves middle school students with a simpler snap-together kit. Every year in late April, a brand new game is revealed at the VEX World Championship. Teams then spend the entire following season (September through April) designing, building, programming, and iterating on a robot specifically built to play that game.\n\nThe competitive season follows a structured path: local scrimmages for practice, qualifier tournaments where teams earn ranking points, state and regional championships, and finally the World Championship held in Dallas, Texas. Understanding this pipeline early helps teams plan their build schedule and set realistic goals for each stage of the season.",["VRC uses the V5 system for high school teams. VEX IQ uses a simpler snap-together system designed for middle school. VEX U is the college-level division with fewer restrictions.","A new game is revealed every April at the World Championship and played through the following April. The game defines everything: what objects are on the field, how points are scored, and what constraints your robot must work within.","The competition pipeline: scrimmages (practice events, no ranking) \u2192 qualifiers (earn spots at state/regionals) \u2192 state/regional championships \u2192 World Championship in Dallas, Texas.","Each match lasts 2 minutes total: 15 seconds of autonomous (robot runs pre-programmed routine with no driver input) followed by 1 minute 45 seconds of driver control (drivers use controllers).","Matches are played as alliances \u2014 two teams work together against another pair. Alliance selection at tournaments is a critical strategic moment where top-ranked teams pick partners.","Robots are inspected before every event and must meet strict size limits (18 inches x 18 inches x 18 inches at start), weight limits, and construction rules defined in the game manual.","Beyond match performance, VRC awards excellence in engineering notebooks, design process, programming skills, and community outreach. The Excellence Award is the highest honor.","The game manual is your bible. Read it cover to cover at least three times. Rules you miss will cost you matches \u2014 illegal mechanisms, wrong starting positions, or penalties for game element violations.","Scouting other teams is essential at tournaments. Track which robots perform well in autonomous, which have reliable mechanisms, and which teams communicate well as alliance partners.","Start planning your season timeline early: prototype in summer, first competition-ready robot by October, iterate through December, peak performance for state championship in February/March."],"Watch the game reveal video the day it drops, then immediately read the entire game manual. Understanding the game deeply is half the battle \u2014 teams that win Worlds usually master the strategy before they master their robot. Join the VEX Forum and r/vex subreddit to see how the community analyzes the new game in the first 48 hours.")},
+      {id:"f1l2",title:"Structural Parts",desc:"C-channels, beams, plates, standoffs, and the 0.5-inch hole grid system.",coins:10,content:_lc("Every VEX V5 robot is built from aluminum structural parts with holes spaced exactly 0.5 inches apart. This consistent hole spacing \u2014 called the VEX hole grid \u2014 is one of the most important design features of the system because it means almost every part lines up perfectly with every other part without any custom drilling or cutting.\n\nUnderstanding what each type of structural part is best at \u2014 and what it is weak at \u2014 will save you hours of rebuilding. The most common mistake new teams make is using the wrong type of metal for a given application, leading to a robot that flexes, bends, or breaks under competition stress.\n\nThe main structural part types are C-channels, beams (also called bars or angles), plates, and standoffs. Each has specific strengths: C-channels resist bending, plates distribute loads across large areas, and standoffs create precise spacing between layers. Learning when to use each one is a fundamental building skill.",["C-channels are the backbone of most VEX robots. Their U-shaped cross-section makes them extremely strong against bending and torsion. Use them for chassis rails, lift towers, and any structural member that bears significant load.","C-channels come in multiple lengths (2-hole through 25-hole) and two widths (2-wide and 5-wide). 5-wide C-channels are the strongest structural members in VEX and should be used for primary load-bearing structures.","Beams (flat bars) are great for spanning gaps, creating cross-braces, and connecting C-channels together. They are lighter than C-channels but much weaker against bending \u2014 never use them as primary structural members.","Angle pieces (L-channels) provide a convenient 90-degree connection point. They are commonly used to mount sensors, create brackets, and build intake guards.","Plates are large flat sheets of aluminum \u2014 ideal for mounting the V5 Brain, creating protective walls around mechanisms, or building flat surfaces for game object manipulation.","Standoffs are threaded aluminum or steel cylinders that create precise, fixed spacing between two parallel plates or channels. They come in lengths from 0.5 inches to 4 inches.","All VEX structural parts have holes spaced exactly 0.5 inches apart in both directions. This grid system means parts always align without custom measurement \u2014 a huge time saver during rapid prototyping.","Screws in VEX come in two thread types: 8-32 (coarse, most common, used for structural connections) and 6-32 (fine, used for some specialty applications). Always use lock nuts or Loctite on competition robots.","When connecting two C-channels, use at least two screws spaced apart (not side by side) to prevent the joint from pivoting. Three-screw triangulated connections are even stronger.","Keep a well-organized parts bin sorted by type and length. At competition, being able to quickly find the right screw, spacer, or standoff can mean the difference between a 5-minute fix and a 30-minute scramble."],"Always plan your hole alignment on paper or in CAD before you start building. A 30-minute planning session can save you 3 hours of disassembly and rebuilding. Use graph paper with 0.5-inch grid lines \u2014 each square represents one VEX hole spacing.")},
+      {id:"f1l3",title:"Motors & the V5 Brain",desc:"Smart ports, V5 motors, the brain, and how power flows through your robot.",coins:15,content:_lc("The VEX V5 system is built around the V5 Brain \u2014 a powerful embedded computer with a color touchscreen, 21 smart ports, and a dual-core processor. The Brain is the central hub that connects to every motor, sensor, controller, and radio on your robot, managing communication, power distribution, and program execution.\n\nV5 Smart Motors are the workhorses of every VEX robot. Unlike older VEX motors, V5 motors include built-in encoders, PID controllers, temperature sensors, and current monitors \u2014 all accessible through code. This built-in intelligence makes precise position control, velocity regulation, and motor health monitoring straightforward.\n\nUnderstanding how motors work \u2014 their speed/torque trade-offs, their thermal limits, and how to configure them in code \u2014 is essential for building a robot that performs consistently throughout a tournament. Motors that overheat or stall will lose you matches.",["The V5 Brain has 21 smart ports numbered 1-21. All ports are identical and bidirectional \u2014 any motor, sensor, or device can plug into any port using the same universal smart cable.","V5 Smart Motors include built-in quadrature encoders that measure rotation in degrees (0.1-degree resolution). This means you can precisely control how far a motor turns without adding external sensors.","Motors come with three interchangeable gear cartridges: 100 RPM (red/torque \u2014 2.1 Nm), 200 RPM (green/balanced \u2014 1.05 Nm), and 600 RPM (blue/speed \u2014 0.35 Nm). Choose based on your application.","Motor power is controlled from -100% to +100% in code. Positive values spin the motor forward, negative values spin it in reverse. You can also control by voltage (0-12V) or RPM for more precise applications.","The V5 Battery is a rechargeable Li-Ion pack that provides 12.8V nominal power. It connects to the Brain via a dedicated power port. Always bring at least 2 fully charged batteries to competition.","The Brain runs two user-defined functions during a match: autonomous() for the 15-second autonomous period and usercontrol() for the 1:45 driver-controlled period. The competition switch triggers transitions automatically.","V5 motors have thermal protection \u2014 they automatically reduce power output when internal temperature exceeds safe limits. Monitor motor temperature in your code with motor.temperature(celsius) and design cooling breaks into your driver strategy.","The V5 Controller connects wirelessly to the Brain via a radio link. It provides two joysticks (4 axes total), 12 buttons (L1/L2/R1/R2, Up/Down/Left/Right, A/B/X/Y), and a small LCD screen for driver feedback.","Each motor draws up to 2.5A under heavy load. With 8 motors running simultaneously at full power, current draw can exceed 20A \u2014 factor this into your battery management strategy during long tournament days.","Use the V5 Brain's built-in Device screen to verify that all motors and sensors are detected and functioning. This is your first debugging step whenever something stops working \u2014 check the Device screen before touching code."],"Label every motor port in three places: on the Brain's Device configuration screen, in your code comments, and with physical tape labels on the cables near the Brain. When debugging at competition with 3 minutes until your next match, clear labeling saves critical time.")},
+      {id:"f1l4",title:"Sensors Overview",desc:"Inertial, rotation, distance, and optical sensors.",coins:15,content:_lc("Sensors give your robot information about itself and the world around it. While motors make things move, sensors tell your code what is actually happening \u2014 how far the robot has driven, which direction it is facing, whether a game object is nearby, and what color it is.\n\nThe V5 sensor ecosystem includes the Inertial Sensor (IMU), Rotation Sensor, Distance Sensor, Optical Sensor, Vision Sensor, and GPS Sensor. Each serves a different purpose, and competitive robots typically use 3-5 sensors in combination to achieve reliable autonomous routines and smart driver-assist features.\n\nThe most impactful sensor for autonomous programming is the Inertial Sensor, which measures heading (rotation around the vertical axis) and acceleration. Combined with motor encoders, it enables precise driving and turning that repeats consistently \u2014 the foundation of any competitive autonomous routine.",["Inertial Sensor (IMU): Measures heading (0-360 degrees), rotation rate, and acceleration in all three axes. Essential for accurate autonomous turns. Calibrate it at the start of every match while the robot is perfectly still.","The Inertial Sensor must be mounted as close to the robot's center of rotation as possible, and perfectly level. Even a few degrees of tilt will introduce drift that compounds over the autonomous period.","Rotation Sensor: An external high-precision encoder (0.088-degree resolution) that mounts to any shaft. Use it for tracking mechanisms that need more precision than motor encoders provide \u2014 like a flywheel speed sensor or arm position tracker.","Distance Sensor: Uses ultrasonic pulses to measure the distance to the nearest object. Range: 20mm to 2,000mm. Useful for wall alignment, detecting game objects in front of the robot, or stopping before a collision.","Optical Sensor: Detects the color (hue) and brightness of objects directly in front of it at close range (< 100mm). Perfect for sorting game objects by color or detecting line markings on the field.","Vision Sensor: A camera that can be trained to recognize up to 7 colored objects or codes. Returns the position and size of detected objects in the camera frame. Complex to set up but powerful for tracking moving game elements.","GPS Sensor: Uses a field-mounted strip to determine the robot's absolute position (X, Y, heading) on the field. Accuracy varies but can be useful for complex autonomous routines that need absolute positioning.","Motor encoders (built into V5 motors) are your most basic and reliable sensors. They measure motor shaft rotation in degrees. Use them for distance tracking by converting degrees to inches using wheel circumference.","Combine multiple sensors for reliability. For example, use the Inertial Sensor for heading + motor encoders for distance + Distance Sensor for wall alignment. If one sensor drifts, the others provide correction.","Test your sensor readings by printing values to the Brain screen or a serial console. Before writing any autonomous code, spend time just reading sensor values while manually moving your robot to build intuition."],"Mount your Inertial Sensor as close to the robot's center of gravity as possible, and ensure it is perfectly level. During calibration at the start of autonomous, the robot must be completely motionless \u2014 even vibration from other robots driving nearby can affect calibration accuracy.")},
+      {id:"f1l5",title:"Connectors & Cables",desc:"Smart cables, power cables, and best practices for reliable wiring.",coins:10,content:_lc("Wiring is the most underrated aspect of VEX robot building. A robot with excellent mechanical design and programming can be completely undone by a single loose cable during a match. Cable management is not glamorous, but it is the difference between a robot that works reliably all day at a tournament and one that randomly disconnects mid-match.\n\nThe V5 system uses smart cables that carry both power and data on a single connection. This simplifies wiring compared to older systems, but it also means a single damaged cable can cause both communication and power failures. Every cable on your robot is a potential point of failure, and you should treat them accordingly.\n\nDeveloping a consistent wiring methodology \u2014 routing paths, strain relief, labeling, and regular inspection \u2014 will pay dividends throughout your competitive season. The best teams have a wiring checklist they run before every match.",["V5 Smart Cables carry both power and data simultaneously. One universal cable type connects all V5 smart devices (motors, sensors) to the Brain. They come in lengths from 12 inches to 72 inches.","The V5 Battery cable (red/black) is the only non-smart cable. It connects the battery directly to the Brain's dedicated power port. Never modify or extend this cable.","Always use the shortest cable that comfortably reaches from the Brain to the device. Excess cable creates snag hazards and adds unnecessary weight. Keep a variety of lengths in your parts bin.","Route all cables away from moving parts: gears, chains, wheels, linkages, and intakes. A cable caught in a gear train will be destroyed instantly and may damage the motor or Brain port.","Use cable clips, zip ties, or adhesive cable anchors every 3-4 inches along the cable run. Secure cables to structural members so they cannot swing freely. Loose cables are the #1 cause of disconnection at competition.","Create a wiring harness by bundling cables that run along the same path. Use split loom tubing or braided sleeving for high-traffic areas where cables cross moving mechanisms.","Label both ends of every cable with colored tape or numbered tags. When a motor stops working at competition, you need to quickly identify which port and cable are involved without tracing the entire run.","Inspect every cable connection before each match. Push each connector firmly into its port and listen/feel for the click. V5 smart cable connectors can work loose from vibration over the course of a tournament.","Carry spare cables of every length in your team's repair kit. Cable damage (pinched wires, bent pins, cracked connectors) is common and a quick swap is faster than troubleshooting a damaged cable.","The V5 Brain logs communication errors for each port. If you see frequent errors on a specific port, the cable is likely damaged \u2014 replace it immediately, even if it seems to work intermittently."],"Label both ends of every cable with colored tape and a port number. At a tournament with 3 minutes to fix a problem before your next match, clear wiring saves critical time. Also, keep a dedicated 'cable repair kit' with spare cables, zip ties, electrical tape, and a flashlight.")},
     ]},
-    {id:'f2',title:'Building Techniques',lessons:[
-      {id:'f2l1',title:'Chassis & Drivetrains',desc:'Tank drive, X-drive, and mecanum — trade-offs and how to choose.',coins:15,content:_lc('The drivetrain is the most critical subsystem on your robot.',['Tank Drive: Most reliable, highest torque, easy to program.','X-Drive: Moves in any direction (holonomic). Faster but lower torque.','Mecanum Drive: Also holonomic, can strafe sideways. Complex build.','6-wheel tank with dropped center wheel: Reduces turning resistance.','Gear ratio matters as much as drive type.'],'For your first competition robot, build a reliable 4-motor tank drive.')},
-      {id:'f2l2',title:'Gear Ratios & Torque',desc:'How gears trade speed for torque and calculating ratios.',coins:20,content:_lc('Gears let you trade speed for torque.',['Gear ratio = driven gear teeth ÷ driving gear teeth.','Ratio > 1: more torque (slower). Ratio < 1: more speed (less torque).','Example: 12-tooth driving 60-tooth = 5:1 — 5× more torque, 5× slower.','VEX sprockets and chain follow the same principle.','Motor cartridges: 100 RPM (red), 200 RPM (green), 600 RPM (blue).'],'Use the VEX Gear Ratio Calculator before building.')},
-      {id:'f2l3',title:'Bracing & Structural Stability',desc:'Triangulation, cross-bracing, and building robots that stay rigid.',coins:15,content:_lc('Structural stability is the difference between a robot that runs all day and one needing constant repairs.',['Triangles cannot deform without changing side lengths — they are inherently rigid.','Cross-brace long unsupported spans diagonally.','Use screw-through-bearing joints for connections under repeated stress.','Standoffs are good for static spacing but weak under lateral force.','Test rigidity by grabbing the top of your robot and attempting to twist it.'],'After every build session, shake your robot firmly in all directions.')},
-      {id:'f2l4',title:'Lifts & Mechanisms',desc:'4-bar linkages, DR4B, and linear slides.',coins:20,content:_lc('Most VEX games require picking up or scoring objects at height.',['4-bar linkage: Maintains end-effector angle throughout range of motion.','DR4B: Two stacked 4-bars for very high reach. Complex but powerful.','Linear Slide: Moves straight up and down — smooth but needs careful alignment.','Scissor Lift: Compact folded, extends high. Heavy and complex.','All lifts need counterbalancing — rubber bands offset mechanism weight.'],'Always counterbalance your lift with rubber bands.')},
-      {id:'f2l5',title:'Intakes & Game Object Handling',desc:'Roller intakes, flex wheels, and reliable pickup.',coins:20,content:_lc('Your intake determines how your robot interacts with game objects.',['Roller intakes using flex wheels or rubber flaps are most common.','Flex wheels deform slightly to grip objects of varying sizes.','Intake speed matters: too slow misses objects, too fast bounces them out.','Passive indexers align game objects automatically.','Always test your intake with 10+ game objects in a row.'],'Test your intake at multiple battery levels.')},
+    {id:"f2",title:"Building Techniques",lessons:[
+      {id:"f2l1",title:"Chassis & Drivetrains",desc:"Tank drive, X-drive, and mecanum \u2014 trade-offs and how to choose.",coins:15,content:_lc("The drivetrain is the single most critical subsystem on your robot. Every other mechanism \u2014 intake, lift, shooter \u2014 depends on the drivetrain to position the robot correctly on the field. A drivetrain that is too slow, too weak, too unreliable, or too hard to control will handicap everything else you build.\n\nThere are three main drivetrain types used in VRC: tank drive, X-drive, and mecanum drive. Each makes different trade-offs between pushing power (torque), speed, maneuverability, programming complexity, and build difficulty. Your choice should be driven by the specific requirements of the current season's game.\n\nFor most teams, especially those in their first or second year, a well-built tank drive is the best choice. It provides the highest pushing force, is the easiest to build and program, and is the most mechanically reliable. X-drive and mecanum offer advantages in specific game scenarios but come with significant build and programming overhead.",["Tank Drive: Each side of the robot is driven independently. Left joystick controls left wheels, right joystick controls right wheels. Turning is achieved by running the sides at different speeds. This is the most common and reliable drivetrain in VRC.","Tank drives provide the highest pushing force (torque) of any drivetrain type because 100% of motor power translates directly to forward/backward motion. This matters enormously in games with defensive play or heavy game objects.","X-Drive: Four motors mounted at 45-degree angles allow the robot to move in any direction (holonomic motion) \u2014 forward, backward, sideways, and diagonally \u2014 without turning. Faster than tank drive in straight lines but significantly lower pushing force.","Mecanum Drive: Four special wheels with angled rollers enable holonomic motion similar to X-drive. The build is more conventional (wheels at 90 degrees) but the wheel cost is higher and pushing force is the lowest of all three types.","6-motor tank drive (3 motors per side) offers the best balance of speed and torque for most games. The extra motors provide redundancy \u2014 if one motor overheats, you still have two per side.","Dropped center wheel: In a 6-wheel tank drive, lower the center wheel by about 1/16 inch. This creates a pivot point that dramatically reduces turning resistance, making the robot much more agile without sacrificing pushing force.","Gear ratio selection is as important as drivetrain type. For tank drives: 60:36 (1.67:1 speed) with 200 RPM motors is a popular balanced ratio. Adjust based on whether the game favors speed or pushing power.","Wheel choice matters: 4-inch omni wheels are standard for tank drives (low friction turning). 3.25-inch wheels are faster (more surface speed at same RPM) but have less traction. Traction wheels on the center provide grip.","Build your chassis as a rigid, rectangular frame using 5-wide C-channels. All four corners should be perfectly square \u2014 use a machinist's square to check. A twisted chassis causes unpredictable driving behavior.","Test your drivetrain extensively before building any other mechanisms on top of it. Drive it around the field for at least an hour. Check for: straight-line drift, turning consistency, motor temperatures, and any unusual sounds."],"For your first competition robot, build a reliable 4-motor or 6-motor tank drive with a dropped center wheel. Master this before attempting X-drive or mecanum. The best robot is the one that works every match, and tank drives have the highest reliability rate in VRC competition.")},
+      {id:"f2l2",title:"Gear Ratios & Torque",desc:"How gears trade speed for torque and calculating ratios.",coins:20,content:_lc("Gears are one of the most fundamental mechanical concepts in robotics. They allow you to trade speed for torque (and vice versa), change the direction of rotation, and transmit power between shafts that are not aligned. Every mechanism on your robot \u2014 drivetrain, lift, intake, flywheel \u2014 uses gears or sprockets to convert motor output into useful work.\n\nThe key insight is simple: you cannot get more total power out of a gear train than you put in. Gears only redistribute that power between speed and torque. A gear ratio that doubles your torque will halve your speed. A ratio that triples your speed will reduce your torque to one-third. Understanding this trade-off and choosing the right ratio for each application is a critical engineering skill.\n\nIn VEX, you can change gear ratios in three ways: external gear meshes (spur gears on the robot), internal motor cartridges (100/200/600 RPM), and sprocket-and-chain systems. Most competitive robots use a combination of all three to optimize each mechanism independently.",["Gear ratio = driven gear teeth / driving gear teeth. If a 12-tooth gear drives a 60-tooth gear, the ratio is 60/12 = 5:1. The output has 5x more torque but 5x less speed.","Ratio greater than 1:1 = more torque, less speed (gear UP for torque). Used for lifts, heavy intakes, and drivetrains that need pushing power. The output shaft turns slower but with more force.","Ratio less than 1:1 = more speed, less torque (gear UP for speed). Used for flywheels, fast intakes, and speed-focused drivetrains. The output shaft turns faster but with less force.","Compound gear ratios: When you chain multiple gear stages together, multiply the ratios. A 3:1 stage followed by a 2:1 stage = 6:1 total ratio. This lets you achieve extreme ratios in a compact space.","VEX sprockets and chain follow the same ratio principles as gears. Sprocket ratio = driven sprocket teeth / driving sprocket teeth. Chain drives are useful for transmitting power over longer distances.","Motor cartridges provide built-in gear ratios: Red (100 RPM) = high torque, Green (200 RPM) = balanced, Blue (600 RPM) = high speed. Choose the cartridge first, then add external gearing to fine-tune.","For drivetrains: Start with 200 RPM (green) cartridges and a 60:36 external ratio = 333 RPM output. This gives a good balance of speed and pushing power. Adjust based on game requirements.","For lifts: Use 100 RPM (red) cartridges with additional gear reduction if needed. Lifts fight gravity, so they need high torque. A 7:1 total ratio on a double-reverse-4-bar is common.","For flywheels/shooters: Use 600 RPM (blue) cartridges geared UP for speed. Ratios of 1:3 to 1:7 are common. The flywheel stores kinetic energy in its mass, which requires high rotational speed.","Always check for gear mesh quality: the gears should turn smoothly with minimal play (backlash) but no binding. Too tight = friction and motor strain. Too loose = lost motion and inconsistent performance."],"Use the VEX Gear Ratio Calculator or a spreadsheet to calculate your final output RPM, torque, and wheel speed before building. Test your ratio with a temporary build first \u2014 changing gear ratios after a mechanism is fully built is time-consuming and frustrating.")},
+      {id:"f2l3",title:"Bracing & Structural Stability",desc:"Triangulation, cross-bracing, and building robots that stay rigid.",coins:15,content:_lc("A structurally unstable robot is a ticking time bomb. It might work fine during testing in your workshop, but the moment it takes a hard hit from another robot during a match \u2014 or even just drives over a bump on the field \u2014 parts start shifting, screws loosen, shafts bend, and mechanisms go out of alignment.\n\nStructural stability comes down to one concept: preventing unwanted flex and twist in your robot's frame. When you push on the top of your robot, it should feel as solid as a block of aluminum, not wobble like a card house. The primary tools for achieving this are triangulation, cross-bracing, and proper fastener selection.\n\nThe single most effective structural technique in VEX is triangulation \u2014 connecting three points to form a triangle. Triangles are inherently rigid because they cannot change shape without changing the length of at least one side. Rectangles, by contrast, can collapse into parallelograms under load. Every time you see a rectangle in your robot's frame, ask yourself: can I add a diagonal brace to triangulate it?",["Triangles are the only polygon that cannot deform without changing side lengths. They are inherently rigid. Every structural engineer uses triangulation \u2014 from bridges to skyscrapers to VEX robots.","Cross-brace every long, unsupported span with a diagonal member. If you have two vertical towers connected by a horizontal bar, add a diagonal between them. This prevents racking (parallelogram collapse) under side loads.","Use screw-through-bearing-flat joints for any connection that experiences repeated stress or vibration. The bearing flat distributes load across a wider area and prevents the screw from wallowing out the hole over time.","Standoffs are excellent for creating fixed spacing between parallel plates, but they are weak against lateral (sideways) forces. Never rely on standoffs alone for structural bracing \u2014 add diagonal members.","Use nylock (lock) nuts on every structural connection. Standard nuts will vibrate loose within a few matches. Alternatively, apply medium-strength Loctite (blue) to critical connections.","Bearing flats should be used wherever a shaft passes through a C-channel or plate. Without bearing flats, the shaft will gradually enlarge the hole, introducing slop and reducing mechanism precision.","Test your robot's rigidity by firmly grabbing the top of the frame and trying to twist it in all directions. If you can feel or see any flex, add bracing until the frame feels completely solid.","Box-frame construction (two parallel C-channels connected by cross members on all four sides) creates extremely rigid substructures. Use this for lift towers, shooter housings, and drivetrain frames.","Consider the load path: trace the path that forces take from the point of contact (wheels on ground, intake on game object) through your robot's structure to the motors. Every link in that chain must be strong enough.","After every practice session and between matches at competition, do a physical inspection: check for loose screws, bent shafts, cracked metal, and any new play in joints. Fix issues before they become failures."],"After every build session, perform the 'shake test': grab your robot firmly and shake it hard in all six directions (forward/back, left/right, up/down). If anything rattles, flexes, or moves unexpectedly, fix it immediately. A robot that passes the shake test will survive the impacts of competitive play.")},
+      {id:"f2l4",title:"Lifts & Mechanisms",desc:"4-bar linkages, DR4B, and linear slides.",coins:20,content:_lc("Most VEX games require your robot to move game objects vertically \u2014 picking them up from the ground and scoring them at elevated goals, or stacking objects on top of each other. The mechanism that accomplishes this vertical motion is called a lift, and choosing the right type of lift for your game is one of the most important design decisions you will make.\n\nThe three most common lift types in VRC are the 4-bar linkage, the double reverse 4-bar (DR4B), and the linear slide. Each has different characteristics in terms of reach, speed, stability, mechanical complexity, and weight. Understanding the trade-offs helps you select the best option for your specific game scenario.\n\nRegardless of which lift type you choose, all lifts share one universal requirement: counterbalancing. Your lift must fight gravity every time it raises a load, and without counterbalancing (typically using rubber bands), your motors will overheat within minutes. Proper rubber band tuning is an art that separates good lifts from great ones.",["4-bar linkage: Two parallel bars of equal length, connected at both ends to create a parallelogram. The key property: the end effector (claw, intake) maintains a constant angle throughout the lift's range of motion.","The 4-bar's constant-angle property means your claw stays level as the lift goes up and down. This is critical for keeping game objects stable during lifting \u2014 they do not tilt or fall out.","Double Reverse 4-Bar (DR4B): Two 4-bar linkages stacked so the second one reverses the first. This creates a lift with roughly double the vertical reach of a single 4-bar while keeping the base footprint compact.","DR4B lifts are mechanically complex \u2014 they require precise alignment of all four pivot points, synchronized rubber banding on both stages, and careful gear ratio selection. But when built well, they are the most capable lift type in VRC.","Linear slides: Two telescoping channels that move in a straight vertical line. Simpler mechanically than linkage lifts, but require precise alignment to prevent binding. Drawer slides or custom-built slide channels are commonly used.","Scissor lifts: Compact when folded, extend to great heights. However, they are heavy, slow, and structurally weak at full extension. Rarely competitive in modern VRC but useful in specific game scenarios.","All lifts need counterbalancing with rubber bands. The bands should support approximately the weight of the lift structure plus an empty claw, so the motor only needs to provide force for the game object weight.","Rubber band placement matters: mount bands so they provide the most assistance at the lift's weakest point (usually fully extended, where gravity has the most leverage). Linear spring rates mean force changes with extension.","Choose your gear ratio based on lift speed vs. load requirements. Lifts are torque-intensive \u2014 start with 100 RPM (red) motor cartridges and add external gear reduction (5:1 to 7:1 is typical for DR4B lifts).","Build your lift as a separate subassembly that can be removed from the chassis without disassembling the drivetrain. This modular approach makes repairs, adjustments, and full rebuilds dramatically faster."],"Always counterbalance your lift with rubber bands before testing with motors. Tune the rubber bands so the lift floats at mid-height \u2014 when you let go, it should hold its position without the motor running. This dramatically reduces motor load, prevents overheating, and extends your battery life through a tournament day.")},
+      {id:"f2l5",title:"Intakes & Game Object Handling",desc:"Roller intakes, flex wheels, and reliable pickup.",coins:20,content:_lc("Your intake is how your robot interacts with game objects \u2014 it is the mechanism that picks up, holds, sorts, and releases the objects you need to score. A fast, reliable intake is often the single biggest competitive advantage a robot can have, because it directly determines your scoring rate (game objects per minute).\n\nThe most common intake type in VRC is the roller intake, which uses spinning wheels or rollers to pull game objects into the robot. Flex wheels (compliant, slightly squishy wheels) are the most popular roller material because they conform to the shape of the game object, providing consistent grip across a range of object sizes and orientations.\n\nDesigning a great intake requires understanding the specific game objects for the current season: their size, weight, shape, surface texture, and how they are positioned on the field. An intake that works perfectly on one type of game object may completely fail on another. This is why prototyping and testing with real game objects (not approximations) is absolutely critical.",["Roller intakes use spinning wheels, rollers, or flaps to pull game objects into the robot through friction. The contact surfaces must provide enough grip without launching objects back out.","Flex wheels are the most popular intake roller in VRC. They are made of flexible polyurethane and deform slightly to conform to the game object's shape, providing consistent grip across different object sizes and orientations.","Intake geometry is critical: the opening must be wide enough to capture objects from a range of approach angles, but narrow enough to maintain control. A funnel shape with wide entry and narrow throat works well for most applications.","Intake speed determines capture reliability. Too slow = objects are not pulled in before the robot drives past them. Too fast = objects bounce off the rollers or are launched out the back. Test at multiple speeds to find the sweet spot.","Passive indexing uses physical guides (ramps, channels, funnels) to automatically align and position game objects inside the robot. Good passive indexing reduces the driver's workload and speeds up scoring cycles.","Compression matters: the gap between the intake roller and the ground (or between two opposing rollers) should be slightly smaller than the game object. This ensures the flex wheels deform to grip the object firmly.","Rubber flap intakes (strips of rubber attached to a spinning shaft) are an alternative to flex wheels. They are cheaper and easier to build but provide less consistent grip. Good for round objects, less effective for irregular shapes.","Multi-stage intakes use one set of rollers to capture objects and a second set to transport them to the scoring mechanism. This allows continuous intake \u2014 the robot can keep collecting while the first objects are being scored.","Always test your intake with at least 10 game objects in rapid succession. Single-object testing does not reveal jamming issues, inconsistent grip, or mechanical interference that appear during fast multi-cycle operation.","Test your intake at different battery levels. A freshly charged battery provides more voltage = faster motor speed = different intake behavior than a battery at 50% charge. Your intake must work reliably across the full battery range."],"Build a standalone intake prototype before integrating it into your robot. Mount it on a simple frame with one motor and test it extensively with real game objects on the actual field surface. Document the optimal motor speed, roller spacing, and compression for your team's reference.")},
     ]},
   ]},
   cad:{label:'Design & CAD',icon:'📐',units:[
@@ -1500,6 +1616,7 @@ const CURRICULUM={
       {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID adjusts motor speed in real time based on how far the motor is from its target.',['P (Proportional): speed = kP × error. Farther from target = faster.','I (Integral): accumulates past error over time to correct persistent offsets.','D (Derivative): reacts to rate-of-change of error — predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first, then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible.',`void driveDistance(double targetDeg) {\n  const double kP = 0.5;\n  const double kD = 0.02;\n  double prevError = 0;\n  LeftMotors.resetPosition();\n\n  while(true) {\n    double error = targetDeg - LeftMotors.position(degrees);\n    double deriv = error - prevError;\n    double speed = (kP * error) + (kD * deriv);\n\n    speed = fmax(-100, fmin(100, speed));\n    LeftMotors.spin(forward, speed, percent);\n    RightMotors.spin(forward, speed, percent);\n\n    if(fabs(error) < 3.0) break;\n    prevError = error;\n    wait(20, msec);\n  }\n  LeftMotors.stop(hold);\n}`)},
     ]},
   ]},
+
 };
 
 let activeTrack = 'foundations';
@@ -1576,58 +1693,124 @@ function toggleUnit(unitId){
 }
 
 function toggleLesson(lessonId){
-  // Find lesson data from CURRICULUM
-  let lesson=null;
-  for(const track of Object.values(CURRICULUM)){
+  // Find lesson + track/unit info
+  let lesson=null, trackId=null, unitId=null, allLessonsFlat=[];
+  for(const [tk, track] of Object.entries(CURRICULUM)){
     for(const unit of track.units){
+      for(const l of unit.lessons){ allLessonsFlat.push({...l, trackId:tk, unitId:unit.id, unitTitle:unit.title}); }
       const found=unit.lessons.find(l=>l.id===lessonId);
-      if(found){lesson=found;break;}
+      if(found){lesson=found; trackId=tk; unitId=unit.id;}
     }
-    if(lesson)break;
   }
   if(!lesson) return;
+  openLesson=lessonId;
 
-  // Create full-page overlay (Khan Academy style)
+  // Remove existing overlay
   document.getElementById('lesson-page-overlay')?.remove();
+
   const isDone=!!DB.completedLessons['cl_'+lesson.id];
   const isStudent=currentUser.role==='student';
+  const track=CURRICULUM[trackId];
+
+  // Build sidebar HTML
+  function buildSidebar(){
+    return track.units.map(unit=>{
+      const done=unit.lessons.filter(l=>DB.completedLessons['cl_'+l.id]).length;
+      const pct=Math.round(done/unit.lessons.length*100);
+      const lessonItems=unit.lessons.map(l=>{
+        const lDone=!!DB.completedLessons['cl_'+l.id];
+        const isActive=l.id===lessonId;
+        return `<div class="ls-lesson-item${isActive?' active':lDone?' done':''}" onclick="switchLesson('${l.id}')">
+          <span class="ls-check${isActive?' active':lDone?' done':''}">
+            ${lDone?'✓':isActive?'▶':''}
+          </span>
+          <span style="flex:1;line-height:1.4">${l.title}</span>
+        </div>`;
+      }).join('');
+      return `<div class="ls-unit">
+        <div class="ls-unit-header">
+          <span style="flex:1">${unit.title}</span>
+          <span style="font-size:10px;color:var(--text-3)">${done}/${unit.lessons.length}</span>
+        </div>
+        <div class="ls-unit-bar"><div class="ls-unit-bar-fill" style="width:${pct}%"></div></div>
+        ${lessonItems}
+      </div>`;
+    }).join('');
+  }
+
+  // Find prev/next lesson
+  const idx=allLessonsFlat.findIndex(l=>l.id===lessonId);
+  const prevLesson=idx>0?allLessonsFlat[idx-1]:null;
+  const nextLesson=idx<allLessonsFlat.length-1?allLessonsFlat[idx+1]:null;
+
   const overlay=document.createElement('div');
   overlay.className='lesson-page-overlay';
   overlay.id='lesson-page-overlay';
   overlay.innerHTML=
-    '<div class="lesson-page-header">'+
-      '<button class="lesson-page-back" id="lp-back">'+
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>'+
-        'Back to lessons'+
-      '</button>'+
-      '<div class="lesson-page-title">'+esc(lesson.title)+'</div>'+
-      '<div class="lesson-page-coins">\ud83e\ude99 '+lesson.coins+' VCoins</div>'+
-    '</div>'+
-    '<div class="lesson-page-body">'+
-      '<div style="margin-bottom:1.5rem"><div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">'+lesson.desc+'</div></div>'+
-      lesson.content+
-    '</div>'+
-    '<div class="lesson-page-complete">'+
-      (isDone
-        ? '<span style="font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>'
-        : (isStudent
-          ? '<button class="btn btn-primary btn-pill" id="lp-complete" style="min-width:180px;justify-content:center">Mark Complete &mdash; Earn '+lesson.coins+' VCoins</button>'
-          : '')
-      )+
-    '</div>';
+    // Header
+    `<div class="lesson-page-header">
+      <button class="lesson-page-back" id="lp-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Lessons
+      </button>
+      <div class="lesson-page-title">${esc(lesson.title)}</div>
+      <div class="lesson-page-coins">🪙 ${lesson.coins} VCoins</div>
+    </div>`+
+    // Body with sidebar
+    `<div class="lesson-page-inner">
+      <div class="lesson-sidebar" id="lp-sidebar">
+        <div class="ls-track-label">${track.icon} ${track.label}</div>
+        ${buildSidebar()}
+      </div>
+      <div class="lesson-main">
+        <div class="lesson-page-body" id="lp-body">
+          ${lesson.content}
+        </div>
+        <div class="lesson-page-complete" id="lp-footer">
+          <div class="lp-nav-btns">
+            ${prevLesson?`<button class="btn btn-ghost btn-sm" onclick="switchLesson('${prevLesson.id}')">← ${esc(prevLesson.title).substring(0,25)}…</button>`:'<span></span>'}
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            ${isDone
+              ? `<span style="font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>`
+              : isStudent
+                ? `<button class="btn btn-primary btn-pill" id="lp-complete" style="min-width:180px;justify-content:center">✓ Mark Complete — Earn ${lesson.coins} VCoins</button>`
+                : ''
+            }
+            ${nextLesson?`<button class="btn btn-ghost btn-sm" id="lp-next">Next →</button>`:''}
+          </div>
+        </div>
+      </div>
+    </div>`;
 
   document.body.appendChild(overlay);
-  document.getElementById('lp-back').addEventListener('click',function(){
-    overlay.remove();
-    openLesson=null;
+
+  // Event listeners
+  document.getElementById('lp-back').addEventListener('click',()=>{
+    overlay.remove(); openLesson=null;
+  });
+  document.getElementById('lp-next')?.addEventListener('click',()=>{
+    if(nextLesson) switchLesson(nextLesson.id);
   });
   if(!isDone && isStudent){
-    document.getElementById('lp-complete')?.addEventListener('click',function(){
-      completeCurriculumLesson(lesson.id, lesson.coins, null);
-      overlay.remove();
+    document.getElementById('lp-complete')?.addEventListener('click',async function(){
+      this.disabled=true; this.textContent='Saving…';
+      await completeCurriculumLesson(lesson.id, lesson.coins, null);
+      // Refresh the overlay with updated state
+      overlay.remove(); toggleLesson(lessonId);
     });
   }
-  openLesson=lessonId;
+
+  // Scroll active lesson into view in sidebar
+  setTimeout(()=>{
+    overlay.querySelector('.ls-lesson-item.active')?.scrollIntoView({block:'nearest',behavior:'smooth'});
+  }, 100);
+}
+
+function switchLesson(lessonId){
+  document.getElementById('lesson-page-overlay')?.remove();
+  openLesson=null;
+  toggleLesson(lessonId);
 }
 
 async function completeCurriculumLesson(lessonId,coins,event){
@@ -1886,6 +2069,8 @@ function copyInviteLink(email){
   navigator.clipboard.writeText(msg).then(()=>showToast('Invite message copied!')).catch(()=>prompt('Copy this invite:',msg));
 }
 
+
+
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -1975,6 +2160,12 @@ function authSwitch(t){
   document.getElementById('auth-heading').textContent=t==='login'?'Welcome back':'Create an account';
   document.getElementById('auth-subhead').textContent=t==='login'?'Sign in to your account to continue':'Get started for free';
 }
+function resetLoginBtn(){
+  const btn=document.querySelector('#form-login .btn-dark');
+  if(btn){btn.textContent='Continue';btn.disabled=false;}
+  document.getElementById('login-err').textContent='';
+}
+
 async function doLogin(){
   const email=document.getElementById('login-email').value.trim().toLowerCase();
   const pw=document.getElementById('login-password').value;
@@ -2679,8 +2870,15 @@ async function renderShop(){
   const body=document.getElementById('shop-body');
   const inventory=currentUser.inventory||[];
   const coins=currentUser.coins||0;
-  body.innerHTML=`<div class="shop-grid">${SHOP_ITEMS.map(item=>{
+  // Combine default items + teacher-created items
+  const teacherItems=JSON.parse(localStorage.getItem('vexify_shop_items')||'[]');
+  const allItems=[...SHOP_ITEMS,...teacherItems];
+  // Get pending purchases for this student
+  const purchases=JSON.parse(localStorage.getItem('vexify_purchases')||'[]');
+  const myPending=purchases.filter(p=>p.studentEmail===currentUser.email&&p.status==='pending').map(p=>p.itemId);
+  body.innerHTML=`<div class="shop-grid">${allItems.map(item=>{
     const owned=inventory.includes(item.id);
+    const isPending=myPending.includes(item.id);
     const canAfford=coins>=item.price;
     return`<div class="shop-item">
       <span class="shop-item-icon">${item.icon}</span>
@@ -2689,24 +2887,31 @@ async function renderShop(){
       <div class="shop-item-price">${item.price} VCoins</div>
       ${owned
         ?`<span class="badge badge-green" style="justify-content:center;width:100%">✓ Owned</span>`
-        :`<button class="btn btn-sm ${canAfford?'btn-primary':'btn-ghost'}" style="width:100%;justify-content:center;margin-top:4px" ${canAfford?'':'disabled'} onclick="buyItem('${item.id}','${item.name}',${item.price})">${canAfford?'Buy Now':'Not enough VCoins'}</button>`
+        :isPending
+          ?`<span class="badge badge-amber" style="justify-content:center;width:100%">⏳ Pending Approval</span>`
+          :`<button class="btn ${canAfford?'btn-primary':'btn-ghost'} btn-sm btn-pill" style="width:100%;justify-content:center" onclick="buyItem('${item.id}','${item.name}',${item.price},'${item.icon}')" ${canAfford?'':'disabled'}>${canAfford?'Buy Now':'Not enough VCoins'}</button>`
       }
     </div>`;
   }).join('')}</div>`;
 }
-async function buyItem(id,name,price){
+
+function buyItem(id,name,price,icon){
   if((currentUser.coins||0)<price){showToast('Not enough VCoins!');return;}
   currentUser.coins-=price;
-  if(!currentUser.inventory)currentUser.inventory=[];
-  currentUser.inventory.push(id);
   DB.users[currentUser.email].coins=currentUser.coins;
-  DB.users[currentUser.email].inventory=currentUser.inventory;
-  await window._firebase.updateUser(currentUser.email,{coins:currentUser.coins,inventory:currentUser.inventory});
-  updateCoinDisplay();renderShop();
-  showToast(`🎉 You unlocked: ${name}!`);
+  if(window._firebase)window._firebase.updateUser(currentUser.email,{coins:currentUser.coins});
+  updateCoinDisplay();
+  const purchases=JSON.parse(localStorage.getItem('vexify_purchases')||'[]');
+  purchases.push({
+    itemId:id, itemName:name, price:price, icon:icon||'🎁',
+    studentEmail:currentUser.email, studentName:currentUser.name,
+    status:'pending', timestamp:Date.now()
+  });
+  localStorage.setItem('vexify_purchases', JSON.stringify(purchases));
+  showToast('Purchase request sent! Your teacher will review it.');
+  renderShop();
 }
 
-// ═══════ MANAGE ═══════
 function renderManage(){
   const classes=getMyClasses();
   const body=document.getElementById('manage-body');
@@ -2863,8 +3068,17 @@ function showToast(msg){
 }
 
 // ═══════ MODAL HELPERS ═══════
-function openModal(id){document.getElementById(id).classList.remove('hidden');}
-function closeModal(id){document.getElementById(id).classList.add('hidden');}
+function openModal(id){
+  document.getElementById(id)?.classList.remove('hidden');
+  // Also show the corresponding overlay
+  const oid=id.replace('modal-','overlay-');
+  document.getElementById(oid)?.classList.remove('hidden');
+}
+function closeModal(id){
+  document.getElementById(id)?.classList.add('hidden');
+  const oid=id.replace('modal-','overlay-');
+  document.getElementById(oid)?.classList.add('hidden');
+}
 document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('click',function(e){if(e.target===this)this.classList.add('hidden');});});
 </script>
 
