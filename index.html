@@ -893,27 +893,31 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   }
   body.dark .lesson-page-complete{background:#141414;border-top-color:#2d2d2d;}
   .lp-nav-btns{display:flex;gap:8px;}
-  .t-layout{display:flex;height:100vh;overflow:hidden;}
-  .t-sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
-  body.dark .t-sidebar{background:#111;border-right-color:#2d2d2d;}
-  .t-sidebar-header{padding:1.125rem 1rem .875rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-  body.dark .t-sidebar-header{border-bottom-color:#2d2d2d;}
-  .t-sidebar-logo{font-size:15px;font-weight:800;letter-spacing:-.04em;}
-  .t-sidebar-section{padding:.5rem 0;}
-  .t-sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-3);padding:.5rem 1rem .25rem;}
-  .t-nav-item{display:flex;align-items:center;gap:9px;padding:.5rem 1rem;margin:1px .5rem;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s,color .12s;}
-  .t-nav-item:hover{background:var(--bg);color:var(--text);}
-  .t-nav-item.active{background:var(--accent);color:#fff;}
-  body.dark .t-nav-item.active{background:#f0f0f0;color:#000;}
-  .t-nav-item svg{width:14px;height:14px;flex-shrink:0;}
-  .t-class-btn{display:flex;align-items:center;gap:8px;padding:.4rem 1rem;margin:1px .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s;border:none;background:none;width:100%;text-align:left;}
+  .t-layout{display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+  .t-topnav{
+    background:rgba(255,255,255,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;flex-shrink:0;
+    padding:0 1.5rem;height:56px;gap:0;
+  }
+  body.dark .t-topnav{background:rgba(17,17,17,.92);border-bottom-color:#2d2d2d;}
+  .t-topnav-logo{font-size:15px;font-weight:800;letter-spacing:-.04em;margin-right:1.25rem;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+  .t-nav-items{display:flex;align-items:center;flex:1;overflow-x:auto;}
+  .t-nav-item{display:flex;align-items:center;gap:6px;padding:18px 13px;font-size:13px;font-weight:400;color:var(--text-3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s;margin-bottom:-1px;}
+  .t-nav-item:hover{color:var(--text);}
+  .t-nav-item.active{color:var(--text);border-bottom-color:var(--text);font-weight:600;}
+  body.dark .t-nav-item{color:#666;}
+  body.dark .t-nav-item.active{color:#ededed;border-bottom-color:#ededed;}
+  .t-nav-item svg{width:14px;height:14px;flex-shrink:0;stroke-width:1.75;}
+  .t-topnav-right{display:flex;align-items:center;gap:8px;margin-left:auto;padding-left:1rem;flex-shrink:0;}
+  .t-class-btn{display:flex;align-items:center;gap:8px;padding:.4rem 1rem;margin:1px .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .12s;}
   .t-class-btn:hover{background:var(--bg);}
   .t-class-btn.active{background:var(--bg);color:var(--text);font-weight:600;}
   .t-class-dot{width:6px;height:6px;border-radius:50%;background:#ddd;flex-shrink:0;}
   body.dark .t-class-dot{background:#333;}
   .t-class-btn.active .t-class-dot{background:var(--accent);}
   .t-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-  .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
+  .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:46px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
   body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
   .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;background:#f0f4ff;}
@@ -1019,39 +1023,8 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   body.dark .pricing-card{background:#1a1a1a;border-color:#2d2d2d;}
 
 
-  /* TEACHER SIDEBAR */
-  .t-layout{display:flex;height:100vh;overflow:hidden;}
-  .t-sidebar{width:230px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
-  body.dark .t-sidebar{background:#111;border-right-color:#2d2d2d;}
-  .t-sidebar-header{padding:1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-  body.dark .t-sidebar-header{border-bottom-color:#2d2d2d;}
-  .t-sidebar-logo{font-size:15px;font-weight:800;letter-spacing:-.04em;}
-  .t-sidebar-section{padding:.5rem 0;}
-  .t-sidebar-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--text-3);padding:.5rem 1rem .25rem;}
-  .t-nav-item{display:flex;align-items:center;gap:9px;padding:.5rem 1rem;margin:1px .5rem;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s,color .12s;}
-  .t-nav-item:hover{background:var(--bg);color:var(--text);}
-  .t-nav-item.active{background:var(--accent);color:#fff;}
-  body.dark .t-nav-item.active{background:#f0f0f0;color:#000;}
-  .t-nav-item svg{width:14px;height:14px;flex-shrink:0;}
-  .t-class-btn{display:flex;align-items:center;gap:8px;padding:.4rem 1rem;margin:1px .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:background .12s;}
-  .t-class-btn:hover{background:var(--bg);}
-  .t-class-btn.active{background:var(--bg);color:var(--text);font-weight:600;}
-  .t-class-dot{width:6px;height:6px;border-radius:50%;background:#ddd;flex-shrink:0;}
-  body.dark .t-class-dot{background:#333;}
-  .t-class-btn.active .t-class-dot{background:var(--accent);}
-  .t-main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-  .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
-  body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
-  .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
-  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;background:#f0f4ff;}
-  body.dark .t-content-area{background:#0d0d0d;}
-  .t-content-inner{max-width:900px;margin:0 auto;width:100%;}
-  .t-panel{display:none;}.t-panel.t-active{display:block;}
-  .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
-  body.dark .t-inner-tabs{background:#1a1a1a;}
-  .t-inner-tab{flex:1;text-align:center;padding:.45rem .5rem;border-radius:7px;font-size:12.5px;font-weight:500;color:var(--text-2);cursor:pointer;transition:background .12s;}
-  .t-inner-tab.active{background:var(--white);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08);}
-  body.dark .t-inner-tab.active{background:#252525;color:#ededed;}
+  /* TEACHER HORIZONTAL NAV */
+  /* (styles already defined above; this section intentionally left minimal) */
 
   /* ADMIN SIDEBAR */
   .a-layout{display:flex;height:100vh;overflow:hidden;}
@@ -1174,16 +1147,16 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .lc-check-text{font-size:14px;color:var(--text-2);line-height:1.8;margin-top:.5rem;}
 
   /* Teacher Dashboard */
-  .td-top{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
-  @media(max-width:800px){.td-top{grid-template-columns:1fr;}}
-  .td-score-card{background:#fff;border-radius:18px;padding:1.75rem;display:flex;gap:1.5rem;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+  .td-top{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:stretch;}
+  @media(max-width:900px){.td-top{flex-wrap:wrap;}}
+  .td-score-card{background:#fff;border-radius:18px;padding:1.5rem;display:flex;gap:1.25rem;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);flex:1;min-width:0;}
   body.dark .td-score-card{background:#1c1c1c;box-shadow:none;border:1px solid #2d2d2d;}
   .td-score-big{font-size:3rem;font-weight:900;letter-spacing:-.06em;line-height:1;}
   .td-score-lbl{font-size:12px;color:#888;font-weight:500;margin-bottom:4px;}
   .td-score-sub{font-size:11px;color:#bbb;}
-  .td-alert-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
-  @media(max-width:800px){.td-alert-row{grid-template-columns:1fr;}}
-  .td-alert{border-radius:16px;padding:1.5rem;color:#fff;position:relative;overflow:hidden;min-height:100px;}
+  .td-alert-row{display:flex;gap:.75rem;flex:1;min-width:0;}
+  @media(max-width:600px){.td-alert-row{flex-wrap:wrap;}}
+  .td-alert{border-radius:16px;padding:1.25rem;color:#fff;position:relative;overflow:hidden;min-height:90px;flex:1;}
   .td-alert-green{background:#6bc26b;}
   .td-alert-yellow{background:#e8c840;}
   .td-alert-orange{background:#e8845a;}
@@ -1247,6 +1220,170 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .td-action-btn:hover{background:var(--bg);border-color:var(--text-3);}
   body.dark .td-action-btn{background:#1c1c1c;border-color:#2d2d2d;color:#ededed;}
   body.dark .td-action-btn:hover{background:#252525;}
+
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE / DYNAMIC SCALING
+   ══════════════════════════════════════════════ */
+
+/* ── Tablet: 768px – 1024px ── */
+@media (max-width: 1024px) {
+  .panel { padding: 1.5rem 1.25rem; }
+  .t-content-area { padding: 1.25rem; }
+  .a-content { padding: 1.25rem; }
+  .t-content-inner, .a-content-inner { max-width: 100%; }
+  .td-top { flex-wrap: wrap; }
+  .td-stats { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+}
+
+/* ── Small tablet / large phone: ≤ 768px ── */
+@media (max-width: 768px) {
+
+  /* Global nav */
+  #nav { padding: 0 1rem; height: 52px; }
+  .logo-text { font-size: 14px; }
+  .theme-toggles { display: none; }
+  #nav-right { gap: 6px; }
+  #nav-name, #nav-role-label { display: none; }
+
+  /* Student app nav: allow horizontal scroll */
+  .app-nav { padding: 0 .75rem; gap: 0; }
+  .app-nav-item { padding: 12px 10px; font-size: 12px; gap: 5px; }
+  .app-nav-item svg { width: 13px; height: 13px; }
+
+  /* Teacher top nav */
+  .t-topnav { padding: 0 .75rem; height: 52px; }
+  .t-topnav-logo { margin-right: .75rem; font-size: 14px; }
+  .t-nav-item { padding: 14px 10px; font-size: 12px; gap: 5px; }
+  .t-nav-item svg { width: 13px; height: 13px; }
+  .t-topnav-right { gap: 6px; padding-left: .5rem; }
+  #t-user-name { display: none; }
+  .t-topnav-right > div[style*="line-height"] { display: none; }
+  .t-topbar { padding: 0 .75rem; height: 42px; }
+  .t-topbar-title { font-size: 13px; }
+  .t-content-area { padding: 1rem .75rem; }
+
+  /* Admin nav */
+  .a-sidebar { width: 185px; }
+  .a-topbar { padding: 0 1rem; }
+  .a-content { padding: 1rem; }
+
+  /* Panels */
+  .panel { padding: 1.25rem 1rem; }
+  .panel-header { margin-bottom: 1.25rem; }
+  .panel-title { font-size: 15px; }
+
+  /* Stat cards */
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .stat-val { font-size: 1.3rem; }
+
+  /* Calendar */
+  .cal-label { display: none; }
+
+  /* Modals */
+  .modal { padding: 1.25rem; border-radius: var(--rl); }
+  .modal-overlay { padding: .5rem; }
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Auth card */
+  .auth-card { padding: 1.5rem 1.25rem; }
+
+  /* Hero */
+  .hero { padding: 4rem 1rem 3.5rem; }
+  .hero-btns { flex-direction: column; align-items: center; }
+  .features-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Message bubbles */
+  .msg-bubble { max-width: 85%; }
+
+  /* Lesson sidebar */
+  .lesson-sidebar { width: 200px; }
+
+  /* Teacher dashboard cards */
+  .td-top { flex-direction: column; }
+  .td-alert-row { flex-wrap: wrap; }
+  .td-actions { gap: .375rem; }
+  .td-action-btn { font-size: 11px; padding: 6px 10px; }
+}
+
+/* ── Mobile: ≤ 480px ── */
+@media (max-width: 480px) {
+
+  /* Nav: hide text labels in student nav, icon-only */
+  .app-nav-item { font-size: 0; gap: 0; padding: 14px 9px; }
+  .app-nav-item svg { width: 16px; height: 16px; }
+
+  /* Teacher nav: icon-only too */
+  .t-nav-item { font-size: 0; gap: 0; padding: 14px 9px; }
+  .t-nav-item svg { width: 16px; height: 16px; }
+  .t-topnav-logo { font-size: 13px; margin-right: .5rem; }
+  .t-topbar-title { font-size: 12px; }
+
+  /* Panels go full-bleed */
+  .panel { padding: 1rem .75rem; }
+
+  /* Stat cards single column */
+  .stat-cards { grid-template-columns: 1fr 1fr; }
+  .stat-card { padding: .875rem; }
+  .stat-val { font-size: 1.2rem; }
+
+  /* Features grid single column */
+  .features-grid { grid-template-columns: 1fr; }
+
+  /* Modal full-width */
+  .modal { max-width: 100%; border-radius: var(--r); }
+
+  /* Hero */
+  .hero h1 { font-size: clamp(1.6rem, 8vw, 2.5rem); }
+  .hero-sub { font-size: 14px; }
+
+  /* Lesson content panel */
+  .lesson-content-panel { padding: 1rem .875rem 1rem 2.5rem; }
+  .lesson-page-body { padding: 1.5rem 1rem 4rem; }
+  .lesson-page-header { padding: 10px 12px; }
+
+  /* Track tabs wrap */
+  .track-tabs { gap: 4px; }
+  .track-tab { font-size: 11px; padding: 5px 10px; }
+
+  /* Buttons shrink */
+  .btn-pill-lg { padding: 9px 20px; font-size: 13px; }
+
+  /* Member rows */
+  .member-row { gap: 8px; }
+  .member-info .member-name { font-size: 12px; }
+  .member-email { font-size: 10px; }
+
+  /* Admin sidebar collapses to icons */
+  .a-sidebar { width: 52px; overflow: visible; }
+  .a-nav-item span, .a-sidebar-logo span:not(.a-sidebar-badge), .a-sidebar-badge { display: none; }
+  .a-nav-item { justify-content: center; padding: .5rem; margin: 1px 4px; }
+  .a-sidebar-logo { padding: .75rem .5rem; justify-content: center; }
+  .a-content { padding: .75rem; }
+}
+
+/* ── Very small: ≤ 360px ── */
+@media (max-width: 360px) {
+  .app-nav-item { padding: 14px 7px; }
+  .t-nav-item { padding: 14px 7px; }
+  .panel { padding: .75rem .5rem; }
+  .stat-cards { grid-template-columns: 1fr; }
+  .auth-card { padding: 1.25rem 1rem; margin: .5rem; }
+}
+
+/* ── Ensure lesson sidebar stacks on narrow screens ── */
+@media (max-width: 640px) {
+  .lesson-page-inner { flex-direction: column; }
+  .lesson-sidebar { width: 100%; max-height: 200px; border-right: none; border-bottom: 1px solid var(--border); }
+  .lesson-main { flex: 1; overflow-y: auto; }
+}
+
+/* ── Fix touch scrolling for horizontal navs on iOS ── */
+.app-nav, .t-nav-items {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.app-nav::-webkit-scrollbar, .t-nav-items::-webkit-scrollbar { display: none; }
 
 </style>
 </head>
@@ -1481,39 +1618,46 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 
 <div id="page-teacher" style="display:none;position:fixed;inset:0;z-index:200;background:var(--bg);">
   <div class="t-layout">
-    <div class="t-sidebar">
-      <div class="t-sidebar-header">
-        <span class="t-sidebar-logo">Vexify</span>
-        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+    <!-- HORIZONTAL TOP NAV -->
+    <nav class="t-topnav">
+      <span class="t-topnav-logo">Vexify</span>
+      <div class="t-nav-items">
+        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes
+        </div>
+        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading
+        </div>
+        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons
+        </div>
+        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets
+        </div>
+        <div class="t-nav-item" data-tpanel="shop" onclick="tNavTo('shop')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Shop
+        </div>
+      </div>
+      <div class="t-topnav-right">
+        <button class="btn btn-ghost btn-sm" onclick="openCreateClassModal()">+ New Class</button>
+        <button onclick="toggleDark()" class="btn btn-ghost btn-sm" style="padding:5px 8px;" title="Toggle dark mode">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
+        <div style="line-height:1.3;">
+          <div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div>
+          <div style="font-size:11px;color:var(--text-3);">Teacher</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="signOut()" title="Sign out" style="padding:5px 8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">Menu</div>
-        <div class="t-nav-item active" data-tpanel="classes" onclick="tNavTo('classes')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Classes</div>
-        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Grading</div>
-        <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons</div>
-        <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets</div>
-        <div class="t-nav-item" data-tpanel="shop" onclick="tNavTo('shop')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>Shop</div>
-      </div>
-      <div class="t-sidebar-section">
-        <div class="t-sidebar-label">My Classes</div>
-        <div id="t-class-list"><div style="padding:.4rem 1rem;font-size:12px;color:var(--text-3)">No classes yet</div></div>
-        <div style="padding:.25rem .75rem .5rem;"><button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;font-size:12px;" onclick="openCreateClassModal()">+ New Class</button></div>
-      </div>
-      <div style="flex:1"></div>
-      <div style="padding:.5rem;border-top:1px solid var(--border);">
-        <div class="t-nav-item" onclick="signOut()" style="color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign Out</div>
-      </div>
-    </div>
+    </nav>
+    <!-- MAIN CONTENT -->
     <div class="t-main">
       <div class="t-topbar">
         <div class="t-topbar-title" id="t-topbar-title">Classes</div>
         <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
-        <div style="display:flex;align-items:center;gap:8px;margin-left:8px;">
-          <div class="avatar" style="width:28px;height:28px;font-size:11px;" id="t-avatar">T</div>
-          <div><div style="font-size:12px;font-weight:600;" id="t-user-name">Teacher</div><div style="font-size:11px;color:var(--text-3);">Teacher</div></div>
-        </div>
       </div>
       <div class="t-content-area">
         <div id="t-panel-classes" class="t-panel t-active"><div id="t-classes-body"></div></div>
@@ -2151,6 +2295,20 @@ function copyInviteLink(email){
 
 
 
+
+// SVG icons for dashboard
+const SVG_ICONS={
+  trophy:'<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".35"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 19.24 7 20v2"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 19.24 17 20v2"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>',
+  users:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>',
+  book:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+  coin:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/><path d="M15.5 9.5a3 3 0 10-3-3"/><path d="M8.5 14.5a3 3 0 103 3"/></svg>',
+  check:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  ticket:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5v2"/><path d="M15 11v2"/><path d="M15 17v2"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>',
+  chart:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+  star:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+};
+
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -2415,7 +2573,7 @@ function tNavTo(panel){
   if(panel==='shop')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openAddShopItem()">+ Add Item</button>';
   if(panel==='classes'){
     const cls=getMyClasses();
-    if(cls.length===1){tOpenClass(cls[0][0]);return;}
+    if(cls.length>=1){tOpenClass(cls[0][0]);return;}
     else tRenderClasses();
   }
   if(panel==='grading')tRenderGrading();
@@ -2453,7 +2611,19 @@ function tDetailTab(tab){
     const studentStats=students.map((u,i)=>{
       const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
       const pct=totalLessons?Math.round(done/totalLessons*100):0;
-      return {name:u.name,email:u.email,coins:u.coins||0,done,total:totalLessons,pct,avClass:avColors[i%avColors.length]};
+      // Per-track progress
+      const tracks={};
+      for(const [tk,track] of Object.entries(CURRICULUM)){
+        let tTotal=0,tDone=0;
+        for(const unit of track.units){
+          for(const l of unit.lessons){
+            tTotal++;
+            if(DB.completedLessons['cl_'+l.id]||DB.completedLessons[u.email+'_'+l.id])tDone++;
+          }
+        }
+        tracks[tk]={done:tDone,total:tTotal,pct:tTotal?Math.round(tDone/tTotal*100):0};
+      }
+      return {name:u.name,email:u.email,coins:u.coins||0,done,total:totalLessons,pct,avClass:avColors[i%avColors.length],tracks};
     });
 
     const avgPct=studentStats.length?Math.round(studentStats.reduce((s,x)=>s+x.pct,0)/studentStats.length):0;
@@ -2471,9 +2641,9 @@ function tDetailTab(tab){
           <div style="font-size:13px;color:#888;margin-top:4px;">${esc(c.name)} · ${students.length} student${students.length!==1?'s':''} · Code: <strong>${c.code||'N/A'}</strong></div>
         </div>
         <div class="td-actions">
-          <button class="td-action-btn" onclick="openAddMember('${tActiveClassId}')">👤 Add Student</button>
-          <button class="td-action-btn" onclick="openGiveCoins('${tActiveClassId}')">🪙 Give Coins</button>
-          <button class="td-action-btn" onclick="copyClassCode('${c?.code||''}')">📋 Copy Code</button>
+          <button class="td-action-btn" onclick="openAddMember('${tActiveClassId}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Add Student</button>
+          <button class="td-action-btn" onclick="openGiveCoins('${tActiveClassId}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/></svg> Give Coins</button>
+          <button class="td-action-btn" onclick="copyClassCode('${c?.code||''}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copy Code</button>
         </div>
       </div>
 
@@ -2484,7 +2654,7 @@ function tDetailTab(tab){
             <div class="td-score-big" style="color:#6bc26b;">${avgPct}%</div>
             <div class="td-score-sub">Class average across ${totalLessons} lessons</div>
           </div>
-          <div style="font-size:60px;opacity:.2;">🏆</div>
+          <div style="opacity:.15;">${SVG_ICONS.trophy}</div>
           <div>
             <div class="td-score-lbl">Work Assigned</div>
             <div class="td-score-big">${totalLessons}</div>
@@ -2507,7 +2677,7 @@ function tDetailTab(tab){
         </div>
       </div>
 
-      ${myTickets?`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:.875rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;"><span style="font-size:18px;">🎫</span><strong>${myTickets} open ticket${myTickets!==1?'s':''}</strong> from students in this class <button class="btn btn-ghost btn-sm" onclick="tNavTo('tickets')" style="margin-left:auto;">View Tickets</button></div>`:''}
+      ${myTickets?`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:.875rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5v2"/><path d="M15 11v2"/><path d="M15 17v2"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><strong>${myTickets} open ticket${myTickets!==1?'s':''}</strong> from students in this class <button class="btn btn-ghost btn-sm" onclick="tNavTo('tickets')" style="margin-left:auto;">View Tickets</button></div>`:''}
 
       <div class="td-prof">
         <div class="td-prof-header">
@@ -2515,16 +2685,19 @@ function tDetailTab(tab){
           <div style="font-size:12px;color:var(--text-3);">${students.length} student${students.length!==1?'s':''}</div>
         </div>
         ${students.length?`<table>
-          <thead><tr><th>Student</th><th>Completed</th><th>Progress</th><th>VCoins</th></tr></thead>
+          <thead><tr><th>Student</th><th>Completed</th><th>Progress</th><th>Foundations</th><th>CAD</th><th>Programming</th><th>VCoins</th></tr></thead>
           <tbody>
             ${studentStats.map(s=>`<tr>
               <td><div class="td-student-row"><div class="td-avatar ${s.avClass}">${initials(s.name)}</div><div><div style="font-weight:600">${esc(s.name)}</div><div style="font-size:11px;color:var(--text-3)">${s.email}</div></div></div></td>
               <td style="font-weight:700;font-size:14px;">${s.done} / ${s.total}</td>
               <td><div style="display:flex;align-items:center;gap:10px;"><div class="td-bar"><div class="td-bar-fill td-bar-${pctColor(s.pct)}" style="width:${s.pct}%"></div></div><span class="td-pct td-pct-${pctColor(s.pct)}">${s.pct}%</span></div></td>
+              <td><div style="width:36px;height:36px;border-radius:50%;background:${s.tracks.foundations?.pct>=70?'#6bc26b':s.tracks.foundations?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto;">${s.tracks.foundations?.done||0}</div></td>
+              <td><div style="width:36px;height:36px;border-radius:50%;background:${s.tracks.cad?.pct>=70?'#6bc26b':s.tracks.cad?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto;">${s.tracks.cad?.done||0}</div></td>
+              <td><div style="width:36px;height:36px;border-radius:50%;background:${s.tracks.programming?.pct>=70?'#6bc26b':s.tracks.programming?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto;">${s.tracks.programming?.done||0}</div></td>
               <td><span style="background:rgba(251,191,36,.15);color:#b45309;font-weight:700;padding:4px 10px;border-radius:20px;font-size:12px;">${s.coins} VC</span></td>
             </tr>`).join('')}
           </tbody>
-        </table>`:`<div style="padding:3rem;text-align:center;color:var(--text-3);font-size:13px;"><div style="font-size:40px;margin-bottom:.75rem;">👥</div>No students yet. Share the join code or add students manually.</div>`}
+        </table>`:`<div style="padding:3rem;text-align:center;color:var(--text-3);font-size:13px;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>No students yet. Share the join code or add students manually.</div>`}
       </div>`
   } else if(tab==='messages'){
     msgClassId=tActiveClassId;
@@ -2542,47 +2715,33 @@ function tDetailTab(tab){
 function tRenderClasses(){
   const classes=getMyClasses();const body=document.getElementById('t-classes-body');if(!body)return;
   if(!classes.length){body.innerHTML=`
-      <div style="margin-bottom:1.5rem;">
-        <div style="font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:4px;">Welcome, ${esc(currentUser.name)}</div>
-        <div style="font-size:13px;color:var(--text-3);">Here's your teacher dashboard. Get started by creating a class.</div>
+      <div class="td-stats">
+        <div class="td-card td-card-blue">
+          <div class="td-card-val">0</div>
+          <div class="td-card-lbl">Classes</div>
+          <div class="td-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        </div>
+        <div class="td-card td-card-green">
+          <div class="td-card-val">0</div>
+          <div class="td-card-lbl">Students</div>
+          <div class="td-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        </div>
+        <div class="td-card td-card-amber">
+          <div class="td-card-val">0</div>
+          <div class="td-card-lbl">Lessons</div>
+          <div class="td-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+        <div class="td-card td-card-purple">
+          <div class="td-card-val">0</div>
+          <div class="td-card-lbl">VCoins Earned</div>
+          <div class="td-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v12"/></svg></div>
+        </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.75rem;margin-bottom:2rem;">
-        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="openCreateClassModal()">
-          <div style="font-size:32px;margin-bottom:.5rem;">📚</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Create a Class</div>
-          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Set up your first class, invite students, and start teaching.</div>
-        </div>
-        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="tNavTo('shop')">
-          <div style="font-size:32px;margin-bottom:.5rem;">🛒</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Set Up Shop</div>
-          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Create items students can buy with VCoins they earn from lessons.</div>
-        </div>
-        <div class="card" style="text-align:center;padding:1.5rem;cursor:pointer;" onclick="tNavTo('lessons')">
-          <div style="font-size:32px;margin-bottom:.5rem;">📅</div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:4px;">View Lessons</div>
-          <div style="font-size:12px;color:var(--text-3);line-height:1.5;">Browse and schedule lessons from the VEX curriculum for your classes.</div>
-        </div>
-      </div>
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:1.25rem 1.5rem;">
-        <div style="font-size:13px;font-weight:700;margin-bottom:.75rem;">🚀 Getting Started</div>
-        <div style="font-size:13px;color:var(--text-2);line-height:1.8;">
-          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
-            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span>
-            <span><strong>Create a class</strong> by giving it a name, season, and room number. You'll get a join code students can use.</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
-            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span>
-            <span><strong>Add students</strong> by sharing the join code or manually add them by email from the class Members tab.</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
-            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span>
-            <span><strong>Schedule lessons</strong> by assigning curriculum lessons to dates. Students complete them to earn VCoins.</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start;">
-            <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</span>
-            <span><strong>Track progress</strong> using the Grading tab to see completion rates and award bonus VCoins.</span>
-          </div>
-        </div>
+      <div style="text-align:center;padding:4rem 1rem;">
+        <div style="margin-bottom:1rem;opacity:.5;"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <div style="font-size:18px;font-weight:700;margin-bottom:.5rem;">No classes yet</div>
+        <div style="font-size:14px;color:var(--text-3);max-width:360px;margin:0 auto 1.5rem;line-height:1.6;">Create your first class to start managing students, scheduling lessons, and tracking progress.</div>
+        <button class="btn btn-primary" onclick="openCreateClassModal()" style="padding:10px 28px;font-size:14px;">+ Create Your First Class</button>
       </div>`;return;}
   const classColors=['td-card-green','td-card-blue','td-card-amber','td-card-purple','td-card-orange'];
   const classIcons=['📚','🎓','🔬','🤖','⚡'];
@@ -2615,13 +2774,13 @@ function tRenderClasses(){
 
 function tRenderGrading(){
   const classes=getMyClasses();const body=document.getElementById('t-grading-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">📊</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Grading Data Yet</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class and add students to start tracking their lesson completion and progress.</div></div>';return;}
+  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Grading Data Yet</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class and add students to start tracking their lesson completion and progress.</div></div>';return;}
   body.innerHTML=classes.map(([cid,c])=>{const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));return`<div class="card" style="margin-bottom:1rem;"><div style="font-size:15px;font-weight:700;margin-bottom:1rem;">${esc(c.name)}</div>${students.length?students.map(u=>{const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;const pct=allLessons.length?Math.round(done/allLessons.length*100):0;return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${esc(u.name)}</span><span style="font-size:12px;color:var(--text-3)">${done}/${allLessons.length} · ${pct}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`;}).join(''):'<div style="font-size:13px;color:var(--text-3)">No students yet.</div>'}</div>`;}).join('');
 }
 
 function tRenderLessons(){
   const classes=getMyClasses();const body=document.getElementById('t-lessons-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">📅</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Lessons Scheduled</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class first, then schedule lessons from the calendar inside each class.</div></div>';return;}
+  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Lessons Scheduled</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class first, then schedule lessons from the calendar inside each class.</div></div>';return;}
   const all=[];classes.forEach(([cid,c])=>{Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_')).forEach(([k,l])=>{all.push({...l,classId:cid,className:c.name,key:k});});});
   all.sort((a,b)=>a.date.localeCompare(b.date));
   if(!all.length){body.innerHTML='<div class="empty-state"><div class="empty-title">No lessons yet</div><div class="empty-desc">Open a class and click Calendar to add lessons.</div></div>';return;}
@@ -2632,7 +2791,7 @@ function tRenderTickets(){
   const body=document.getElementById('t-tickets-body');if(!body)return;
   const myIds=getMyClasses().map(([id])=>id);
   const tickets=DB.tickets.filter(t=>myIds.includes(t.classId));
-  if(!tickets.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="font-size:40px;margin-bottom:.75rem;">🎫</div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Help Tickets</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">When students submit help requests, they will appear here for you to review and resolve.</div></div>';return;}
+  if(!tickets.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5v2"/><path d="M15 11v2"/><path d="M15 17v2"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg></div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Help Tickets</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">When students submit help requests, they will appear here for you to review and resolve.</div></div>';return;}
   const pc={low:'badge-blue',medium:'badge-orange',high:'badge-red'};const sc={open:'badge-orange',resolved:'badge-green'};
   body.innerHTML=[...tickets].reverse().map(t=>`<div class="ticket-card"><div style="display:flex;flex-direction:column;gap:6px;min-width:80px"><span class="badge ${pc[t.priority]||'badge-blue'}">${t.priority}</span><span class="badge ${sc[t.status||'open']}">${t.status||'open'}</span></div><div class="ticket-body"><div class="ticket-title">${esc(t.title)}</div><div class="ticket-desc">${esc(t.desc)}</div><div class="ticket-meta"><span>${esc(t.userName)}</span><span>${DB.classes[t.classId]?.name||''}</span><span>${t.date}</span></div></div>${(t.status||'open')==='open'?`<button class="btn btn-ghost btn-sm" style="white-space:nowrap;align-self:center" onclick="resolveTicket('${t._id}');tRenderTickets();">✓ Resolve</button>`:''}</div>`).join('');
 }
