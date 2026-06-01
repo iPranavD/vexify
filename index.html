@@ -672,7 +672,7 @@ body.dark{
   --amber:#fbbf24;--amber-bg:rgba(251,191,36,.1);--amber-border:rgba(251,191,36,.25);
 }
 
-/* ── DARK MODE NAV FIX — force nav text/icons to always be readable ── */
+/* ── DARK MODE NAV FIX - force nav text/icons to always be readable ── */
 body.dark #nav{background:rgba(17,17,17,.92);border-bottom:1px solid #222;}
 body.dark .logo-text{color:#f0f0f0;}
 body.dark #nav-name{color:#f0f0f0 !important;}
@@ -688,7 +688,7 @@ body.dark .btn-ghost:hover{background:#2a2a2a;border-color:#444;color:#f0f0f0;}
 body.dark .btn-danger{background:transparent;color:#f87171;border-color:rgba(248,113,113,.3);}
 body.dark .btn-danger:hover{background:rgba(248,113,113,.1);}
 
-/* Dark mode theme toggle — stays visually consistent */
+/* Dark mode theme toggle - stays visually consistent */
 body.dark .theme-btn{background:#222;border-color:#333;color:#aaa;}
 body.dark .theme-btn:hover{color:#f0f0f0;border-color:#555;}
 body.dark .theme-btn.active{background:#f0f0f0;color:#000;border-color:#f0f0f0;}
@@ -916,7 +916,8 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
   body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
-  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;background:#f0f4ff;}
+  body.dark .t-content-area{background:#0d0d0d;}
   .t-content-inner{max-width:900px;margin:0 auto;width:100%;}
   .t-panel{display:none;}.t-panel.t-active{display:block;}
   .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
@@ -1042,7 +1043,8 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .t-topbar{display:flex;align-items:center;gap:12px;padding:0 1.25rem;height:54px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--white);}
   body.dark .t-topbar{background:#111;border-bottom-color:#2d2d2d;}
   .t-topbar-title{font-size:15px;font-weight:700;flex:1;}
-  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;}
+  .t-content-area{flex:1;overflow-y:auto;padding:1.5rem;background:#f0f4ff;}
+  body.dark .t-content-area{background:#0d0d0d;}
   .t-content-inner{max-width:900px;margin:0 auto;width:100%;}
   .t-panel{display:none;}.t-panel.t-active{display:block;}
   .t-inner-tabs{display:flex;gap:2px;background:var(--bg);border-radius:9px;padding:3px;margin-bottom:1.25rem;}
@@ -1170,6 +1172,82 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   .lc-check{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--r);padding:1.25rem 1.5rem;margin-top:2rem;}
   body.dark .lc-check{background:rgba(34,197,94,.04);border-color:rgba(34,197,94,.15);}
   .lc-check-text{font-size:14px;color:var(--text-2);line-height:1.8;margin-top:.5rem;}
+
+  /* Teacher Dashboard */
+  .td-top{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+  @media(max-width:800px){.td-top{grid-template-columns:1fr;}}
+  .td-score-card{background:#fff;border-radius:18px;padding:1.75rem;display:flex;gap:1.5rem;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+  body.dark .td-score-card{background:#1c1c1c;box-shadow:none;border:1px solid #2d2d2d;}
+  .td-score-big{font-size:3rem;font-weight:900;letter-spacing:-.06em;line-height:1;}
+  .td-score-lbl{font-size:12px;color:#888;font-weight:500;margin-bottom:4px;}
+  .td-score-sub{font-size:11px;color:#bbb;}
+  .td-alert-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+  @media(max-width:800px){.td-alert-row{grid-template-columns:1fr;}}
+  .td-alert{border-radius:16px;padding:1.5rem;color:#fff;position:relative;overflow:hidden;min-height:100px;}
+  .td-alert-green{background:#6bc26b;}
+  .td-alert-yellow{background:#e8c840;}
+  .td-alert-orange{background:#e8845a;}
+  .td-alert-val{font-size:2.5rem;font-weight:900;line-height:1;}
+  .td-alert-lbl{font-size:11px;font-weight:600;opacity:.8;margin-top:8px;line-height:1.4;}
+  .td-alert-avatar{position:absolute;top:10px;right:10px;width:36px;height:36px;border-radius:50%;border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+  .td-alert-av-1{background:#e8845a;} .td-alert-av-2{background:#6bc26b;} .td-alert-av-3{background:#e8c840;}
+
+  .td-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.75rem;margin-bottom:1.5rem;}
+  .td-card{border-radius:14px;padding:1.25rem;color:#fff;position:relative;overflow:hidden;}
+  .td-card-green{background:#6bc26b;}
+  .td-card-amber{background:#e8c840;}
+  .td-card-orange{background:#e8845a;}
+  .td-card-red{background:#d95555;}
+  .td-card-blue{background:#5b9bd5;}
+  .td-card-purple{background:#9b7ad8;}
+  .td-card-val{font-size:2rem;font-weight:800;letter-spacing:-.04em;line-height:1;}
+  .td-card-lbl{font-size:11px;font-weight:600;opacity:.85;margin-top:6px;text-transform:uppercase;letter-spacing:.5px;}
+  .td-card-icon{position:absolute;right:12px;bottom:10px;font-size:28px;opacity:.3;}
+
+  /* Student proficiency table */
+  .td-prof{background:var(--white);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  body.dark .td-prof{background:#1c1c1c;border-color:#2d2d2d;}
+  .td-prof-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);}
+  body.dark .td-prof-header{border-bottom-color:#2d2d2d;}
+  .td-prof-title{font-size:15px;font-weight:700;}
+  .td-prof table{width:100%;border-collapse:collapse;font-size:13px;}
+  .td-prof th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);background:var(--bg);}
+  body.dark .td-prof th{background:#161616;}
+  .td-prof td{padding:12px 14px;border:none;vertical-align:middle;}
+  .td-prof tbody tr{border-radius:10px;}
+  .td-prof tbody tr:nth-child(1){background:#fde8e8;}
+  .td-prof tbody tr:nth-child(2){background:#fef3cd;}
+  .td-prof tbody tr:nth-child(3){background:#d4edda;}
+  .td-prof tbody tr:nth-child(4){background:#e8f0fe;}
+  .td-prof tbody tr:nth-child(5){background:#f3e8ff;}
+  .td-prof tbody tr:nth-child(n+6){background:#f0fdf4;}
+  body.dark .td-prof tbody tr:nth-child(1){background:#2d1a1a;}
+  body.dark .td-prof tbody tr:nth-child(2){background:#2d2a1a;}
+  body.dark .td-prof tbody tr:nth-child(3){background:#1a2d1a;}
+  body.dark .td-prof tbody tr:nth-child(4){background:#1a1e2d;}
+  body.dark .td-prof tbody tr:nth-child(5){background:#251a2d;}
+  body.dark .td-prof tbody tr:nth-child(n+6){background:#1a2d1e;}
+  .td-bar{height:14px;border-radius:7px;background:#e5e7eb;overflow:hidden;min-width:100px;}
+  body.dark .td-bar{background:#2d2d2d;}
+  .td-bar-fill{height:100%;border-radius:7px;transition:width .4s ease;}
+  .td-bar-green{background:#22c55e;}
+  .td-bar-amber{background:#f59e0b;}
+  .td-bar-red{background:#ef4444;}
+  .td-pct{font-size:14px;font-weight:800;min-width:40px;text-align:right;}
+  .td-pct-green{color:#22c55e;}
+  .td-pct-amber{color:#f59e0b;}
+  .td-pct-red{color:#ef4444;}
+  .td-student-row{display:flex;align-items:center;gap:10px;}
+  .td-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .td-av-1{background:#4ade80;} .td-av-2{background:#60a5fa;} .td-av-3{background:#f59e0b;} .td-av-4{background:#a78bfa;} .td-av-5{background:#f87171;} .td-av-6{background:#2dd4bf;}
+
+  /* Quick actions row */
+  .td-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+  .td-action-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--white);color:var(--text);cursor:pointer;transition:all .15s;}
+  .td-action-btn:hover{background:var(--bg);border-color:var(--text-3);}
+  body.dark .td-action-btn{background:#1c1c1c;border-color:#2d2d2d;color:#ededed;}
+  body.dark .td-action-btn:hover{background:#252525;}
+
 </style>
 </head>
 <body>
@@ -1220,7 +1298,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
   <div class="hero">
     
     <h1>Learn, build, and compete with Vexify</h1>
-    <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system — built for VEX teams.</p>
+    <p class="hero-sub">Structured curriculum, class management, real-time messaging, and a reward system, all built for VEX teams.</p>
     <div class="hero-btns">
       <button class="btn btn-primary btn-pill" onclick="showPage('auth')">Get started</button>
       <button class="btn btn-ghost btn-pill" onclick="document.getElementById('landing-features').scrollIntoView({behavior:'smooth'})">Learn more</button>
@@ -1347,7 +1425,7 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
     <!-- LESSONS -->
     <div id="panel-lessons" class="panel hidden">
       <div class="panel-header">
-        <div><div class="panel-title">Lessons</div><div class="panel-sub">Structured VEX Robotics curriculum — work through tracks at your own pace</div></div>
+        <div><div class="panel-title">Lessons</div><div class="panel-sub">Structured VEX Robotics curriculum you can work through at your own pace</div></div>
       </div>
       <div class="track-tabs">
         <div class="track-tab active" data-track="foundations" onclick="switchTrack('foundations')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg> Foundations</div>
@@ -1565,7 +1643,7 @@ function _lc(intro, concepts, tip, code=null){
     <div class="lc-tip">💡 <strong>Pro Tip:</strong> ${tip}</div>
     <div class="lc-check">
       <div class="lc-section-title">✅ Self-Check</div>
-      <div class="lc-check-text">Before marking this lesson complete, make sure you can explain the key concepts above in your own words. Try teaching one concept to a teammate — if you can explain it clearly, you truly understand it.</div>
+      <div class="lc-check-text">Before marking this lesson complete, make sure you can explain the key concepts above in your own words. Try teaching one concept to a teammate. If you can explain it clearly, you truly understand it.</div>
     </div>`;
 }
 
@@ -1589,33 +1667,33 @@ const CURRICULUM={
   cad:{label:'Design & CAD',icon:'📐',units:[
     {id:'c1',title:'CAD Fundamentals',lessons:[
       {id:'c1l1',title:'What is CAD & Why It Matters',desc:'Introduction to computer-aided design and its role in competitive VRC.',coins:10,content:_lc('CAD lets you design your robot digitally before cutting any metal.',['CAD creates precise 3D models that can be measured and checked for fit.','VEX provides a free official library of every V5 part for Fusion 360, Inventor, and SolidWorks.','CAD lets you verify hole alignment, range of motion, and part interference before building.','Excellence Award judges strongly reward teams that show CAD models.','Common CAD tools: Autodesk Fusion 360 (most popular, free for students), Inventor, SolidWorks.'],'Fusion 360 is free for students and most widely used in the VEX community.')},
-      {id:'c1l2',title:'Getting Started with Fusion 360',desc:'Installing Fusion 360, navigating the interface, and loading the VEX parts library.',coins:15,content:_lc('Fusion 360 is a cloud-based CAD tool from Autodesk — free for students.',['Download Fusion 360 free at autodesk.com/education.','The BLRS or TJ2 VEX parts library has pre-made models of every VEX part.','Key areas: Browser (left panel), Canvas (3D viewport), Toolbar (top), Timeline (bottom).','Navigation: middle-click + drag to orbit, scroll to zoom, Shift+middle-click to pan.','Fusion saves to Autodesk cloud — accessible from any computer.'],'Join the VRC Discord and search "Fusion 360 parts library" — the community maintains up-to-date downloads.')},
+      {id:'c1l2',title:'Getting Started with Fusion 360',desc:'Installing Fusion 360, navigating the interface, and loading the VEX parts library.',coins:15,content:_lc('Fusion 360 is a free cloud-based CAD tool from Autodesk, available to all students.',['Download Fusion 360 free at autodesk.com/education.','The BLRS or TJ2 VEX parts library has pre-made models of every VEX part.','Key areas: Browser (left panel), Canvas (3D viewport), Toolbar (top), Timeline (bottom).','Navigation: middle-click + drag to orbit, scroll to zoom, Shift+middle-click to pan.','Fusion saves to the Autodesk cloud, so you can access your projects from any computer.'],'Join the VRC Discord and search "Fusion 360 parts library" where the community maintains up-to-date downloads.')},
       {id:'c1l3',title:'Basic Sketching & Constraints',desc:'Creating 2D sketches, applying constraints and dimensions, extruding to 3D.',coins:15,content:_lc('Everything in Fusion 360 starts with a 2D sketch drawn on a flat plane.',['Sketches are drawn on a flat plane or any flat face of an existing body.','Constraints: Horizontal, Vertical, Coincident, Parallel, Perpendicular, Equal, Tangent.','Dimensions (shortcut D): define exact sizes for any line, arc, or angle.','Fully constrained sketch = all lines black. Blue lines = undefined degrees of freedom.','Extrude (shortcut E): pushes a closed sketch into a 3D solid.'],'Always fully constrain your sketches before extruding.')},
-      {id:'c1l4',title:'Assemblies & Motion Joints',desc:'Assembling VEX parts, applying joints, and simulating mechanism movement.',coins:20,content:_lc('An assembly is where individual parts come together into a complete robot.',['Use "Insert Component" to bring parts into an assembly.','Rigid joints: hold two parts in a completely fixed relationship.','Revolute joints: define a rotating connection — used for arms and wheels.','Slider joints: define linear motion — used for linear slides.','As-Built Joint positions parts at their current locations.'],'Build your assembly section by section — drivetrain first, then lift, then intake.')},
-      {id:'c1l5',title:'Exporting & Sharing Designs',desc:'Generating drawings, exporting files, and sharing your model.',coins:15,content:_lc('Your CAD model is only useful if you can communicate it clearly.',['The Drawing workspace creates 2D technical drawings with dimensions from your 3D model.','Export to STEP or F3D format to share with different CAD software.','The "Share Public Link" feature generates a URL to view your model in any browser.','BOM lists every component and quantity — useful for ordering parts.','Screenshots and embedded 3D views are strong notebook additions.'],'Use the "Share Public Link" and embed a live 3D view in your engineering notebook.')},
+      {id:'c1l4',title:'Assemblies & Motion Joints',desc:'Assembling VEX parts, applying joints, and simulating mechanism movement.',coins:20,content:_lc('An assembly is where individual parts come together into a complete robot.',['Use "Insert Component" to bring parts into an assembly.','Rigid joints: hold two parts in a completely fixed relationship.','Revolute joints define a rotating connection, commonly used for arms and wheels.','Slider joints define linear motion, commonly used for linear slides.','As-Built Joint positions parts at their current locations.'],'Build your assembly section by section: drivetrain first, then lift, then intake.')},
+      {id:'c1l5',title:'Exporting & Sharing Designs',desc:'Generating drawings, exporting files, and sharing your model.',coins:15,content:_lc('Your CAD model is only useful if you can communicate it clearly.',['The Drawing workspace creates 2D technical drawings with dimensions from your 3D model.','Export to STEP or F3D format to share with different CAD software.','The "Share Public Link" feature generates a URL to view your model in any browser.','BOM lists every component and quantity, which is useful for ordering parts.','Screenshots and embedded 3D views are strong notebook additions.'],'Use the "Share Public Link" and embed a live 3D view in your engineering notebook.')},
     ]},
     {id:'c2',title:'Robot Design Process',lessons:[
-      {id:'c2l1',title:'Game Analysis',desc:'Reading the game manual, identifying scoring priorities, and setting design goals.',coins:15,content:_lc('Before touching metal, you need to deeply understand the game.',['Download the game manual from vex.com the day of the game reveal. Read it cover to cover.','Identify all scoring methods: what objects score, where they score, and exact point values.','Calculate the theoretical maximum score — this defines what a "perfect robot" looks like.','Identify highest-value scoring per time spent — these should be your primary design goals.','Read all robot rules carefully: size/weight limits, legal starting positions.'],'After reading the manual, watch top teams from the previous World Championship analyze the new game.')},
-      {id:'c2l2',title:'Brainstorming & Concept Sketches',desc:'Generating robot ideas and evaluating concepts before committing.',coins:15,content:_lc('Great robots start with bad sketches. Brainstorming is about quantity before quality.',['Set a 20-minute timer and sketch as many different robot concepts as you can.','Do not self-censor during brainstorming — even "bad" ideas can spark good ones.','For each concept, note its biggest advantage and biggest risk.','After brainstorming, evaluate on: scoring potential, reliability, buildability, programmability.','Narrow to 2–3 strongest concepts, then build quick prototypes of the riskiest mechanisms.'],'Brainstorm individually before discussing as a group.')},
+      {id:'c2l1',title:'Game Analysis',desc:'Reading the game manual, identifying scoring priorities, and setting design goals.',coins:15,content:_lc('Before touching metal, you need to deeply understand the game.',['Download the game manual from vex.com the day of the game reveal. Read it cover to cover.','Identify all scoring methods: what objects score, where they score, and exact point values.','Calculate the theoretical maximum score. This defines what a "perfect robot" looks like.','Identify the highest-value scoring actions per time spent, as these should be your primary design goals.','Read all robot rules carefully: size/weight limits, legal starting positions.'],'After reading the manual, watch top teams from the previous World Championship analyze the new game.')},
+      {id:'c2l2',title:'Brainstorming & Concept Sketches',desc:'Generating robot ideas and evaluating concepts before committing.',coins:15,content:_lc('Great robots start with bad sketches. Brainstorming is about quantity before quality.',['Set a 20-minute timer and sketch as many different robot concepts as you can.','Do not self-censor during brainstorming. Even "bad" ideas can spark good ones.','For each concept, note its biggest advantage and biggest risk.','After brainstorming, evaluate on: scoring potential, reliability, buildability, programmability.','Narrow to 2–3 strongest concepts, then build quick prototypes of the riskiest mechanisms.'],'Brainstorm individually before discussing as a group.')},
       {id:'c2l3',title:'Prototyping',desc:'Building quick physical prototypes to validate design ideas.',coins:20,content:_lc('A prototype is a quick, rough version of a mechanism built to answer one question: "Will this work?"',['Build prototypes with cheapest, fastest materials: cardboard, tape, zip ties, scrap metal.','Define one specific question before each prototype.','Test prototypes with real game objects.','Prototype the riskiest parts of your design first.','Photograph every prototype, even failed ones.'],'Give yourself a strict 30–60 minute time limit per prototype.')},
-      {id:'c2l4',title:'Iterating on Your Design',desc:'Making systematic, documented design improvements based on testing data.',coins:20,content:_lc('The best teams treat each iteration as an experiment.',['Iteration means deliberate, documented changes — not random tinkering.','Change one variable at a time.','After each change, quantify the result: count cycles per minute, measure consistency rate.','Keep a log of every iteration: what changed, why, and what actually happened.','Plan iterations based on competition data.'],'Score yourself in practice with a stopwatch.')},
-      {id:'c2l5',title:'Engineering Notebook',desc:'What judges evaluate, how to document your process, and tips for a winning notebook.',coins:25,content:_lc('The engineering notebook is required for VRC awards including Excellence.',['Document every meeting: date, attendees, decisions made, and the reasoning.','Include problem statements, alternatives considered, test results with data.','Use photos liberally — an annotated photo communicates more than a paragraph.','Show you considered and rejected alternative designs.','Maintain consistent format: dated entries, labeled photos, organized sections.'],'Don\'t write your notebook the night before competition. Judges can always tell.')},
+      {id:'c2l4',title:'Iterating on Your Design',desc:'Making systematic, documented design improvements based on testing data.',coins:20,content:_lc('The best teams treat each iteration as an experiment.',['Iteration means deliberate, documented changes, not random tinkering.','Change one variable at a time.','After each change, quantify the result: count cycles per minute, measure consistency rate.','Keep a log of every iteration: what changed, why, and what actually happened.','Plan iterations based on competition data.'],'Score yourself in practice with a stopwatch.')},
+      {id:'c2l5',title:'Engineering Notebook',desc:'What judges evaluate, how to document your process, and tips for a winning notebook.',coins:25,content:_lc('The engineering notebook is required for VRC awards including Excellence.',['Document every meeting: date, attendees, decisions made, and the reasoning.','Include problem statements, alternatives considered, test results with data.','Use photos liberally because an annotated photo communicates more than a paragraph.','Show you considered and rejected alternative designs.','Maintain consistent format: dated entries, labeled photos, organized sections.'],'Don\'t write your notebook the night before competition. Judges can always tell.')},
     ]},
   ]},
   programming:{label:'Programming',icon:'💻',units:[
     {id:'p1',title:'VEXcode Basics',lessons:[
       {id:'p1l1',title:'Introduction to VEXcode V5',desc:'Setting up VEXcode, configuring devices, and uploading your first program.',coins:10,content:_lc('VEXcode V5 is the official programming environment for VEX V5 robots, using C++.',['Download VEXcode V5 free from vex.com. Available on Windows, Mac, Chromebook, and iPad.','Configure devices: open the Devices screen in VEXcode to assign what\'s plugged into each brain port.','The V5 runs two user functions: autonomous() for 15 sec, and usercontrol() for 1:45 driver period.','The brain\'s home screen shows connection status, battery percentage, program list, and port health.','Upload via USB cable (most reliable) or wirelessly via the controller radio.'],'Name your projects clearly from day one.')},
-      {id:'p1l2',title:'Variables & Data Types',desc:'Integers, floats, booleans, and using variables to control your robot.',coins:15,content:_lc('Variables are named containers that store data.',['int: whole numbers. Use for speeds (0–100), port numbers, counters.','double: decimal numbers with high precision. Use for sensor readings, distances, PID values.','bool: only true or false. Use for flags: isIntakeRunning, hasGameObject.','Declare with type and name: int speed = 50;   double heading = 0.0;','Use descriptive names always: "leftMotorSpeed" not "x".'],'Avoid magic numbers — declare named constants instead.',`const int DRIVE_SPEED = 75;\nconst int INTAKE_SPEED = 100;\n\nint leftSpeed = DRIVE_SPEED;\nbool intakeActive = false;`)},
+      {id:'p1l2',title:'Variables & Data Types',desc:'Integers, floats, booleans, and using variables to control your robot.',coins:15,content:_lc('Variables are named containers that store data.',['int: whole numbers. Use for speeds (0–100), port numbers, counters.','double: decimal numbers with high precision. Use for sensor readings, distances, PID values.','bool: only true or false. Use for flags: isIntakeRunning, hasGameObject.','Declare with type and name: int speed = 50;   double heading = 0.0;','Use descriptive names always: "leftMotorSpeed" not "x".'],'Avoid magic numbers and declare named constants instead.',`const int DRIVE_SPEED = 75;\nconst int INTAKE_SPEED = 100;\n\nint leftSpeed = DRIVE_SPEED;\nbool intakeActive = false;`)},
       {id:'p1l3',title:'Motor Control',desc:'Spinning motors, setting velocities, and using encoders.',coins:15,content:_lc('Motor control is the foundation of everything your robot does.',['Continuous: LeftMotor.spin(forward, 60, percent);','Timed: LeftMotor.spinFor(2.0, seconds, 80, percent);','Position: LeftMotor.spinToPosition(360, degrees);','Stop modes: brake (holds position), coast (free spin), hold (actively holds with power).','Read encoder: LeftMotor.position(degrees)'],'Use spinFor() with async=false on the first motor so both motors start simultaneously.',`LeftMotors.spinFor(2.0, seconds, 70, percent, false);\nRightMotors.spinFor(2.0, seconds, 70, percent);\n\nLeftMotors.stop(brake);\nRightMotors.stop(brake);`)},
-      {id:'p1l4',title:'Conditional Logic (if / else)',desc:'Decision-making with if/else — the foundation of adaptive autonomous behavior.',coins:15,content:_lc('Conditional logic lets your robot make decisions.',['if(condition){} — runs only when condition is true.','else{} — runs only when the preceding if was false.','else if(condition2){} — chains multiple conditions in sequence.','Comparison operators: == != > < >= <=','Logical: && (AND), || (OR), ! (NOT).'],'Keep conditions readable. Extract complex conditions into a named bool.',`double dist = WallSensor.objectDistance(mm);\n\nif(dist < 150) {\n  LeftMotors.stop(brake);\n} else if(dist < 400) {\n  LeftMotors.spin(forward, 30, percent);\n} else {\n  LeftMotors.spin(forward, 70, percent);\n}`)},
-      {id:'p1l5',title:'Loops',desc:'Using while and for loops to repeat actions.',coins:15,content:_lc('Loops repeat a block of code multiple times.',['while(condition){} — repeats as long as condition is true. while(true){} loops forever.','for(int i=0; i<n; i++){} — repeats exactly n times.','break; — immediately exits the loop.','continue; — skips the rest of the current iteration.','Always have an exit condition for non-infinite loops.'],'Always add wait(20, msec) at the end of your main control loop.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n\n    LeftMotors.spin(forward, leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    wait(20, msec); // ALWAYS include this\n  }\n}`)},
+      {id:'p1l4',title:'Conditional Logic (if / else)',desc:'Decision-making with if/else, the foundation of adaptive autonomous behavior.',coins:15,content:_lc('Conditional logic lets your robot make decisions.',['if(condition){} runs only when the condition is true.','else{} runs only when the preceding if was false.','else if(condition2){} chains multiple conditions in sequence.','Comparison operators: == != > < >= <=','Logical: && (AND), || (OR), ! (NOT).'],'Keep conditions readable. Extract complex conditions into a named bool.',`double dist = WallSensor.objectDistance(mm);\n\nif(dist < 150) {\n  LeftMotors.stop(brake);\n} else if(dist < 400) {\n  LeftMotors.spin(forward, 30, percent);\n} else {\n  LeftMotors.spin(forward, 70, percent);\n}`)},
+      {id:'p1l5',title:'Loops',desc:'Using while and for loops to repeat actions.',coins:15,content:_lc('Loops repeat a block of code multiple times.',['while(condition){} repeats as long as the condition is true. while(true){} loops forever.','for(int i=0; i<n; i++){} repeats exactly n times.','break; immediately exits the loop.','continue; skips the rest of the current iteration.','Always have an exit condition for non-infinite loops.'],'Always add wait(20, msec) at the end of your main control loop.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n\n    LeftMotors.spin(forward, leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    wait(20, msec); // ALWAYS include this\n  }\n}`)},
     ]},
     {id:'p2',title:'Driver Control & Autonomous',lessons:[
-      {id:'p2l1',title:'Reading Controller Input',desc:'Joystick axes, button states, and mapping inputs to robot actions.',coins:15,content:_lc('The V5 Controller connects wirelessly to the brain and gives your drivers two joysticks and 12 buttons.',['Axes return −100 to +100: Axis3 (left vertical), Axis4 (left horizontal), Axis2 (right vertical), Axis1 (right horizontal).','pressing() — returns true the entire time button is held.','pressed() — fires exactly once per button press.','Controller.ButtonR1.pressing() — read any button by name.','Read values every loop: int speed = Controller.Axis3.position();'],'Print controller values to the brain screen while testing.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n    bool intakeBtn = Controller.ButtonR1.pressing();\n\n    LeftMotors.spin(forward,  leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    if(intakeBtn) Intake.spin(forward, 100, percent);\n    else          Intake.stop(coast);\n\n    wait(20, msec);\n  }\n}`)},
-      {id:'p2l2',title:'Tank Drive & Arcade Drive',desc:'The two most common drive schemes — how they work and how to code them.',coins:20,content:_lc('Tank drive uses one stick per side. Arcade drive uses one stick for forward/backward plus turning.',['Tank Drive: left stick → left motors, right stick → right motors.','Arcade Drive: Y axis = forward/backward, X axis = turning. One stick drives the whole robot.','Arcade formula: leftSpeed = Y + X,   rightSpeed = Y − X','Apply a deadband: ignore inputs smaller than ±5 to prevent drift.','Scale max speed (e.g. ×0.8) for finer control during precision tasks.'],'Run 3+ practice sessions with your driver using both styles before committing.',`void usercontrol(void) {\n  while(true) {\n    int Y = Controller.Axis3.position();\n    int X = Controller.Axis1.position();\n\n    if(abs(Y) < 5) Y = 0;  // deadband\n    if(abs(X) < 5) X = 0;\n\n    LeftMotors.spin(forward,  Y + X, percent);\n    RightMotors.spin(forward, Y - X, percent);\n\n    wait(20, msec);\n  }\n}`)},
-      {id:'p2l3',title:'Basic Timed Autonomous',desc:'Writing autonomous routines with spinFor().',coins:20,content:_lc('A timed autonomous uses spinFor() with specific durations to move through a sequence of actions.',['spinFor(time, seconds, speed, percent) — runs motor for a fixed duration then stops.','Chain multiple spinFor() calls in sequence to create a multi-step routine.','Run paired motors in parallel: use false (async) on first motor so second starts immediately.','Test on the same surface type always — timed routines depend on traction.','Start simple: drive forward, score one element, park.'],'Film your autonomous on video and watch frame by frame.',`void autonomous(void) {\n  // Drive forward 1.5 seconds\n  LeftMotors.spinFor(1.5, seconds, 80, percent, false);\n  RightMotors.spinFor(1.5, seconds, 80, percent);\n\n  // Run intake 0.5 seconds\n  Intake.spinFor(0.5, seconds, 100, percent);\n}`)},
-      {id:'p2l4',title:'Sensor-Based Autonomous',desc:'Using encoders and the inertial sensor for accurate, repeatable autonomous routines.',coins:25,content:_lc('Sensor-based autonomous measures exactly how far the robot has traveled and how much it has turned.',['Encoders: reset with motor.resetPosition() at the start.','Inertial Sensor: calibrate at start with Inertial.calibrate(); wait(2, seconds);','Drive a specific distance: (target_inches / wheel_circumference_inches) × 360 = encoder degrees.','Turn to a heading: spin motors opposite directions, check Inertial.heading() until target.','Test 5–10 times in a row and measure variance — consistency wins.'],'Calibrate your inertial sensor while the robot is completely still at the very start of autonomous.',`void autonomous(void) {\n  Inertial.calibrate();\n  wait(2.0, seconds);\n\n  // Drive 24 inches (~452 encoder degrees for 4" wheel)\n  LeftMotors.spinFor(452, degrees, 70, percent, false);\n  RightMotors.spinFor(452, degrees, 70, percent);\n}`)},
-      {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID adjusts motor speed in real time based on how far the motor is from its target.',['P (Proportional): speed = kP × error. Farther from target = faster.','I (Integral): accumulates past error over time to correct persistent offsets.','D (Derivative): reacts to rate-of-change of error — predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first, then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible.',`void driveDistance(double targetDeg) {\n  const double kP = 0.5;\n  const double kD = 0.02;\n  double prevError = 0;\n  LeftMotors.resetPosition();\n\n  while(true) {\n    double error = targetDeg - LeftMotors.position(degrees);\n    double deriv = error - prevError;\n    double speed = (kP * error) + (kD * deriv);\n\n    speed = fmax(-100, fmin(100, speed));\n    LeftMotors.spin(forward, speed, percent);\n    RightMotors.spin(forward, speed, percent);\n\n    if(fabs(error) < 3.0) break;\n    prevError = error;\n    wait(20, msec);\n  }\n  LeftMotors.stop(hold);\n}`)},
+      {id:'p2l1',title:'Reading Controller Input',desc:'Joystick axes, button states, and mapping inputs to robot actions.',coins:15,content:_lc('The V5 Controller connects wirelessly to the brain and gives your drivers two joysticks and 12 buttons.',['Axes return −100 to +100: Axis3 (left vertical), Axis4 (left horizontal), Axis2 (right vertical), Axis1 (right horizontal).','pressing() returns true the entire time the button is held.','pressed() fires exactly once per button press.','Controller.ButtonR1.pressing() reads any button by name.','Read values every loop: int speed = Controller.Axis3.position();'],'Print controller values to the brain screen while testing.',`void usercontrol(void) {\n  while(true) {\n    int leftY  = Controller.Axis3.position();\n    int rightY = Controller.Axis2.position();\n    bool intakeBtn = Controller.ButtonR1.pressing();\n\n    LeftMotors.spin(forward,  leftY,  percent);\n    RightMotors.spin(forward, rightY, percent);\n\n    if(intakeBtn) Intake.spin(forward, 100, percent);\n    else          Intake.stop(coast);\n\n    wait(20, msec);\n  }\n}`)},
+      {id:'p2l2',title:'Tank Drive & Arcade Drive',desc:'The two most common drive schemes, how they work, and how to code them.',coins:20,content:_lc('Tank drive uses one stick per side. Arcade drive uses one stick for forward/backward plus turning.',['Tank Drive: left stick → left motors, right stick → right motors.','Arcade Drive: Y axis = forward/backward, X axis = turning. One stick drives the whole robot.','Arcade formula: leftSpeed = Y + X,   rightSpeed = Y − X','Apply a deadband: ignore inputs smaller than ±5 to prevent drift.','Scale max speed (e.g. ×0.8) for finer control during precision tasks.'],'Run 3+ practice sessions with your driver using both styles before committing.',`void usercontrol(void) {\n  while(true) {\n    int Y = Controller.Axis3.position();\n    int X = Controller.Axis1.position();\n\n    if(abs(Y) < 5) Y = 0;  // deadband\n    if(abs(X) < 5) X = 0;\n\n    LeftMotors.spin(forward,  Y + X, percent);\n    RightMotors.spin(forward, Y - X, percent);\n\n    wait(20, msec);\n  }\n}`)},
+      {id:'p2l3',title:'Basic Timed Autonomous',desc:'Writing autonomous routines with spinFor().',coins:20,content:_lc('A timed autonomous uses spinFor() with specific durations to move through a sequence of actions.',['spinFor(time, seconds, speed, percent) runs the motor for a fixed duration then stops.','Chain multiple spinFor() calls in sequence to create a multi-step routine.','Run paired motors in parallel: use false (async) on first motor so second starts immediately.','Test on the same surface type always because timed routines depend on traction.','Start simple: drive forward, score one element, park.'],'Film your autonomous on video and watch frame by frame.',`void autonomous(void) {\n  // Drive forward 1.5 seconds\n  LeftMotors.spinFor(1.5, seconds, 80, percent, false);\n  RightMotors.spinFor(1.5, seconds, 80, percent);\n\n  // Run intake 0.5 seconds\n  Intake.spinFor(0.5, seconds, 100, percent);\n}`)},
+      {id:'p2l4',title:'Sensor-Based Autonomous',desc:'Using encoders and the inertial sensor for accurate, repeatable autonomous routines.',coins:25,content:_lc('Sensor-based autonomous measures exactly how far the robot has traveled and how much it has turned.',['Encoders: reset with motor.resetPosition() at the start.','Inertial Sensor: calibrate at start with Inertial.calibrate(); wait(2, seconds);','Drive a specific distance: (target_inches / wheel_circumference_inches) × 360 = encoder degrees.','Turn to a heading: spin motors opposite directions, check Inertial.heading() until target.','Test 5–10 times in a row and measure variance. Consistency wins.'],'Calibrate your inertial sensor while the robot is completely still at the very start of autonomous.',`void autonomous(void) {\n  Inertial.calibrate();\n  wait(2.0, seconds);\n\n  // Drive 24 inches (~452 encoder degrees for 4" wheel)\n  LeftMotors.spinFor(452, degrees, 70, percent, false);\n  RightMotors.spinFor(452, degrees, 70, percent);\n}`)},
+      {id:'p2l5',title:'Introduction to PID Control',desc:'What PID is, why it matters, and how to write and tune a basic PID loop.',coins:30,content:_lc('PID adjusts motor speed in real time based on how far the motor is from its target.',['P (Proportional): speed = kP × error. Farther from target = faster.','I (Integral): accumulates past error over time to correct persistent offsets.','D (Derivative) reacts to the rate of change of error and acts as a predictive brake to prevent overshoot.','error = target − current_position. When error = 0, the motor stops.','Tuning order: kP first, then kD to dampen, kI only if drift remains.'],'Tune PID on your actual competition surface when possible.',`void driveDistance(double targetDeg) {\n  const double kP = 0.5;\n  const double kD = 0.02;\n  double prevError = 0;\n  LeftMotors.resetPosition();\n\n  while(true) {\n    double error = targetDeg - LeftMotors.position(degrees);\n    double deriv = error - prevError;\n    double speed = (kP * error) + (kD * deriv);\n\n    speed = fmax(-100, fmin(100, speed));\n    LeftMotors.spin(forward, speed, percent);\n    RightMotors.spin(forward, speed, percent);\n\n    if(fabs(error) < 3.0) break;\n    prevError = error;\n    wait(20, msec);\n  }\n  LeftMotors.stop(hold);\n}`)},
     ]},
   ]},
 
@@ -1676,7 +1754,7 @@ function switchTrack(trackId){
             </div>
             <div class="lesson-content-panel" id="lcontent-${lesson.id}" style="display:none">
               ${lesson.content}
-              ${isStudent&&!done?`<button class="lesson-complete-btn" onclick="completeCurriculumLesson('${lesson.id}',${lesson.coins},event)">✓ Mark as Complete — Earn ${lesson.coins} VCoins</button>`:''}
+              ${isStudent&&!done?`<button class="lesson-complete-btn" onclick="completeCurriculumLesson('${lesson.id}',${lesson.coins},event)">✓ Mark as Complete and Earn ${lesson.coins} VCoins</button>`:''}
               ${done?`<div class="lc-done-banner">✅ You completed this lesson and earned 🪙 ${lesson.coins} VCoins!</div>`:''}
             </div>
           </div>`;
@@ -1776,7 +1854,7 @@ function toggleLesson(lessonId){
             ${isDone
               ? `<span style="font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Completed</span>`
               : isStudent
-                ? `<button class="btn btn-primary btn-pill" id="lp-complete" style="min-width:180px;justify-content:center">✓ Mark Complete — Earn ${lesson.coins} VCoins</button>`
+                ? `<button class="btn btn-primary btn-pill" id="lp-complete" style="min-width:180px;justify-content:center">✓ Mark Complete and Earn ${lesson.coins} VCoins</button>`
                 : ''
             }
             ${nextLesson?`<button class="btn btn-ghost btn-sm" id="lp-next">Next →</button>`:''}
@@ -1880,7 +1958,7 @@ async function doGoogleSignIn(){
       login(existing);
       return;
     }
-    // New Google user — need to pick a role
+    // New Google user, need to pick a role
     _pendingGoogleUser = {
       email,
       name: firebaseUser.displayName || email.split('@')[0],
@@ -1983,7 +2061,7 @@ async function renderAdminPanel(){
         </div>
         <div class="member-info">
           <div class="member-name">${inv.email}</div>
-          <div class="member-email">${inv.used?'Used — teacher has registered':'Pending — waiting for teacher to sign up'}</div>
+          <div class="member-email">${inv.used?'Used (teacher registered)':'Pending (waiting for sign-up)'}</div>
         </div>
         <span class="badge ${inv.used?'badge-green':'badge-amber'}">${inv.used?'Used':'Pending'}</span>
         ${!inv.used?`<button class="btn btn-xs btn-ghost" onclick="copyInviteLink('${inv.email}')">Copy link</button>`:''}
@@ -2182,7 +2260,7 @@ async function doLogin(){
     if(u.role==='removed'){errEl.textContent='This account has been removed.';resetBtn();return;}
     login(u);return;
   }
-  if(!window._firebase){errEl.textContent='Still connecting — please wait.';resetBtn();return;}
+  if(!window._firebase){errEl.textContent='Still connecting, please wait.';resetBtn();return;}
   try{
     u=await window._firebase.getUser(email);
     if(!u||u.password!==pw){errEl.textContent='Incorrect email or password.';resetBtn();return;}
@@ -2190,7 +2268,7 @@ async function doLogin(){
     DB.users[email]=u;login(u);
   }catch(e){
     console.error('Login error:',e);
-    errEl.textContent=window.location.protocol==='file:'?'Only demo accounts work as a local file.':'Could not reach server — check your connection.';
+    errEl.textContent=window.location.protocol==='file:'?'Only demo accounts work as a local file.':'Could not reach the server. Check your connection.';
     resetBtn();
   }
 }
@@ -2335,7 +2413,11 @@ function tNavTo(panel){
   const act=document.getElementById('t-topbar-actions');act.innerHTML='';
   if(panel==='classes')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>';
   if(panel==='shop')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openAddShopItem()">+ Add Item</button>';
-  if(panel==='classes')tRenderClasses();
+  if(panel==='classes'){
+    const cls=getMyClasses();
+    if(cls.length===1){tOpenClass(cls[0][0]);return;}
+    else tRenderClasses();
+  }
   if(panel==='grading')tRenderGrading();
   if(panel==='lessons')tRenderLessons();
   if(panel==='tickets')tRenderTickets();
@@ -2363,8 +2445,87 @@ function tDetailTab(tab){
   const students=members.map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
   const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(tActiveClassId+'_'));
   if(tab==='overview'){
-    const rows=students.length?students.map(u=>`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)}</div><div class="member-email">${u.email}</div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`).join(''):'<div style="font-size:12px;color:var(--text-3)">No students yet.</div>';
-    body.innerHTML=`<div class="stat-cards" style="margin-bottom:1.25rem"><div class="stat-card"><div class="stat-val">${students.length}</div><div class="stat-lbl2">Students</div></div><div class="stat-card"><div class="stat-val">${allLessons.length}</div><div class="stat-lbl2">Lessons</div></div><div class="stat-card"><div class="stat-val">${c?.code||'—'}</div><div class="stat-lbl2">Join Code</div></div></div><div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClassId}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClassId}')">Give Coins</button><button class="btn btn-ghost btn-sm" onclick="copyClassCode('${c?.code||''}')">Copy Join Code</button></div><div class="card">${rows}</div>`;
+    const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(tActiveClassId+'_'));
+    const totalLessons=allLessons.length;
+    const avColors=['td-av-1','td-av-2','td-av-3','td-av-4','td-av-5','td-av-6'];
+
+    // Calculate per-student stats
+    const studentStats=students.map((u,i)=>{
+      const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+      const pct=totalLessons?Math.round(done/totalLessons*100):0;
+      return {name:u.name,email:u.email,coins:u.coins||0,done,total:totalLessons,pct,avClass:avColors[i%avColors.length]};
+    });
+
+    const avgPct=studentStats.length?Math.round(studentStats.reduce((s,x)=>s+x.pct,0)/studentStats.length):0;
+    const totalCoins=studentStats.reduce((s,x)=>s+x.coins,0);
+    const completedAll=studentStats.filter(s=>s.pct===100).length;
+    const needsHelp=studentStats.filter(s=>s.pct<50&&s.total>0).length;
+    const myTickets=DB.tickets.filter(t=>t.classId===tActiveClassId&&(t.status||'open')==='open').length;
+
+    function pctColor(p){return p>=70?'green':p>=40?'amber':'red';}
+
+    body.innerHTML=`
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:24px;font-weight:900;letter-spacing:-.04em;">Dashboard</div>
+          <div style="font-size:13px;color:#888;margin-top:4px;">${esc(c.name)} · ${students.length} student${students.length!==1?'s':''} · Code: <strong>${c.code||'N/A'}</strong></div>
+        </div>
+        <div class="td-actions">
+          <button class="td-action-btn" onclick="openAddMember('${tActiveClassId}')">👤 Add Student</button>
+          <button class="td-action-btn" onclick="openGiveCoins('${tActiveClassId}')">🪙 Give Coins</button>
+          <button class="td-action-btn" onclick="copyClassCode('${c?.code||''}')">📋 Copy Code</button>
+        </div>
+      </div>
+
+      <div class="td-top">
+        <div class="td-score-card">
+          <div>
+            <div class="td-score-lbl">Overall Class Score</div>
+            <div class="td-score-big" style="color:#6bc26b;">${avgPct}%</div>
+            <div class="td-score-sub">Class average across ${totalLessons} lessons</div>
+          </div>
+          <div style="font-size:60px;opacity:.2;">🏆</div>
+          <div>
+            <div class="td-score-lbl">Work Assigned</div>
+            <div class="td-score-big">${totalLessons}</div>
+            <div class="td-score-sub">Total lessons scheduled</div>
+          </div>
+        </div>
+        <div class="td-alert-row">
+          <div class="td-alert td-alert-green">
+            <div class="td-alert-val">${completedAll}</div>
+            <div class="td-alert-lbl">${completedAll===1?'student has':'students have'} completed all work</div>
+          </div>
+          <div class="td-alert td-alert-yellow">
+            <div class="td-alert-val">${students.length-completedAll-needsHelp}</div>
+            <div class="td-alert-lbl">${students.length-completedAll-needsHelp===1?'student is':'students are'} making progress</div>
+          </div>
+          <div class="td-alert td-alert-orange">
+            <div class="td-alert-val">${needsHelp}</div>
+            <div class="td-alert-lbl">${needsHelp===1?'student needs':'students need'} attention (below 50%)</div>
+          </div>
+        </div>
+      </div>
+
+      ${myTickets?`<div style="background:#fff3cd;border:1px solid #ffc107;border-radius:12px;padding:.875rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:10px;font-size:13px;"><span style="font-size:18px;">🎫</span><strong>${myTickets} open ticket${myTickets!==1?'s':''}</strong> from students in this class <button class="btn btn-ghost btn-sm" onclick="tNavTo('tickets')" style="margin-left:auto;">View Tickets</button></div>`:''}
+
+      <div class="td-prof">
+        <div class="td-prof-header">
+          <div class="td-prof-title">Student Progress</div>
+          <div style="font-size:12px;color:var(--text-3);">${students.length} student${students.length!==1?'s':''}</div>
+        </div>
+        ${students.length?`<table>
+          <thead><tr><th>Student</th><th>Completed</th><th>Progress</th><th>VCoins</th></tr></thead>
+          <tbody>
+            ${studentStats.map(s=>`<tr>
+              <td><div class="td-student-row"><div class="td-avatar ${s.avClass}">${initials(s.name)}</div><div><div style="font-weight:600">${esc(s.name)}</div><div style="font-size:11px;color:var(--text-3)">${s.email}</div></div></div></td>
+              <td style="font-weight:700;font-size:14px;">${s.done} / ${s.total}</td>
+              <td><div style="display:flex;align-items:center;gap:10px;"><div class="td-bar"><div class="td-bar-fill td-bar-${pctColor(s.pct)}" style="width:${s.pct}%"></div></div><span class="td-pct td-pct-${pctColor(s.pct)}">${s.pct}%</span></div></td>
+              <td><span style="background:rgba(251,191,36,.15);color:#b45309;font-weight:700;padding:4px 10px;border-radius:20px;font-size:12px;">${s.coins} VC</span></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>`:`<div style="padding:3rem;text-align:center;color:var(--text-3);font-size:13px;"><div style="font-size:40px;margin-bottom:.75rem;">👥</div>No students yet. Share the join code or add students manually.</div>`}
+      </div>`
   } else if(tab==='messages'){
     msgClassId=tActiveClassId;
     if(window._firebase)window._firebase.stopListening();
@@ -2372,7 +2533,7 @@ function tDetailTab(tab){
     document.getElementById('msg-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg();});
     if(window._firebase)window._firebase.listenMessages(tActiveClassId,msgs=>{_liveMessages=msgs;_renderMsgList(msgs);});
   } else if(tab==='members'){
-    const code=c?.code||'—';
+    const code=c?.code||' - ';
     const rows=members.length?members.map(email=>{const u=DB.users[email];return u?`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div class="member-name">${esc(u.name)} <span class="badge badge-gray" style="font-size:10px">${u.role}</span></div><div class="member-email">${email}</div></div>${u.role==='student'?`<span class="badge badge-gold" style="margin-right:4px">${u.coins||0} VC</span>`:''}<button class="btn btn-danger btn-sm" onclick="removeMember('${tActiveClassId}','${email}')">Remove</button></div>`:''}).join(''):'<div style="font-size:12px;color:var(--text-3)">No members yet.</div>';
     body.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="openAddMember('${tActiveClassId}')">+ Add Member</button><button class="btn btn-gold btn-sm" onclick="openGiveCoins('${tActiveClassId}')">Give Coins</button><div style="display:flex;align-items:center;gap:6px;margin-left:auto"><span style="font-size:11px;color:var(--text-3)">Join code:</span><span style="font-family:monospace;font-size:13px;font-weight:700;letter-spacing:.12em;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:2px 9px">${code}</span><button class="btn btn-xs btn-ghost" onclick="copyClassCode('${code}')">Copy</button></div></div><div class="card">${rows}</div>`;
   }
@@ -2407,23 +2568,49 @@ function tRenderClasses(){
         <div style="font-size:13px;color:var(--text-2);line-height:1.8;">
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
             <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">1</span>
-            <span><strong>Create a class</strong> — give it a name, season, and room number. You'll get a join code students can use.</span>
+            <span><strong>Create a class</strong> by giving it a name, season, and room number. You'll get a join code students can use.</span>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
             <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">2</span>
-            <span><strong>Add students</strong> — share the join code or manually add them by email from the class Members tab.</span>
+            <span><strong>Add students</strong> by sharing the join code or manually add them by email from the class Members tab.</span>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:.5rem;">
             <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">3</span>
-            <span><strong>Schedule lessons</strong> — assign curriculum lessons to dates. Students complete them to earn VCoins.</span>
+            <span><strong>Schedule lessons</strong> by assigning curriculum lessons to dates. Students complete them to earn VCoins.</span>
           </div>
           <div style="display:flex;gap:10px;align-items:flex-start;">
             <span style="background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">4</span>
-            <span><strong>Track progress</strong> — use Grading to see completion rates and award bonus VCoins.</span>
+            <span><strong>Track progress</strong> using the Grading tab to see completion rates and award bonus VCoins.</span>
           </div>
         </div>
       </div>`;return;}
-  body.innerHTML=classes.map(([id,c])=>{const s=(c.members||[]).filter(e=>DB.users[e]?.role==='student').length;const l=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;return`<div class="card" style="cursor:pointer;margin-bottom:.75rem;display:flex;align-items:center;gap:12px;padding:1rem 1.125rem;" onclick="tOpenClass('${id}')"><div class="avatar" style="width:40px;height:40px;font-size:14px;flex-shrink:0;">${initials(c.name)}</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;margin-bottom:2px;">${esc(c.name)}</div><div style="font-size:12px;color:var(--text-3);">${c.season||''}${c.room?' · '+c.room:''}</div></div><span class="badge badge-gray" style="margin-right:4px;">${s} student${s!==1?'s':''}</span><span class="badge badge-gray" style="margin-right:8px;">${l} lesson${l!==1?'s':''}</span><span style="color:var(--text-3);font-size:18px;">›</span></div>`;}).join('');
+  const classColors=['td-card-green','td-card-blue','td-card-amber','td-card-purple','td-card-orange'];
+  const classIcons=['📚','🎓','🔬','🤖','⚡'];
+  body.innerHTML=classes.map(([id,c],ci)=>{
+    const s=(c.members||[]).filter(e=>DB.users[e]?.role==='student').length;
+    const l=Object.keys(DB.lessons).filter(k=>k.startsWith(id+'_')).length;
+    const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+    const done=students.reduce((sum,u)=>{
+      return sum+Object.entries(DB.lessons).filter(([k])=>k.startsWith(id+'_')).filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+    },0);
+    const totalPossible=s*l;
+    const avgPct=totalPossible?Math.round(done/totalPossible*100):0;
+    const col=classColors[ci%classColors.length];
+    const icon=classIcons[ci%classIcons.length];
+    return`<div style="background:var(--white);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-bottom:.75rem;padding:1.25rem;display:flex;align-items:center;gap:14px;transition:transform .1s,box-shadow .15s;" onclick="tOpenClass('${id}')" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
+      <div class="${col}" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${icon}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:15px;font-weight:700;margin-bottom:3px;">${esc(c.name)}</div>
+        <div style="font-size:12px;color:var(--text-3);">${c.season||'Current Season'}${c.room?' · Room '+c.room:''}</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="text-align:center;"><div style="font-size:16px;font-weight:800;">${s}</div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;">Students</div></div>
+        <div style="text-align:center;"><div style="font-size:16px;font-weight:800;">${l}</div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;">Lessons</div></div>
+        <div style="text-align:center;"><div style="font-size:16px;font-weight:800;color:${avgPct>=70?'#22c55e':avgPct>=40?'#f59e0b':'#ef4444'}">${avgPct}%</div><div style="font-size:10px;color:var(--text-3);text-transform:uppercase;">Progress</div></div>
+      </div>
+      <span style="color:var(--text-3);font-size:20px;margin-left:4px;">›</span>
+    </div>`;
+  }).join('');
 }
 
 function tRenderGrading(){
@@ -2770,7 +2957,7 @@ function _renderMsgList(msgs){
         </div>
       </div>
     </div>`;
-  }).join(''):`<div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">No messages yet — say hello! 👋</div>`;
+  }).join(''):`<div style="text-align:center;color:var(--text-3);font-size:13px;margin:auto">No messages yet. Say hello! 👋</div>`;
   if(wasAtBottom) list.scrollTop=list.scrollHeight;
 }
 
@@ -2968,7 +3155,7 @@ function renderManage(){
   if(!classes.length){body.innerHTML=toolsHtml+`<div class="empty-state"><div class="empty-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="empty-title">No classes yet</div><div class="empty-desc">Create your first class above.</div></div>`;return;}
   body.innerHTML=toolsHtml+classes.map(([id,c])=>{
     const members=c.members||[];
-    const code=c.code||'—';
+    const code=c.code||' - ';
     return`<div class="card" style="margin-bottom:1rem">
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
         <div>
@@ -3159,7 +3346,7 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('cl
 <div class="modal-overlay hidden" id="modal-admin-invite">
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Invite a Teacher</div><button class="modal-close" onclick="closeModal('modal-admin-invite')">✕</button></div>
-    <p style="font-size:12px;color:var(--text-3);margin-bottom:1rem;line-height:1.6">Enter the teacher's email. They'll be able to register with that email address — teachers cannot sign up without a valid invite.</p>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:1rem;line-height:1.6">Enter the teacher's email. They'll be able to register with that email address. Teachers cannot sign up without a valid invite.</p>
     <div class="form-group"><label>Teacher Email</label><input type="email" id="invite-email" placeholder="teacher@school.com"></div>
     <div class="auth-err" id="invite-err"></div>
     <div class="modal-footer"><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-admin-invite')">Cancel</button><button class="btn btn-primary btn-sm" onclick="doAdminInvite()">Send Invite</button></div>
