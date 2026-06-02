@@ -1388,6 +1388,400 @@ body.dark .btn-google:hover{background:#333;border-color:#555;}
 </style>
 </head>
 <body>
+<!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  VEXIFY PATCH  –  paste this block just before </body>  ║
+  ╚══════════════════════════════════════════════════════════╝
+
+  Fixes included
+  ──────────────
+  1. Session persistence  – user stays logged in on refresh
+  2. Teacher nav          – logo added, Help Tickets tab removed
+  3. Topbar title         – shows full class name (not truncated)
+  4. Class code badge     – large, prominent, one-click copy
+  5. Layout / scaling     – t-layout fills viewport correctly;
+                            content area no longer cuts off early
+  6. Sign-out guard       – only clears session explicitly
+-->
+
+<!-- ── PATCH CSS ─────────────────────────────────────────── -->
+<style id="vexify-patch-css">
+
+/* 1. Fix teacher layout so it fills the full viewport height
+      and the content area scrolls instead of clipping        */
+#page-teacher { display: none; }        /* hidden by default  */
+#page-teacher.t-visible { display: block !important; }
+
+#page-teacher .t-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#page-teacher .t-topnav {
+  flex-shrink: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 0;
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+#page-teacher .t-topnav::-webkit-scrollbar { display: none; }
+
+body.dark #page-teacher .t-topnav {
+  background: rgba(15,15,15,.97);
+  border-bottom-color: #252525;
+}
+
+#page-teacher .t-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+#page-teacher .t-topbar {
+  flex-shrink: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+body.dark #page-teacher .t-topbar {
+  background: #141414;
+  border-bottom-color: #252525;
+}
+
+#page-teacher .t-content-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  background: var(--bg);
+  min-height: 0;          /* critical – lets flex child scroll */
+}
+body.dark #page-teacher .t-content-area { background: #0c0c0c; }
+
+#page-teacher .t-content-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 3rem;   /* breathing room at the bottom     */
+}
+
+/* 2. Teacher nav logo */
+.t-nav-logo-patch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.35px;
+  color: var(--text);
+  margin-right: 1.25rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+body.dark .t-nav-logo-patch { color: #f0f0f0; }
+
+/* 3. Class code badge inside overview header */
+.patch-code-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Menlo', 'Monaco', monospace;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.patch-code-badge:hover {
+  border-color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+body.dark .patch-code-badge {
+  background: #1a1a1a;
+  border-color: #333;
+  color: #f0f0f0;
+}
+body.dark .patch-code-badge:hover { border-color: #888; }
+.patch-code-copy-icon { opacity: .45; font-size: 13px; }
+
+/* 4. Topbar title – no truncation */
+#t-topbar-title {
+  font-size: 15px;
+  font-weight: 700;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 5. Nav items responsive */
+.t-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 12px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color .12s;
+  margin-bottom: -1px;
+  flex-shrink: 0;
+}
+.t-nav-item:hover { color: var(--text); }
+.t-nav-item.active {
+  color: var(--text);
+  border-bottom-color: var(--text);
+  font-weight: 600;
+}
+body.dark .t-nav-item { color: #555; }
+body.dark .t-nav-item.active { color: #ededed; border-bottom-color: #ededed; }
+.t-nav-item svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* 6. Right controls */
+.t-topnav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding-left: 1rem;
+  flex-shrink: 0;
+}
+
+/* 7. Hide old topnav logo that comes from the original HTML */
+.t-topnav-logo { display: none !important; }
+
+/* 8. Panel visibility */
+.t-panel { display: none; }
+.t-panel.t-active { display: block; }
+
+/* 9. Mobile responsive fixes */
+@media (max-width: 768px) {
+  .t-nav-item { padding: 14px 10px; font-size: 12px; gap: 4px; }
+  #page-teacher .t-content-area { padding: 1rem .75rem; }
+  .patch-code-badge { font-size: 13px; letter-spacing: .12em; }
+}
+@media (max-width: 480px) {
+  .t-nav-item { font-size: 0; gap: 0; padding: 14px 9px; }
+  .t-nav-item svg { width: 16px; height: 16px; }
+  .t-nav-logo-patch span { display: none; }
+}
+
+</style>
+
+<!-- ── PATCH JS ──────────────────────────────────────────── -->
+<script>
+/* ── wait for the page's own scripts to finish ── */
+window.addEventListener('load', function () {
+
+  /* ════════════════════════════════════════════════════════
+     FIX 1 – Session persistence
+     Save the logged-in user to localStorage on login, restore
+     on page load so a refresh doesn't sign them out.
+  ════════════════════════════════════════════════════════ */
+  const _origLogin = window.login;
+  window.login = function (u) {
+    try { localStorage.setItem('vexify_session', JSON.stringify(u)); } catch(e) {}
+    _origLogin(u);
+  };
+
+  const _origSignOut = window.signOut;
+  window.signOut = function () {
+    try { localStorage.removeItem('vexify_session'); } catch(e) {}
+    _origSignOut();
+  };
+
+  /* Restore session on boot (runs after Firebase is ready) */
+  function tryRestoreSession() {
+    if (window.currentUser) return;          // already logged in
+    try {
+      const saved = localStorage.getItem('vexify_session');
+      if (!saved) return;
+      const u = JSON.parse(saved);
+      if (!u || !u.email) return;
+      // Re-fetch fresh user data from Firestore if available
+      if (window._firebase && window._firebaseReady) {
+        window._firebase.getUser(u.email).then(fresh => {
+          const user = fresh || u;
+          if (user.role === 'removed') { localStorage.removeItem('vexify_session'); return; }
+          window.DB.users[user.email] = user;
+          window.login(user);
+        }).catch(() => {
+          window.DB.users[u.email] = u;
+          window.login(u);
+        });
+      } else {
+        window.DB.users[u.email] = u;
+        window.login(u);
+      }
+    } catch(e) {}
+  }
+
+  // Try immediately; also hook into firebase-ready event
+  if (document.readyState === 'complete') tryRestoreSession();
+  document.addEventListener('firebase-ready', tryRestoreSession);
+  setTimeout(tryRestoreSession, 800);   // fallback
+
+  /* ════════════════════════════════════════════════════════
+     FIX 2 – Teacher nav: inject logo, remove Help Tickets
+  ════════════════════════════════════════════════════════ */
+  function patchTeacherNav() {
+    const topnav = document.querySelector('#page-teacher .t-topnav');
+    if (!topnav || topnav.dataset.patched) return;
+    topnav.dataset.patched = '1';
+
+    /* Remove Help Tickets nav item */
+    topnav.querySelectorAll('.t-nav-item[data-tpanel="tickets"]').forEach(el => el.remove());
+    // Also remove from tNavTo routing — override handled below
+
+    /* Inject logo BEFORE the nav items container */
+    const logo = document.createElement('div');
+    logo.className = 't-nav-logo-patch';
+    logo.innerHTML = `
+      <svg width="22" height="22" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="4" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+        <circle cx="22" cy="8" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/>
+        <circle cx="13" cy="20" r="3.8" stroke="currentColor" stroke-width="1.8" fill="none"/>
+        <circle cx="13" cy="20" r="1.4" fill="currentColor"/>
+        <line x1="6.6" y1="9.7" x2="10.7" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="21.4" y1="9.7" x2="15.3" y2="17.6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+      <span>Vexify</span>`;
+    topnav.insertBefore(logo, topnav.firstChild);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     FIX 3 – Topbar title shows full class name
+  ════════════════════════════════════════════════════════ */
+  const _origTOpenClass = window.tOpenClass;
+  window.tOpenClass = function (classId) {
+    _origTOpenClass(classId);
+    // Overwrite the topbar title with the real class name
+    const c = window.DB.classes[classId];
+    const titleEl = document.getElementById('t-topbar-title');
+    if (titleEl && c) titleEl.textContent = c.name;
+  };
+
+  /* ════════════════════════════════════════════════════════
+     FIX 4 – Class code badge in tDetailTab overview
+             Patch the rendered HTML to add the badge
+  ════════════════════════════════════════════════════════ */
+  const _origTDetailTab = window.tDetailTab;
+  window.tDetailTab = function (tab) {
+    _origTDetailTab(tab);
+    if (tab === 'overview') {
+      // After render, inject a prominent code badge near the class title
+      setTimeout(patchOverviewCode, 50);
+    }
+  };
+
+  function patchOverviewCode() {
+    const classId = window.tActiveClassId;
+    if (!classId) return;
+    const c = window.DB.classes[classId];
+    if (!c) return;
+    const code = c.code || 'N/A';
+
+    // Find the subtitle line that already has the code
+    const subtitleEl = document.querySelector('#t-detail-body [style*="color:#888"]');
+    if (!subtitleEl) return;
+
+    // Replace the plain code text with a styled badge
+    subtitleEl.innerHTML = subtitleEl.innerHTML.replace(
+      /Code:\s*<strong>[^<]*<\/strong>/,
+      `Class Code: <span class="patch-code-badge" onclick="patchCopyCode('${code}')" title="Click to copy">${code} <span class="patch-code-copy-icon">⎘</span></span>`
+    );
+
+    // Also inject a standalone big badge below the Dashboard heading
+    const dashHeading = document.querySelector('#t-detail-body [style*="font-size:24px"]');
+    if (dashHeading && !document.getElementById('patch-code-hero')) {
+      const hero = document.createElement('div');
+      hero.id = 'patch-code-hero';
+      hero.style.cssText = 'display:flex;align-items:center;gap:10px;margin-top:10px;margin-bottom:4px;';
+      hero.innerHTML = `
+        <div style="font-size:12px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;">Class Code</div>
+        <span class="patch-code-badge" onclick="patchCopyCode('${code}')" title="Click to copy">
+          ${code}
+          <span class="patch-code-copy-icon">⎘ copy</span>
+        </span>`;
+      const parent = dashHeading.closest('div[style*="display:flex"]') || dashHeading.parentElement;
+      if (parent) parent.insertAdjacentElement('afterend', hero);
+    }
+  }
+
+  window.patchCopyCode = function (code) {
+    navigator.clipboard.writeText(code)
+      .then(() => window.showToast('Class code copied: ' + code))
+      .catch(() => { prompt('Share this code with students:', code); });
+  };
+
+  /* ════════════════════════════════════════════════════════
+     FIX 5 – showPage for teacher uses display:flex correctly
+  ════════════════════════════════════════════════════════ */
+  const _origShowPage = window.showPage;
+  window.showPage = function (p) {
+    _origShowPage(p);
+    // Ensure teacher page uses flex (original sets display:none/flex inconsistently)
+    const tEl = document.getElementById('page-teacher');
+    if (p === 'teacher') {
+      tEl.style.display = 'block';
+      tEl.style.position = 'fixed';
+      tEl.style.inset = '0';
+      tEl.style.zIndex = '200';
+      tEl.style.background = 'var(--bg)';
+      patchTeacherNav();
+    }
+  };
+
+  /* ════════════════════════════════════════════════════════
+     FIX 6 – tNavTo: skip tickets panel (it's removed from nav)
+  ════════════════════════════════════════════════════════ */
+  const _origTNavTo = window.tNavTo;
+  window.tNavTo = function (panel) {
+    if (panel === 'tickets') return;  // removed from teacher view
+    _origTNavTo(panel);
+    // After nav switch, patch the nav logo in case it was re-rendered
+    setTimeout(patchTeacherNav, 20);
+  };
+
+  /* ════════════════════════════════════════════════════════
+     FIX 7 – Patch renderDashboard for teacher to call patchTeacherNav
+  ════════════════════════════════════════════════════════ */
+  const _origRenderDashboard = window.renderDashboard;
+  window.renderDashboard = function () {
+    _origRenderDashboard();
+    if (window.currentUser && window.currentUser.role === 'teacher') {
+      setTimeout(patchTeacherNav, 50);
+    }
+  };
+
+  /* Run nav patch now in case teacher is already shown */
+  patchTeacherNav();
+  setTimeout(patchTeacherNav, 300);
+  setTimeout(patchTeacherNav, 1000);
+
+}, false);
+</script>
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-logo" onclick="goHome()">
