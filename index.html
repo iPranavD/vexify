@@ -2025,6 +2025,9 @@ window.addEventListener('load', function () {
         <div class="t-nav-item" data-tpanel="lessons" onclick="tNavTo('lessons')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lessons
         </div>
+        <div class="t-nav-item" data-tpanel="grading" onclick="tNavTo('grading')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>Gradebook
+        </div>
         <div class="t-nav-item" data-tpanel="tickets" onclick="tNavTo('tickets')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Help Tickets
         </div>
@@ -2051,6 +2054,7 @@ window.addEventListener('load', function () {
     <div class="t-main">
       <div class="t-topbar">
         <div class="t-topbar-title" id="t-topbar-title">Classes</div>
+        <select id="t-class-selector" onchange="if(this.value)tOpenClass(this.value)" style="display:none;padding:5px 10px;border:1px solid var(--border);border-radius:var(--r);font-size:12px;background:var(--white);color:var(--text);max-width:200px;"></select>
         <div id="t-topbar-actions" style="display:flex;gap:8px;align-items:center;"></div>
       </div>
       <div class="t-content-area">
@@ -2246,14 +2250,29 @@ function renderLessonsPanel(){ switchTrack(activeTrack); }
 function switchTrack(trackId){
   activeTrack = trackId;
   openLesson = null;
-  document.querySelectorAll('.track-tab').forEach(t=>t.classList.toggle('active',t.dataset.track===trackId));
-  const track = CURRICULUM[trackId];
+  // Filter curriculum by student's class level
+  const lvlCurriculum=(currentUser.role==='student')?getCurriculumForLevel(getStudentLevel()):CURRICULUM;
+  document.querySelectorAll('.track-tab').forEach(t=>{
+    const exists=!!lvlCurriculum[t.dataset.track];
+    t.style.display=exists?'':'none';
+    t.classList.toggle('active',t.dataset.track===trackId);
+  });
+  if(!lvlCurriculum[trackId]){
+    const first=Object.keys(lvlCurriculum)[0];
+    if(first){activeTrack=first;trackId=first;document.querySelectorAll('.track-tab').forEach(t=>t.classList.toggle('active',t.dataset.track===trackId));}
+  }
+  const track=lvlCurriculum[trackId];
+  if(!track){document.getElementById('track-summary').innerHTML='';document.getElementById('track-units').innerHTML='<div class="empty-state"><div class="empty-title">No lessons available</div></div>';return;}
   const allLessons = track.units.flatMap(u=>u.lessons);
   const doneCount = allLessons.filter(l=>DB.completedLessons['cl_'+l.id]).length;
   const totalCoins = allLessons.reduce((s,l)=>s+l.coins,0);
   const earnedCoins = allLessons.filter(l=>DB.completedLessons['cl_'+l.id]).reduce((s,l)=>s+l.coins,0);
   const pct = Math.round(doneCount/allLessons.length*100);
+  const studentLvl=currentUser.role==='student'?getStudentLevel():null;
+  const lvlLabel={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+  const lvlColor={beginner:'#22c55e',intermediate:'#f59e0b',advanced:'#ef4444'};
   document.getElementById('track-summary').innerHTML=`
+    ${studentLvl?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:.75rem;font-size:13px;color:var(--text-3);">Your level: <span style="background:${lvlColor[studentLvl]};color:#fff;padding:2px 10px;border-radius:999px;font-size:11px;font-weight:700;">${lvlLabel[studentLvl]}</span><span style="font-size:12px;">Unlock more content by joining an Intermediate or Advanced class</span></div>`:''}
     <div class="track-summary">
       <div class="track-summary-stat"><div class="track-summary-val">${doneCount}/${allLessons.length}</div><div class="track-summary-lbl">Lessons Done</div></div>
       <div style="width:1px;background:rgba(79,70,229,.2);align-self:stretch;margin:0 8px"></div>
@@ -2703,6 +2722,31 @@ const SVG_ICONS={
   star:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
 };
 
+
+// Level-based curriculum filtering
+function getCurriculumForLevel(level){
+  if(!level || level==='advanced') return CURRICULUM; // advanced gets everything
+  const filtered={};
+  for(const [tk,track] of Object.entries(CURRICULUM)){
+    if(level==='beginner' && tk==='programming') continue; // beginners skip programming
+    const filteredUnits=track.units.map(unit=>{
+      let lessons=unit.lessons;
+      if(level==='beginner') lessons=lessons.slice(0,3); // beginners: first 3 lessons per unit
+      else if(level==='intermediate') lessons=lessons.slice(0,4); // intermediate: first 4
+      return {...unit, lessons};
+    }).filter(u=>u.lessons.length>0);
+    if(filteredUnits.length>0) filtered[tk]={...track, units:filteredUnits};
+  }
+  return filtered;
+}
+
+function getStudentLevel(){
+  const classes=getMyClasses();
+  if(!classes.length) return 'beginner';
+  // Use the level of the first class
+  return classes[0][1].level || 'beginner';
+}
+
 // ═══════ THEME TOGGLES ═══════
 function toggleDark(){
   document.body.classList.toggle('dark');
@@ -2908,7 +2952,130 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function today(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
 
 // Stub for teacher-only panels (not yet scaffolded)
-function renderTeacherShop(){document.getElementById('teacher-shop-body').innerHTML='<div class="empty-state"><div class="empty-title">Shop Manager</div><div class="empty-desc">Add items for students to buy with VCoins.</div></div>';}
+// ═══════ TEACHER SHOP ═══════
+function getTeacherShopItems(){ return JSON.parse(localStorage.getItem('vexify_shop_items')||'[]'); }
+function saveTeacherShopItems(items){ localStorage.setItem('vexify_shop_items',JSON.stringify(items)); }
+function getPendingPurchases(){ return JSON.parse(localStorage.getItem('vexify_purchases')||'[]'); }
+function savePendingPurchases(p){ localStorage.setItem('vexify_purchases',JSON.stringify(p)); }
+
+function renderTeacherShop(){} // legacy stub
+
+function tRenderShop(){
+  const body=document.getElementById('t-shop-body');if(!body)return;
+  const items=getTeacherShopItems();
+  const purchases=getPendingPurchases();
+  const pending=purchases.filter(p=>p.status==='pending');
+  const history=purchases.filter(p=>p.status!=='pending').slice(-30).reverse();
+
+  body.innerHTML=`
+    ${pending.length?`
+    <div class="a-sh" style="margin-bottom:.75rem;"><div class="a-sh-title" style="color:#e8845a;">Pending Requests (${pending.length})</div></div>
+    <div class="a-table-wrap" style="margin-bottom:1.5rem;">
+      <table class="a-table"><thead><tr><th>Student</th><th>Item</th><th>Cost</th><th>Actions</th></tr></thead>
+      <tbody>${pending.map((p,i)=>`<tr>
+        <td style="font-weight:500">${esc(p.studentName)}</td>
+        <td>${esc(p.icon||'🎁')} ${esc(p.itemName)}</td>
+        <td>${p.price} VC</td>
+        <td style="display:flex;gap:6px;">
+          <button class="btn btn-primary btn-xs" onclick="approvePurchase(${purchases.indexOf(p)})">Approve</button>
+          <button class="btn btn-danger btn-xs" onclick="denyPurchase(${purchases.indexOf(p)})">Deny</button>
+        </td>
+      </tr>`).join('')}</tbody></table>
+    </div>`:''}
+
+    <div class="a-sh">
+      <div class="a-sh-title">Shop Items (${items.length})</div>
+      <button class="btn btn-primary btn-sm" onclick="openAddShopItem()">+ Add Item</button>
+    </div>
+    ${items.length?`
+    <div class="a-table-wrap" style="margin-bottom:1.5rem;">
+      <table class="a-table"><thead><tr><th>Icon</th><th>Name</th><th>Description</th><th>Price</th><th></th></tr></thead>
+      <tbody>${items.map((item,i)=>`<tr>
+        <td style="font-size:20px;">${item.icon}</td>
+        <td style="font-weight:500">${esc(item.name)}</td>
+        <td style="color:var(--text-3);font-size:12px">${esc(item.desc)}</td>
+        <td>${item.price} VC</td>
+        <td><button class="btn btn-danger btn-xs" onclick="removeShopItem(${i})">Remove</button></td>
+      </tr>`).join('')}</tbody></table>
+    </div>`:`<div class="empty-state" style="padding:2rem;"><div class="empty-title">No shop items yet</div><div class="empty-desc">Click "+ Add Item" to create items students can buy with VCoins.</div></div>`}
+
+    ${history.length?`
+    <div class="a-sh" style="margin-bottom:.75rem;"><div class="a-sh-title">History</div></div>
+    <div class="a-table-wrap">
+      <table class="a-table"><thead><tr><th>Student</th><th>Item</th><th>Cost</th><th>Status</th></tr></thead>
+      <tbody>${history.map(p=>`<tr style="${p.status==='denied'?'opacity:.5':''}">
+        <td>${esc(p.studentName)}</td>
+        <td>${esc(p.icon||'🎁')} ${esc(p.itemName)}</td>
+        <td>${p.price} VC</td>
+        <td><span class="badge ${p.status==='approved'?'badge-green':'badge-red'}">${p.status}</span></td>
+      </tr>`).join('')}</tbody></table>
+    </div>`:''}
+  `;
+}
+
+function openAddShopItem(){
+  document.getElementById('si-name').value='';
+  document.getElementById('si-desc').value='';
+  document.getElementById('si-icon').value='🎁';
+  document.getElementById('si-price').value='50';
+  document.getElementById('si-err').textContent='';
+  openModal('modal-add-shop-item');
+}
+
+function doAddShopItem(){
+  const icon=document.getElementById('si-icon').value.trim()||'🎁';
+  const name=document.getElementById('si-name').value.trim();
+  const desc=document.getElementById('si-desc').value.trim();
+  const price=parseInt(document.getElementById('si-price').value)||50;
+  const err=document.getElementById('si-err');
+  if(!name){err.textContent='Name is required.';return;}
+  if(!price||price<1){err.textContent='Price must be at least 1.';return;}
+  const items=getTeacherShopItems();
+  items.push({id:'custom_'+Date.now(),icon,name,desc:desc||'A shop item',price});
+  saveTeacherShopItems(items);
+  closeModal('modal-add-shop-item');
+  showToast('Item added to shop!');
+  tRenderShop();
+}
+
+function removeShopItem(idx){
+  if(!confirm('Remove this item from the shop?'))return;
+  const items=getTeacherShopItems();
+  items.splice(idx,1);
+  saveTeacherShopItems(items);
+  showToast('Item removed.');
+  tRenderShop();
+}
+
+function approvePurchase(idx){
+  const purchases=getPendingPurchases();
+  const p=purchases[idx];if(!p)return;
+  p.status='approved';
+  const u=DB.users[p.studentEmail];
+  if(u){
+    if(!u.inventory)u.inventory=[];
+    if(!u.inventory.includes(p.itemId))u.inventory.push(p.itemId);
+    if(window._firebase)window._firebase.updateUser(p.studentEmail,{inventory:u.inventory});
+  }
+  savePendingPurchases(purchases);
+  showToast('Approved! '+p.studentName+' received '+p.itemName);
+  tRenderShop();
+}
+
+function denyPurchase(idx){
+  const purchases=getPendingPurchases();
+  const p=purchases[idx];if(!p)return;
+  p.status='denied';
+  const u=DB.users[p.studentEmail];
+  if(u){
+    u.coins=(u.coins||0)+p.price;
+    if(window._firebase)window._firebase.updateUser(p.studentEmail,{coins:u.coins});
+    if(u.email===currentUser?.email)updateCoinDisplay();
+  }
+  savePendingPurchases(purchases);
+  showToast(p.price+' VCoins refunded to '+p.studentName);
+  tRenderShop();
+}
 function renderTeacherLessons(){document.getElementById('teacher-lessons-body').innerHTML='<div class="empty-state"><div class="empty-title">Lesson Builder</div><div class="empty-desc">Create custom lessons here.</div></div>';}
 function openAddShopItemModal(){openModal('modal-add-shop-item');}
 function doAddShopItem(){closeModal('modal-add-shop-item');}
@@ -2960,7 +3127,7 @@ function tNavTo(panel){
   document.querySelectorAll('.t-panel').forEach(el=>el.classList.remove('t-active'));
   const pEl=document.getElementById('t-panel-'+panel);
   if(pEl)pEl.classList.add('t-active');
-  const titles={classes:'Classes',grading:'Grading',lessons:'Lessons',tickets:'Help Tickets',shop:'Shop'};
+  const titles={classes:'Classes',grading:'Gradebook',lessons:'Lessons',tickets:'Help Tickets',shop:'Shop'};
   document.getElementById('t-topbar-title').textContent=titles[panel]||panel;
   const act=document.getElementById('t-topbar-actions');act.innerHTML='';
   if(panel==='classes')act.innerHTML='<button class="btn btn-primary btn-sm" onclick="openCreateClassModal()">+ New Class</button>';
@@ -2983,9 +3150,16 @@ function tOpenClass(classId){
   document.querySelectorAll('.t-panel').forEach(el=>el.classList.remove('t-active'));
   document.getElementById('t-panel-class-detail').classList.add('t-active');
   const c=DB.classes[classId];
+  const levelLabels={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+  const levelColors={beginner:'badge-green',intermediate:'badge-amber',advanced:'badge-red'};
   document.getElementById('t-detail-name').textContent=c?.name||'Class';
-  document.getElementById('t-topbar-title').textContent=c?.name||'Class';
-  document.getElementById('t-topbar-actions').innerHTML='<button class="btn btn-ghost btn-sm" onclick="tNavTo(\'classes\')">← All Classes</button>';
+  document.getElementById('t-topbar-title').textContent='';
+  // Show class selector dropdown
+  const sel=document.getElementById('t-class-selector');
+  const classes=getMyClasses();
+  sel.style.display=classes.length>1?'inline-block':'none';
+  sel.innerHTML=classes.map(([id,cl])=>`<option value="${id}"${id===classId?' selected':''}>${cl.name} (${levelLabels[cl.level]||'Beginner'})</option>`).join('');
+  document.getElementById('t-topbar-actions').innerHTML=`<span class="badge ${levelColors[c?.level]||'badge-green'}" style="font-size:11px;">${levelLabels[c?.level]||'Beginner'}</span> <button class="btn btn-ghost btn-sm" onclick="tNavTo('classes')">← All Classes</button>`;
   tDetailTab('overview');
 }
 
@@ -3032,7 +3206,7 @@ function tDetailTab(tab){
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:8px;">
         <div>
           <div style="font-size:24px;font-weight:900;letter-spacing:-.04em;">Dashboard</div>
-          <div style="font-size:13px;color:#888;margin-top:4px;">${esc(c.name)} · ${students.length} student${students.length!==1?'s':''} · Code: <strong>${c.code||'N/A'}</strong></div>
+          <div style="font-size:13px;color:#888;margin-top:4px;">${esc(c.name)} · <span class="badge ${c.level==='advanced'?'badge-red':c.level==='intermediate'?'badge-amber':'badge-green'}" style="font-size:10px;">${c.level==='advanced'?'Advanced':c.level==='intermediate'?'Intermediate':'Beginner'}</span> · ${students.length} student${students.length!==1?'s':''} · Code: <strong>${c.code||'N/A'}</strong></div>
         </div>
         <div class="td-actions">
           <button class="td-action-btn" onclick="openAddMember('${tActiveClassId}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> Add Student</button>
@@ -3153,7 +3327,7 @@ function tRenderClasses(){
     return`<div style="background:var(--white);border:1px solid var(--border);border-radius:14px;cursor:pointer;margin-bottom:.75rem;padding:1.25rem;display:flex;align-items:center;gap:14px;transition:transform .1s,box-shadow .15s;" onclick="tOpenClass('${id}')" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(0,0,0,.08)'" onmouseleave="this.style.transform='';this.style.boxShadow=''">
       <div class="${col}" style="width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${icon}</div>
       <div style="flex:1;min-width:0;">
-        <div style="font-size:15px;font-weight:700;margin-bottom:3px;">${esc(c.name)}</div>
+        <div style="font-size:15px;font-weight:700;margin-bottom:3px;">${esc(c.name)} <span class="badge ${c.level==='advanced'?'badge-red':c.level==='intermediate'?'badge-amber':'badge-green'}" style="font-size:9px;vertical-align:middle;">${c.level==='advanced'?'Advanced':c.level==='intermediate'?'Intermediate':'Beginner'}</span></div>
         <div style="font-size:12px;color:var(--text-3);">${c.season||'Current Season'}${c.room?' · Room '+c.room:''}</div>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
@@ -3168,8 +3342,150 @@ function tRenderClasses(){
 
 function tRenderGrading(){
   const classes=getMyClasses();const body=document.getElementById('t-grading-body');if(!body)return;
-  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Grading Data Yet</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class and add students to start tracking their lesson completion and progress.</div></div>';return;}
-  body.innerHTML=classes.map(([cid,c])=>{const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(cid+'_'));return`<div class="card" style="margin-bottom:1rem;"><div style="font-size:15px;font-weight:700;margin-bottom:1rem;">${esc(c.name)}</div>${students.length?students.map(u=>{const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;const pct=allLessons.length?Math.round(done/allLessons.length*100):0;return`<div class="member-row"><div class="avatar">${initials(u.name)}</div><div class="member-info"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span class="member-name">${esc(u.name)}</span><span style="font-size:12px;color:var(--text-3)">${done}/${allLessons.length} · ${pct}%</span></div><div class="progress-bar-bg"><div class="progress-bar-fill ${pct===100?'green':''}" style="width:${pct}%"></div></div></div><span class="badge badge-gold">${u.coins||0} VC</span></div>`;}).join(''):'<div style="font-size:13px;color:var(--text-3)">No students yet.</div>'}</div>`;}).join('');
+  if(!classes.length){body.innerHTML='<div style="text-align:center;padding:3rem 1rem;"><div style="margin-bottom:.75rem;opacity:.4;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div><div style="font-size:16px;font-weight:700;margin-bottom:.5rem;">No Grading Data Yet</div><div style="font-size:13px;color:var(--text-3);max-width:320px;margin:0 auto;line-height:1.6;">Create a class and add students to start tracking their progress.</div></div>';return;}
+  
+  // Class selector for gradebook
+  const levelLabels={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+  const levelColors={beginner:'#22c55e',intermediate:'#f59e0b',advanced:'#ef4444'};
+  
+  body.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap;">
+      <div style="font-size:20px;font-weight:800;letter-spacing:-.03em;">Gradebook</div>
+      <select id="gb-class-select" onchange="renderGradebook(this.value)" style="padding:6px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;background:var(--white);color:var(--text);">
+        ${classes.map(([id,c])=>`<option value="${id}">${c.name} (${levelLabels[c.level]||'Beginner'})</option>`).join('')}
+      </select>
+    </div>
+    <div id="gb-content"></div>`;
+  renderGradebook(classes[0][0]);
+}
+
+function renderGradebook(classId){
+  const c=DB.classes[classId];if(!c)return;
+  const body=document.getElementById('gb-content');if(!body)return;
+  const members=c.members||[];
+  const students=members.map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+  const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(classId+'_'));
+  const levelLabels={beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+  const levelColors={beginner:'#22c55e',intermediate:'#f59e0b',advanced:'#ef4444'};
+  const level=c.level||'beginner';
+  
+  // Calculate stats
+  const studentData=students.map(u=>{
+    const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+    const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
+    let grade='N/A';
+    if(allLessons.length>0){
+      if(pct>=90)grade='A';else if(pct>=80)grade='B';else if(pct>=70)grade='C';else if(pct>=60)grade='D';else grade='F';
+    }
+    // Per-track progress
+    const tracks={};
+    for(const [tk,track] of Object.entries(CURRICULUM)){
+      let tTotal=0,tDone=0;
+      for(const unit of track.units){
+        for(const l of unit.lessons){tTotal++;if(DB.completedLessons['cl_'+l.id]||DB.completedLessons[u.email+'_'+l.id])tDone++;}
+      }
+      tracks[tk]={done:tDone,total:tTotal,pct:tTotal?Math.round(tDone/tTotal*100):0};
+    }
+    return {name:u.name,email:u.email,coins:u.coins||0,done,total:allLessons.length,pct,grade,tracks};
+  });
+  
+  const avgPct=studentData.length?Math.round(studentData.reduce((s,x)=>s+x.pct,0)/studentData.length):0;
+  const gradeDistrib={A:0,B:0,C:0,D:0,F:0,'N/A':0};
+  studentData.forEach(s=>gradeDistrib[s.grade]++);
+  
+  body.innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;">
+      <span style="font-size:15px;font-weight:700;">${esc(c.name)}</span>
+      <span class="badge" style="background:${levelColors[level]};color:#fff;border-color:${levelColors[level]};">${levelLabels[level]}</span>
+      <span style="font-size:12px;color:var(--text-3);">${students.length} students · ${allLessons.length} lessons · Code: <strong>${c.code}</strong></span>
+    </div>
+    
+    <!-- Grade Distribution -->
+    <div style="display:flex;gap:.75rem;margin-bottom:1.5rem;">
+      ${['A','B','C','D','F'].map(g=>{
+        const colors={A:'#22c55e',B:'#60a5fa',C:'#fbbf24',D:'#fb923c',F:'#ef4444'};
+        return `<div style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+          <div style="font-size:1.8rem;font-weight:900;color:${colors[g]};">${gradeDistrib[g]}</div>
+          <div style="font-size:11px;color:var(--text-3);font-weight:600;margin-top:4px;">Grade ${g}</div>
+        </div>`;
+      }).join('')}
+      <div style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center;">
+        <div style="font-size:1.8rem;font-weight:900;color:var(--accent);">${avgPct}%</div>
+        <div style="font-size:11px;color:var(--text-3);font-weight:600;margin-top:4px;">Class Avg</div>
+      </div>
+    </div>
+    
+    <!-- Student Table -->
+    <div class="td-prof">
+      <div class="td-prof-header">
+        <div class="td-prof-title">Student Grades</div>
+        <button class="btn btn-ghost btn-sm" onclick="exportGradebook('${classId}')">Export CSV</button>
+      </div>
+      ${students.length?`<table>
+        <thead><tr><th>Student</th><th>Grade</th><th>Completed</th><th>Progress</th><th>Foundations</th><th>CAD</th><th>Programming</th><th>VCoins</th><th>Actions</th></tr></thead>
+        <tbody>
+          ${studentData.map((s,i)=>{
+            const gradeColors={A:'#22c55e',B:'#60a5fa',C:'#fbbf24',D:'#fb923c',F:'#ef4444'};
+            const avColors=['td-av-1','td-av-2','td-av-3','td-av-4','td-av-5','td-av-6'];
+            function pctColor(p){return p>=70?'green':p>=40?'amber':'red';}
+            return `<tr>
+              <td><div class="td-student-row"><div class="td-avatar ${avColors[i%6]}">${initials(s.name)}</div><div><div style="font-weight:600">${esc(s.name)}</div><div style="font-size:11px;color:var(--text-3)">${s.email}</div></div></div></td>
+              <td><span style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:${gradeColors[s.grade]||'#888'};color:#fff;font-weight:800;font-size:14px;">${s.grade}</span></td>
+              <td style="font-weight:700;">${s.done} / ${s.total}</td>
+              <td><div style="display:flex;align-items:center;gap:8px;"><div class="td-bar"><div class="td-bar-fill td-bar-${pctColor(s.pct)}" style="width:${s.pct}%"></div></div><span class="td-pct td-pct-${pctColor(s.pct)}">${s.pct}%</span></div></td>
+              <td><div style="width:32px;height:32px;border-radius:50%;background:${s.tracks.foundations?.pct>=70?'#6bc26b':s.tracks.foundations?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto;">${s.tracks.foundations?.done||0}</div></td>
+              <td><div style="width:32px;height:32px;border-radius:50%;background:${s.tracks.cad?.pct>=70?'#6bc26b':s.tracks.cad?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto;">${s.tracks.cad?.done||0}</div></td>
+              <td><div style="width:32px;height:32px;border-radius:50%;background:${s.tracks.programming?.pct>=70?'#6bc26b':s.tracks.programming?.pct>=40?'#e8c840':'#e8845a'};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto;">${s.tracks.programming?.done||0}</div></td>
+              <td><span style="background:rgba(251,191,36,.15);color:#b45309;font-weight:700;padding:4px 10px;border-radius:20px;font-size:12px;">${s.coins} VC</span></td>
+              <td><button class="btn btn-gold btn-xs" onclick="openGiveCoins('${classId}')">+ Coins</button></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>`:`<div style="padding:3rem;text-align:center;color:var(--text-3);font-size:13px;">No students yet.</div>`}
+    </div>
+    
+    <!-- Lesson Completion Details -->
+    ${allLessons.length?`
+    <div style="margin-top:1.5rem;">
+      <div class="td-prof">
+        <div class="td-prof-header"><div class="td-prof-title">Lesson Completion Detail</div></div>
+        <table>
+          <thead><tr><th>Lesson</th><th>Date</th>${students.map(u=>`<th style="text-align:center;font-size:10px;max-width:60px;overflow:hidden;">${u.name.split(' ')[0]}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${allLessons.map(([k,l])=>`<tr>
+              <td style="font-weight:500;font-size:12px;">${esc(l.title)}</td>
+              <td style="font-size:11px;color:var(--text-3);">${fmtDate(l.date)}</td>
+              ${students.map(u=>{
+                const done=DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')];
+                return `<td style="text-align:center;">${done?'<span style="color:#22c55e;font-weight:700;">✓</span>':'<span style="color:#ddd;">-</span>'}</td>`;
+              }).join('')}
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`:''}
+  `;
+}
+
+function exportGradebook(classId){
+  const c=DB.classes[classId];if(!c)return;
+  const students=(c.members||[]).map(e=>DB.users[e]).filter(u=>u&&u.role==='student');
+  const allLessons=Object.entries(DB.lessons).filter(([k])=>k.startsWith(classId+'_'));
+  let csv='Name,Email,Completed,Total,Percentage,Grade,VCoins\n';
+  students.forEach(u=>{
+    const done=allLessons.filter(([k])=>DB.completedLessons[u.email+'_'+k.replace(/^[^_]+_/,'')]).length;
+    const pct=allLessons.length?Math.round(done/allLessons.length*100):0;
+    let grade='N/A';if(allLessons.length>0){if(pct>=90)grade='A';else if(pct>=80)grade='B';else if(pct>=70)grade='C';else if(pct>=60)grade='D';else grade='F';}
+    csv+=`"${u.name}","${u.email}",${done},${allLessons.length},${pct}%,${grade},${u.coins||0}\n`;
+  });
+  try{
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=(c.name||'gradebook').replace(/[^a-z0-9]/gi,'_')+'_gradebook.csv';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    showToast('Gradebook exported!');
+  }catch(e){showToast('Export failed - try from a hosted server.');}
 }
 
 function tRenderLessons(){
@@ -3752,7 +4068,8 @@ async function createClass(){
   if(!name){alert('Class name required.');return;}
   const id='cls_'+Date.now();
   const code=Math.random().toString(36).substring(2,6).toUpperCase()+Math.random().toString(36).substring(2,5).toUpperCase();
-  const classData={id,name,season:document.getElementById('cc-season').value.trim(),room:document.getElementById('cc-room').value.trim(),teacherEmail:currentUser.email,members:[],code};
+  const level=document.getElementById('cc-level').value;
+  const classData={id,name,level,season:document.getElementById('cc-season').value.trim(),room:document.getElementById('cc-room').value.trim(),teacherEmail:currentUser.email,members:[],code};
   DB.classes[id]=classData;
   await window._firebase.saveClass(id,classData);
   closeModal('modal-create-class');if(currentUser.role==='teacher'){tRefreshClassList();tNavTo('classes');}else{renderHome();_updateNavLockState();}
@@ -3941,6 +4258,7 @@ document.querySelectorAll('.modal-overlay').forEach(el=>{el.addEventListener('cl
   <div class="modal">
     <div class="modal-header"><div class="modal-title">Create New Class</div><button class="modal-close" onclick="closeModal('modal-create-class')">✕</button></div>
     <div class="form-group"><label>Class Name</label><input type="text" id="cc-name" placeholder="e.g. VEX IQ Beginners"></div>
+    <div class="form-group"><label>Level</label><select id="cc-level" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r);font-size:13px;color:var(--text);background:var(--white)"><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
     <div class="form-row">
       <div class="form-group"><label>Season</label><input type="text" id="cc-season" placeholder="e.g. 2024-25"></div>
       <div class="form-group"><label>Room / Location</label><input type="text" id="cc-room" placeholder="e.g. Room 204"></div>
