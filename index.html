@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vexify</title>
+<title>Vexify — The Builder's Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -28,6 +28,15 @@ a{color:inherit;text-decoration:none;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border-mid);border-radius:2px;}
 
+/* ─── LOADING ─── */
+#loading{position:fixed;inset:0;background:var(--canvas);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .4s var(--trans);}
+#loading.fade{opacity:0;pointer-events:none;}
+.load-inner{text-align:center;}
+.load-logo{font-size:40px;font-weight:700;letter-spacing:-.04em;margin-bottom:12px;}
+.load-bar{width:120px;height:2px;background:var(--surface2);margin:0 auto;}
+.load-bar-inner{height:100%;background:#fff;animation:loadbar 1.4s var(--trans) infinite;}
+@keyframes loadbar{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
+
 /* ─── AUTH SCREEN ─── */
 #auth-screen{position:fixed;inset:0;background:var(--canvas);display:flex;align-items:center;justify-content:center;z-index:100;}
 .auth-wrap{width:100%;max-width:420px;padding:0 24px;}
@@ -38,17 +47,17 @@ a{color:inherit;text-decoration:none;}
 .auth-tab.active{color:var(--white);border-bottom-color:var(--white);}
 .auth-field{margin-bottom:16px;}
 .auth-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
-.auth-field input,.auth-field select{width:100%;background:var(--surface);border:none;color:var(--white);padding:10px 14px;font-size:14px;border-radius:var(--radius);}
+.auth-field input,.auth-field select{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:10px 14px;font-size:14px;border-radius:var(--radius);transition:border .15s;}
 .auth-field input:focus,.auth-field select:focus{border-color:var(--mid-grey);}
 .auth-field select option{background:var(--surface);}
-.btn-primary{width:100%;background:var(--white);color:var(--canvas);font-weight:700;font-size:14px;padding:14px;border-radius:var(--radius);margin-top:8px;}
+.btn-primary{width:100%;background:var(--white);color:var(--canvas);font-weight:700;font-size:14px;padding:12px;border-radius:var(--radius);margin-top:8px;transition:opacity .15s;}
 .btn-primary:hover{opacity:.88;}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
 .auth-divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
 .auth-divider span{font-family:var(--mono);font-size:10px;color:var(--text3);}
 .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.btn-google{width:100%;background:var(--surface);border:none;color:var(--white);font-size:14px;padding:11px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;gap:10px;}
-.btn-google:hover{background:var(--surface2);}
+.btn-google{width:100%;background:transparent;border:1px solid var(--border);color:var(--white);font-size:14px;padding:11px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color .15s;}
+.btn-google:hover{border-color:var(--mid-grey);}
 .auth-err{font-family:var(--mono);font-size:11px;color:var(--danger);margin-top:10px;min-height:16px;}
 
 /* ─── APP SHELL ─── */
@@ -61,20 +70,20 @@ a{color:inherit;text-decoration:none;}
 .topbar-role{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;background:var(--surface);padding:3px 8px;border-radius:var(--radius);}
 .topbar-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
 .topbar-user{font-family:var(--mono);font-size:11px;color:var(--text2);}
-.topbar-notif{position:relative;background:transparent;border:none;color:var(--text2);padding:5px 8px;border-radius:var(--radius);font-size:13px;}
-.topbar-notif:hover{color:var(--white);}
+.topbar-notif{position:relative;background:transparent;border:1px solid var(--border);color:var(--text2);padding:5px 8px;border-radius:var(--radius);font-size:13px;transition:border-color .15s;}
+.topbar-notif:hover{border-color:var(--mid-grey);}
 .notif-badge{position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--danger);border-radius:50%;font-size:9px;font-family:var(--mono);display:flex;align-items:center;justify-content:center;font-weight:600;}
-.btn-signout{background:transparent;border:none;color:var(--text3);font-size:12px;padding:5px 10px;border-radius:var(--radius);}
-.btn-signout:hover{color:var(--white);}
+.btn-signout{background:transparent;border:1px solid var(--border);color:var(--text3);font-size:12px;padding:5px 10px;border-radius:var(--radius);transition:all .15s;}
+.btn-signout:hover{border-color:var(--mid-grey);color:var(--text);}
 
 /* ─── MAIN LAYOUT ─── */
 .main-layout{flex:1;display:flex;overflow:hidden;}
 
 /* ─── SIDEBAR ─── */
-.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;}
-.sidebar-section{padding:12px 8px 4px;}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-section{padding:16px 12px 8px;}
 .sidebar-label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase;padding:0 8px;margin-bottom:6px;}
-.sidebar-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);margin-bottom:1px;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:2px;}
 .sidebar-item:hover{background:var(--surface2);color:var(--white);}
 .sidebar-item.active{background:var(--white);color:var(--canvas);}
 .sidebar-item svg{width:15px;height:15px;flex-shrink:0;}
@@ -98,15 +107,15 @@ a{color:inherit;text-decoration:none;}
 .tab-panel.active{display:block;}
 
 /* ─── CARDS ─── */
-.card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:20px;}
-.card-sm{background:var(--surface);border:none;border-radius:var(--radius);padding:14px 16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;}
+.card-sm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
 .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .card-title{font-size:13px;font-weight:600;color:var(--white);}
 .card-meta{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.08em;}
 
 /* ─── STAT GRID ─── */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
-.stat-card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:18px 20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;}
 .stat-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
 .stat-val{font-size:32px;font-weight:700;letter-spacing:-.02em;color:var(--white);}
 .stat-delta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;}
@@ -117,24 +126,24 @@ a{color:inherit;text-decoration:none;}
 .tbl td{padding:12px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle;}
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr:hover td{background:var(--surface2);}
-.tbl-wrap{background:var(--surface);border:none;border-radius:var(--radius-lg);overflow:hidden;}
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
 
 /* ─── BUTTONS ─── */
-.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--font);font-size:13px;font-weight:600;padding:10px 18px;border-radius:var(--radius);cursor:pointer;border:none;}
+.btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:13px;font-weight:600;padding:8px 14px;border-radius:var(--radius);cursor:pointer;transition:all .15s;border:none;}
 .btn-white{background:var(--white);color:var(--canvas);}
-.btn-white:hover{opacity:.85;}
-.btn-ghost{background:transparent;border:none;color:var(--text2);}
-.btn-ghost:hover{background:var(--white);color:var(--canvas);}
+.btn-white:hover{opacity:.88;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--mid-grey);color:var(--white);}
 .btn-danger{background:var(--danger);color:#fff;}
-.btn-danger:hover{opacity:.82;}
+.btn-danger:hover{opacity:.85;}
 .btn-success{background:var(--success);color:var(--canvas);}
-.btn-sm{padding:7px 14px;font-size:12px;}
-.btn-xs{padding:5px 10px;font-size:11px;}
+.btn-sm{padding:5px 10px;font-size:12px;}
+.btn-xs{padding:3px 8px;font-size:11px;}
 
 /* ─── FORM ELEMENTS ─── */
 .form-group{margin-bottom:16px;}
 .form-label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;}
-.form-input,.form-textarea,.form-select{width:100%;background:var(--surface);border:none;color:var(--white);padding:9px 12px;font-size:14px;border-radius:var(--radius);}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:9px 12px;font-size:14px;border-radius:var(--radius);transition:border .15s;}
 .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--mid-grey);}
 .form-textarea{resize:vertical;min-height:80px;}
 .form-select option{background:var(--surface);}
@@ -158,7 +167,7 @@ a{color:inherit;text-decoration:none;}
 /* ─── MODAL ─── */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:none;border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:520px;max-height:85vh;overflow-y:auto;}
 .modal-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .modal-title{font-size:16px;font-weight:700;letter-spacing:-.02em;}
 .modal-close{background:transparent;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1;padding:2px;}
@@ -168,7 +177,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ─── TOAST ─── */
 #toast-container{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;}
-.toast{background:var(--surface);border:none;border-radius:var(--radius);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:10px;min-width:240px;animation:toastIn .25s var(--trans);box-shadow:0 4px 24px rgba(0,0,0,.6);}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:10px;min-width:240px;animation:toastIn .25s var(--trans);box-shadow:0 4px 20px rgba(0,0,0,.4);}
 .toast.success{border-left:3px solid var(--success);}
 .toast.error{border-left:3px solid var(--danger);}
 .toast.info{border-left:3px solid var(--white);}
@@ -182,16 +191,16 @@ a{color:inherit;text-decoration:none;}
 
 /* ─── STUDENT CLASSES ─── */
 .class-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-.class-card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:20px;cursor:pointer;}
-.class-card:hover{background:var(--surface2);}
+.class-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;cursor:pointer;transition:all .2s var(--trans);}
+.class-card:hover{border-color:var(--mid-grey);transform:translateY(-1px);}
 .class-card-code{font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:8px;}
 .class-card-name{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;}
 .class-card-teacher{font-size:12px;color:var(--text2);margin-bottom:14px;}
 .class-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
 
 /* ─── LESSON LIST ─── */
-.lesson-item{background:var(--surface);border:none;border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:14px;}
-.lesson-item:hover{background:var(--surface2);}
+.lesson-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:14px;}
+.lesson-item:hover{border-color:var(--mid-grey);}
 .lesson-num{font-family:var(--mono);font-size:11px;color:var(--text3);width:28px;flex-shrink:0;}
 .lesson-info{flex:1;}
 .lesson-title{font-size:14px;font-weight:600;margin-bottom:2px;}
@@ -205,7 +214,7 @@ a{color:inherit;text-decoration:none;}
 .lesson-viewer-body h3{font-size:17px;font-weight:700;color:var(--white);margin:20px 0 10px;}
 .lesson-viewer-body p{margin-bottom:14px;}
 .lesson-viewer-body code{font-family:var(--mono);font-size:13px;background:var(--surface2);padding:2px 6px;border-radius:2px;color:var(--white);}
-.lesson-viewer-body pre{background:var(--surface2);border:none;border-radius:var(--radius);padding:16px;margin:12px 0;overflow-x:auto;}
+.lesson-viewer-body pre{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 0;overflow-x:auto;}
 .lesson-viewer-body pre code{background:none;padding:0;}
 
 /* ─── CHAT / MESSAGES ─── */
@@ -216,7 +225,7 @@ a{color:inherit;text-decoration:none;}
 .chat-msg.recv{background:var(--surface2);color:var(--white);align-self:flex-start;border-radius:var(--radius) var(--radius) var(--radius) 2px;}
 .chat-msg-meta{font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;}
 .chat-input-wrap{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;}
-.chat-input{flex:1;background:var(--surface2);border:none;color:var(--white);padding:9px 12px;border-radius:var(--radius);font-size:14px;}
+.chat-input{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--white);padding:9px 12px;border-radius:var(--radius);font-size:14px;}
 .chat-input:focus{border-color:var(--mid-grey);}
 
 /* ─── HELP / ACCORDION ─── */
@@ -231,16 +240,16 @@ a{color:inherit;text-decoration:none;}
 /* ─── ANALYTICS ─── */
 .chart-bar-wrap{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:8px;}
 .chart-bar-col{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;}
-.chart-bar{background:var(--surface2);width:100%;border-radius:2px 2px 0 0;position:relative;}
+.chart-bar{background:var(--surface2);width:100%;border-radius:2px 2px 0 0;transition:height .4s var(--trans);position:relative;}
 .chart-bar:hover{background:var(--mid-grey);}
 .chart-bar-label{font-family:var(--mono);font-size:9px;color:var(--text3);}
 .chart-bar-val{font-family:var(--mono);font-size:9px;color:var(--text3);position:absolute;top:-14px;left:50%;transform:translateX(-50%);white-space:nowrap;}
 
 /* ─── NOTIFICATION PANEL ─── */
-.notif-panel{position:absolute;top:52px;right:16px;width:320px;background:var(--surface);border:none;border-radius:var(--radius-lg);z-index:100;display:none;box-shadow:0 8px 40px rgba(0,0,0,.7);}
+.notif-panel{position:absolute;top:52px;right:16px;width:320px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);z-index:100;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5);}
 .notif-panel.open{display:block;}
 .notif-panel-header{padding:14px 16px;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:space-between;}
-.notif-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
 .notif-item:hover{background:var(--surface2);}
 .notif-item:last-child{border-bottom:none;}
 .notif-item-title{font-size:12px;font-weight:600;margin-bottom:2px;}
@@ -271,14 +280,14 @@ a{color:inherit;text-decoration:none;}
 #doc-viewer{position:fixed;inset:0;z-index:300;background:var(--canvas);display:none;flex-direction:column;}
 #doc-viewer.open{display:flex;}
 .doc-topbar{height:52px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;flex-shrink:0;}
-.doc-topbar-back{background:transparent;border:none;color:var(--text2);font-size:13px;padding:5px 12px;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font);}
-.doc-topbar-back:hover{color:var(--white);background:var(--surface2);}
+.doc-topbar-back{background:transparent;border:1px solid var(--border);color:var(--text2);font-size:13px;padding:5px 12px;border-radius:var(--radius);cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font);transition:all .15s;}
+.doc-topbar-back:hover{border-color:var(--mid-grey);color:var(--white);}
 .doc-topbar-title{font-size:14px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px;}
 .doc-topbar-progress{flex:1;max-width:200px;margin-left:auto;margin-right:8px;}
 .doc-layout{flex:1;display:grid;grid-template-columns:240px 1fr 200px;overflow:hidden;}
 .doc-toc{background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;overflow-y:auto;}
 .doc-toc-label{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--text3);text-transform:uppercase;margin-bottom:12px;}
-.doc-toc-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius);font-size:13px;color:var(--text3);cursor:pointer;margin-bottom:2px;border-left:2px solid transparent;}
+.doc-toc-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:var(--radius);font-size:13px;color:var(--text3);cursor:pointer;transition:all .12s;margin-bottom:2px;border-left:2px solid transparent;}
 .doc-toc-item:hover{color:var(--text2);background:var(--surface2);}
 .doc-toc-item.active{color:var(--white);border-left-color:var(--white);background:rgba(255,255,255,.05);}
 .doc-toc-item.h2{font-weight:600;font-size:13px;}
@@ -298,21 +307,21 @@ a{color:inherit;text-decoration:none;}
 .doc-content li{font-size:15px;color:var(--text2);line-height:1.75;margin-bottom:6px;}
 .doc-content strong{color:var(--white);font-weight:700;}
 .doc-content em{color:var(--text2);font-style:italic;}
-.doc-content code{font-family:var(--mono);font-size:13px;background:var(--surface2);color:var(--white);padding:2px 7px;border-radius:3px;}
-.doc-content pre{background:var(--surface2);border:none;border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0;overflow-x:auto;position:relative;}
+.doc-content code{font-family:var(--mono);font-size:13px;background:var(--surface2);color:var(--white);padding:2px 7px;border-radius:3px;border:1px solid var(--border);}
+.doc-content pre{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0;overflow-x:auto;position:relative;}
 .doc-content pre .code-lang{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;}
 .doc-content pre code{background:none;padding:0;font-size:13px;line-height:1.7;border:none;color:var(--off-white);}
 .doc-content blockquote,.doc-content .callout{border-radius:0 var(--radius-lg) var(--radius-lg) 0;padding:14px 20px;margin:20px 0;}
 .doc-content blockquote{border-left:3px solid var(--mid-grey);background:var(--surface);}
 .doc-content blockquote p,.doc-content blockquote{color:var(--text2);}
 .doc-content figure{margin:24px 0;}
-.doc-content figure img{width:100%;border-radius:var(--radius-lg);cursor:zoom-in;display:block;}
+.doc-content figure img{width:100%;border-radius:var(--radius-lg);cursor:zoom-in;transition:transform .2s,opacity .15s;display:block;border:1px solid var(--border);}
 .doc-content figure img:hover{opacity:.88;}
 .doc-content figcaption{font-family:var(--mono);font-size:11px;color:var(--text3);text-align:center;margin-top:8px;letter-spacing:.05em;}
-.doc-content .quiz-block{background:var(--surface2);border:none;border-radius:var(--radius-lg);padding:22px;margin:24px 0;}
+.doc-content .quiz-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin:24px 0;}
 .doc-content .quiz-question{font-size:15px;font-weight:700;color:var(--white);margin-bottom:14px;line-height:1.5;}
-.doc-content .quiz-opt{padding:11px 14px;border:none;border-radius:var(--radius);margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--text2);display:flex;align-items:center;gap:10px;background:var(--surface2);}
-.doc-content .quiz-opt:hover{color:var(--white);background:var(--surface3);}
+.doc-content .quiz-opt{padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:8px;cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;display:flex;align-items:center;gap:10px;}
+.doc-content .quiz-opt:hover{border-color:var(--mid-grey);color:var(--white);background:var(--surface2);}
 .doc-content .quiz-opt.correct{border-color:var(--success);color:var(--success);background:rgba(68,255,136,.07);}
 .doc-content .quiz-opt.wrong{border-color:var(--danger);color:var(--danger);background:rgba(255,68,68,.07);}
 .doc-content .quiz-opt-letter{width:22px;height:22px;border:1px solid currentColor;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;font-family:var(--mono);}
@@ -331,12 +340,12 @@ a{color:inherit;text-decoration:none;}
 #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:600;display:none;align-items:center;justify-content:center;cursor:zoom-out;animation:fadeIn .15s ease;}
 #lightbox.open{display:flex;}
 #lightbox img{max-width:88vw;max-height:86vh;object-fit:contain;border-radius:var(--radius-lg);}
-#lightbox-close{position:fixed;top:18px;right:22px;color:var(--text2);font-size:28px;cursor:pointer;background:none;border:none;line-height:1;}
+#lightbox-close{position:fixed;top:18px;right:22px;color:var(--text2);font-size:28px;cursor:pointer;background:none;border:none;line-height:1;transition:color .15s;}
 #lightbox-close:hover{color:var(--white);}
 
 /* ─── AI LESSON CREATOR ─── */
 .ai-creator{max-width:800px;}
-.ai-step{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:22px;margin-bottom:14px;}
+.ai-step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:14px;}
 .ai-step-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
 .ai-step-num{width:26px;height:26px;background:var(--white);color:var(--canvas);border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .ai-step-title{font-size:14px;font-weight:700;letter-spacing:-.01em;}
@@ -346,7 +355,7 @@ a{color:inherit;text-decoration:none;}
 .ai-dots span:nth-child(2){animation-delay:.2s;}
 .ai-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes dot-bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
-.ai-outline-section{background:var(--surface2);border:none;border-radius:var(--radius);padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;}
+.ai-outline-section{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;}
 .ai-outline-idx{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:2px;width:20px;flex-shrink:0;}
 .ai-outline-title{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;}
 .ai-outline-desc{font-size:12px;color:var(--text3);line-height:1.5;}
@@ -354,7 +363,7 @@ a{color:inherit;text-decoration:none;}
 .ai-progress-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;}
 .ai-progress-fill{height:100%;background:var(--white);border-radius:2px;transition:width .5s ease;}
 .ai-progress-text{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:6px;}
-.ai-preview-card{background:var(--surface2);border:none;border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;}
+.ai-preview-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;}
 .ai-preview-section-title{font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px;}
 .ai-preview-section-body{font-size:12px;color:var(--text3);line-height:1.5;}
 
@@ -364,13 +373,13 @@ a{color:inherit;text-decoration:none;}
 .db-header-title{font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1;}
 .db-header-meta{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:5px;}
 .db-header-actions{display:flex;gap:8px;align-items:center;flex-shrink:0;}
-.db-action-btn{display:flex;align-items:center;gap:8px;background:var(--surface);border:none;color:var(--text);font-size:13px;font-weight:500;padding:10px 16px;border-radius:var(--radius);cursor:pointer;font-family:var(--font);}
-.db-action-btn:hover{background:var(--white);color:var(--canvas);}
+.db-action-btn{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:500;padding:7px 14px;border-radius:var(--radius);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.db-action-btn:hover{border-color:var(--mid-grey);background:var(--surface2);}
 .db-action-btn svg{flex-shrink:0;}
-.db-class-select{background:var(--surface);border:none;color:var(--white);font-size:13px;padding:7px 12px;border-radius:var(--radius);font-family:var(--font);cursor:pointer;}
+.db-class-select{background:var(--surface);border:1px solid var(--border);color:var(--white);font-size:13px;padding:7px 12px;border-radius:var(--radius);font-family:var(--font);cursor:pointer;}
 .db-class-select:focus{outline:none;border-color:var(--mid-grey);}
 /* Score summary card */
-.db-score-card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:22px 24px;display:flex;align-items:center;gap:32px;}
+.db-score-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;display:flex;align-items:center;gap:32px;}
 .db-score-main{}
 .db-score-label{font-size:12px;color:var(--text3);margin-bottom:6px;}
 .db-score-pct{font-size:42px;font-weight:700;letter-spacing:-.03em;line-height:1;}
@@ -393,7 +402,7 @@ a{color:inherit;text-decoration:none;}
 .db-tile-yellow{background:#b8860b;}
 .db-tile-orange{background:#b05a2a;}
 /* Student progress table */
-.db-progress-section{background:var(--surface);border:none;border-radius:var(--radius-lg);overflow:hidden;}
+.db-progress-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
 .db-progress-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
 .db-progress-title{font-size:15px;font-weight:700;}
 .db-progress-count{font-family:var(--mono);font-size:11px;color:var(--text3);}
@@ -418,63 +427,6 @@ a{color:inherit;text-decoration:none;}
 /* AI Panel */
 .ai-key-notice{background:rgba(68,255,136,.08);border:1px solid rgba(68,255,136,.2);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--success);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 
-/* ─── COMPETITION MODE ─── */
-.comp-header{padding:24px 28px 0;flex-shrink:0;}
-.comp-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.comp-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:0;flex-shrink:0;padding:0 28px;}
-.comp-tab{font-size:13px;font-weight:600;color:var(--text3);padding:10px 0;margin-right:24px;border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:6px;}
-.comp-tab:hover{color:var(--text2);}
-.comp-tab.active{color:var(--white);border-bottom-color:var(--white);}
-.comp-body{flex:1;overflow-y:auto;padding:24px 28px;}
-.comp-tab-panel{display:none;}
-.comp-tab-panel.active{display:block;}
-/* Team selector */
-.team-selector{display:flex;align-items:center;gap:10px;}
-.team-select{background:var(--surface);border:none;color:var(--white);font-size:14px;font-weight:600;padding:6px 12px;border-radius:var(--radius);font-family:var(--font);cursor:pointer;}
-.team-select:focus{outline:none;border-color:var(--mid-grey);}
-/* Event cards */
-.event-card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:10px;display:flex;align-items:flex-start;gap:16px;}
-.event-card:hover{border-color:var(--mid-grey);}
-.event-date-badge{background:var(--surface2);border-radius:var(--radius);padding:8px 12px;text-align:center;flex-shrink:0;min-width:56px;}
-.event-date-month{font-family:var(--mono);font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;}
-.event-date-day{font-size:22px;font-weight:700;line-height:1;}
-.event-info{flex:1;}
-.event-name{font-size:14px;font-weight:700;margin-bottom:4px;}
-.event-meta{font-family:var(--mono);font-size:11px;color:var(--text3);display:flex;flex-wrap:wrap;gap:8px;}
-.event-meta span{display:flex;align-items:center;gap:4px;}
-.event-type-badge{font-family:var(--mono);font-size:9px;letter-spacing:.08em;padding:2px 7px;border-radius:2px;text-transform:uppercase;flex-shrink:0;}
-.event-upcoming{background:rgba(68,255,136,.1);color:var(--success);}
-.event-past{background:var(--surface2);color:var(--text3);}
-/* Team info grid */
-.team-info-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:24px;}
-.team-stat-card{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:16px 18px;}
-.team-stat-label{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:8px;}
-.team-stat-val{font-size:28px;font-weight:700;letter-spacing:-.02em;}
-.team-stat-sub{font-size:11px;color:var(--text3);margin-top:3px;}
-/* Links */
-.link-card{background:var(--surface);border:none;border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-.link-card:hover{background:var(--surface2);}
-.link-favicon{width:28px;height:28px;background:var(--surface2);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px;}
-.link-info{flex:1;min-width:0;}
-.link-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.link-url{font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-/* Todos */
-.todo-item{background:var(--surface);border:none;border-radius:var(--radius-lg);padding:14px 16px;margin-bottom:8px;}
-.todo-item.done{opacity:.55;}
-.todo-item.done .todo-title{text-decoration:line-through;color:var(--text3);}
-.todo-check{width:20px;height:20px;border:2px solid var(--surface3);border-radius:4px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.todo-check:hover{border-color:var(--white);}
-.todo-check.checked{background:var(--success);border-color:var(--success);}
-.todo-title{font-size:14px;font-weight:600;flex:1;}
-.todo-meta{font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:4px;}
-.todo-note{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;padding-top:8px;border-top:1px solid var(--border);}
-.todo-img{margin-top:8px;border-radius:var(--radius);max-width:100%;max-height:200px;object-fit:cover;cursor:zoom-in;}
-.todo-completion{background:var(--surface2);border-radius:var(--radius);padding:10px 14px;margin-top:8px;font-size:13px;}
-/* VEX API search */
-.vex-search-row{display:flex;gap:8px;margin-bottom:16px;}
-.vex-result-item{padding:12px 14px;border:none;border-radius:var(--radius);margin-bottom:6px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;background:var(--surface2);}
-.vex-result-item:hover{background:var(--surface3);}
-
 /* ─── ANIMATIONS ─── */
 .fade-in{animation:fadeIn .3s var(--trans);}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
@@ -484,7 +436,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ─── TEACHER STUDENT LIST ─── */
 .student-row-actions{display:flex;gap:6px;align-items:center;}
-.grade-input{width:60px;background:var(--surface2);border:none;color:var(--white);padding:4px 8px;font-family:var(--mono);font-size:12px;border-radius:var(--radius);text-align:center;}
+.grade-input{width:60px;background:var(--surface2);border:1px solid var(--border);color:var(--white);padding:4px 8px;font-family:var(--mono);font-size:12px;border-radius:var(--radius);text-align:center;}
 .grade-input:focus{border-color:var(--mid-grey);}
 
 /* ─── ANNOUNCEMENT ─── */
@@ -496,7 +448,7 @@ a{color:inherit;text-decoration:none;}
 
 /* ─── TEACHER MESSAGE ─── */
 .msg-list{display:flex;flex-direction:column;gap:8px;max-height:300px;overflow-y:auto;}
-.msg-thread{background:var(--surface2);border:none;border-radius:var(--radius);padding:12px 14px;cursor:pointer;}
+.msg-thread{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;cursor:pointer;transition:all .15s;}
 .msg-thread:hover{border-color:var(--mid-grey);}
 .msg-thread.unread{border-left:2px solid var(--white);}
 .msg-thread-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
@@ -507,8 +459,12 @@ a{color:inherit;text-decoration:none;}
 </head>
 <body>
 
+    <div class="load-bar"><div class="load-bar-inner"></div></div>
+  </div>
+</div>
+
 <!-- AUTH SCREEN -->
-<div id="auth-screen" style="display:none;">
+<div id="auth-screen" style="display:flex;">
   <div class="auth-wrap">
     <div class="auth-logo">VEXIFY</div>
     <div class="auth-tagline">Where builders learn to build better.</div>
@@ -633,7 +589,7 @@ a{color:inherit;text-decoration:none;}
     <div class="topbar-right">
       <span class="topbar-user" id="topbar-user-name"></span>
       <button class="topbar-notif" onclick="toggleNotifPanel()" id="notif-btn">
-        🔔
+        
         <div class="notif-badge" id="notif-count" style="display:none;">0</div>
       </button>
       <button class="btn-signout" onclick="doSignOut()">Sign out</button>
@@ -673,15 +629,22 @@ import { getFirestore, doc, setDoc, getDoc, getDocs, addDoc, updateDoc, deleteDo
          collection, query, where, orderBy, onSnapshot, serverTimestamp, arrayUnion, arrayRemove
        } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// ── CONFIG (replace with your own Firebase project config) ──
 const firebaseConfig = {
+
   apiKey: "AIzaSyAUMU_CEN9HQ1y7VEExeNkoGNypctQW1oo",
+
   authDomain: "idkk-cce24.firebaseapp.com",
+
   projectId: "idkk-cce24",
+
   storageBucket: "idkk-cce24.firebasestorage.app",
+
   messagingSenderId: "250419417675",
+
   appId: "1:250419417675:web:4ce3894c9b49678bdb33ce",
+
   measurementId: "G-2HM3ZYD0G4"
+
 };
 
 // ── INIT ──
@@ -696,7 +659,6 @@ let userProfile = null;
 let activeListeners = [];
 let messageListeners = {};
 
-// ── GEMINI API KEY (replace with your key) ──
 const GEMINI_API_KEY = ''; // user provides their own key in the AI panel
 
 // ── HELPERS ──
@@ -709,7 +671,8 @@ function toast(msg, type='info'){
   setTimeout(()=>t.remove(), 3500);
 }
 
-// loading screen removed
+function showLoading(){ document.getElementById('loading').style.opacity='1'; document.getElementById('loading').style.display='flex';}
+function hideLoading(){ const l=document.getElementById('loading'); l.classList.add('fade'); setTimeout(()=>l.style.display='none',400);}
 
 function openModal(title, bodyHtml, footerHtml=''){
   document.getElementById('modal-title').textContent = title;
@@ -788,66 +751,77 @@ window.signInGoogle = async()=>{
     const uref = doc(db,'users',res.user.uid);
     const snap = await getDoc(uref);
     if(!snap.exists()){
-      // New Google user - ask for role before creating profile
+      // New Google user — show role picker
       window._pendingGoogleUser = res.user;
       showRolePicker();
     }
-    // Existing user - onAuthStateChanged handles the rest
+    // Existing user: onAuthStateChanged handles login
   } catch(e){
     const errEl = document.getElementById('si-err') || document.getElementById('su-err');
-    if(errEl) errEl.textContent = friendlyError(e.code);
+    if(errEl) errEl.textContent = friendlyError(e.code||'');
   }
 };
 
 function showRolePicker(){
-  const user = window._pendingGoogleUser;
-  if(!user) return;
-
-  // Hide auth screen content, show role picker overlay
-  const authWrap = document.querySelector('.auth-wrap');
-  authWrap.innerHTML = `
-    <div style="text-align:center;margin-bottom:32px;">
-      <div style="width:56px;height:56px;border-radius:50%;background:var(--surface2);margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;">
-        ${(user.displayName||'U')[0].toUpperCase()}
-      </div>
-      <div style="font-size:18px;font-weight:700;margin-bottom:4px;">Welcome, ${user.displayName?.split(' ')[0]||'there'}!</div>
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">${user.email}</div>
+  const u = window._pendingGoogleUser;
+  if(!u) return;
+  const screen = document.getElementById('auth-screen');
+  const wrap = screen.querySelector('.auth-wrap');
+  wrap.innerHTML = `
+    <div style="text-align:center;margin-bottom:28px;">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--surface2);
+           margin:0 auto 14px;display:flex;align-items:center;justify-content:center;
+           font-size:20px;font-weight:700;">${(u.displayName||'U')[0].toUpperCase()}</div>
+      <div style="font-size:18px;font-weight:700;margin-bottom:4px;">
+        Welcome, ${u.displayName?.split(' ')[0]||'there'}!</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">${u.email}</div>
     </div>
     <div style="font-size:15px;font-weight:600;margin-bottom:6px;">I am a...</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:20px;">Choose your role. This cannot be changed later.</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:18px;">
+      Choose your role. This cannot be changed later.</div>
     <div style="display:flex;flex-direction:column;gap:10px;">
       <button onclick="completeGoogleSignup('student')"
-        style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;text-align:left;cursor:pointer;transition:all .15s;font-family:var(--font);"
+        style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);
+               padding:16px 20px;text-align:left;cursor:pointer;font-family:var(--font);transition:border-color .15s;"
         onmouseenter="this.style.borderColor='var(--white)'"
         onmouseleave="this.style.borderColor='var(--border)'">
-        <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px;">🎓 Student</div>
-        <div style="font-size:13px;color:var(--text3);">I'm here to learn, complete lessons, and earn points.</div>
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:3px;">Student</div>
+        <div style="font-size:12px;color:var(--text3);">
+          I am here to learn, complete lessons, and earn points.</div>
       </button>
       <button onclick="completeGoogleSignup('teacher')"
-        style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;text-align:left;cursor:pointer;transition:all .15s;font-family:var(--font);"
+        style="background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);
+               padding:16px 20px;text-align:left;cursor:pointer;font-family:var(--font);transition:border-color .15s;"
         onmouseenter="this.style.borderColor='var(--white)'"
         onmouseleave="this.style.borderColor='var(--border)'">
-        <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px;">🏫 Teacher / Coach</div>
-        <div style="font-size:13px;color:var(--text3);">I manage classes, create lessons, and track student progress.</div>
+        <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:3px;">Teacher / Coach</div>
+        <div style="font-size:12px;color:var(--text3);">
+          I manage classes, create lessons, and track student progress.</div>
       </button>
     </div>`;
 }
 
 window.completeGoogleSignup = async(role)=>{
-  const user = window._pendingGoogleUser;
-  if(!user) return;
+  const u = window._pendingGoogleUser;
+  if(!u) return;
   try {
-    await setDoc(doc(db,'users',user.uid),{
-      uid:user.uid, displayName:user.displayName,
-      email:user.email, role,
+    const userData = {
+      uid:u.uid, displayName:u.displayName||u.email,
+      email:u.email, role,
       createdAt:serverTimestamp(), enrolledClasses:[], points:0,
-      firstName:user.displayName?.split(' ')[0]||'',
-      lastName:user.displayName?.split(' ').slice(1).join(' ')||''
-    });
+      firstName:u.displayName?.split(' ')[0]||'',
+      lastName:u.displayName?.split(' ').slice(1).join(' ')||''
+    };
+    await setDoc(doc(db,'users',u.uid), userData);
     window._pendingGoogleUser = null;
-    // onAuthStateChanged will now fire and launch the app
+    // Manually trigger app launch since auth state didn't change
+    currentUser = u;
+    userProfile = userData;
+    document.getElementById('auth-screen').style.display = 'none';
+    launchApp();
   } catch(e){
     console.error('Signup error:', e);
+    toast('Error creating account: ' + (e.message||''), 'error');
   }
 };
 
@@ -867,6 +841,7 @@ function friendlyError(code){
 
 // ─────────────────────────────────────── AUTH STATE ───────────────────────────
 onAuthStateChanged(auth, async (user)=>{
+  hideLoading();
   if(user){
     currentUser = user;
     const snap = await getDoc(doc(db,'users',user.uid));
@@ -905,18 +880,19 @@ function buildStudentApp(){
 
   sidebar.innerHTML = `
     <div class="sidebar-section">
+      <div class="sidebar-label">Student</div>
       <div class="sidebar-item active" id="snav-classes" onclick="sNav('classes')">
         ${ico('grid')} Classes
       </div>
       <div class="sidebar-item" id="snav-lessons" onclick="sNav('lessons')">
         ${ico('book')} Lessons
       </div>
-      <div class="sidebar-item" id="snav-competition" onclick="sNav('competition')">
-        ${ico('trophy')} My Teams
-      </div>
       <div class="sidebar-item" id="snav-help" onclick="sNav('help')">
         ${ico('help')} Help
       </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Account</div>
       <div class="sidebar-item" id="snav-profile" onclick="sNav('profile')">
         ${ico('user')} Profile
       </div>
@@ -926,8 +902,7 @@ function buildStudentApp(){
     ${studentClassesPanel()}
     ${studentLessonsPanel()}
     ${studentHelpPanel()}
-    ${studentProfilePanel()}
-    ${studentCompetitionPanel()}`;
+    ${studentProfilePanel()}`;
 
   sNav('classes');
   loadStudentClasses();
@@ -940,7 +915,6 @@ window.sNav = (panel)=>{
   document.getElementById(`s-panel-${panel}`)?.classList.add('active');
   if(panel==='lessons') loadStudentLessons();
   if(panel==='profile') renderStudentProfile();
-  if(panel==='competition') loadCompetitionPanel();
 };
 
 // ── STUDENT PANELS ──
@@ -983,7 +957,7 @@ function studentLessonsPanel(){
 
 function studentHelpPanel(){
   const faqs=[
-    {q:'How do I join a class?',a:'Your teacher will invite you by email. Once invited, you\'ll see a "Pending Invites" button on your Classes page: click it to accept and join.'},
+    {q:'How do I join a class?',a:'Your teacher will invite you by email. Once invited, you\'ll see a "Pending Invites" button on your Classes page — click it to accept and join.'},
     {q:'How do I submit a lesson?',a:'Open the lesson, complete the reading, then click "Mark Complete" at the bottom. Your teacher will be notified.'},
     {q:'Where do I see my progress?',a:'Each class card shows your completion percentage. Your profile page shows total points and overall progress.'},
     {q:'How do points work?',a:'You earn points for completing lessons and assignments. Your teacher can award bonus points. Points appear on your profile.'},
@@ -1047,40 +1021,6 @@ function studentProfilePanel(){
   </div>`;
 }
 
-function studentCompetitionPanel(){
-  return `<div class="panel" id="s-panel-competition">
-    <div class="comp-header">
-      <div class="comp-title-row">
-        <div>
-          <div class="panel-title">My Teams</div>
-          <div class="panel-sub">Collaborate with your team</div>
-        </div>
-        <div class="team-selector">
-          <select class="team-select" id="comp-team-sel" onchange="switchCompTeam()">
-            <option value="">Select team...</option>
-          </select>
-          <button class="btn btn-ghost btn-sm" id="comp-members-btn" onclick="openTeamMembersModal()" style="display:none;">
-            ${ico('users',13)} Members
-          </button>
-          <button class="btn btn-white btn-sm" id="comp-new-team-btn" onclick="openCreateTeamModal()" style="display:none;">+ New Team</button>
-        </div>
-      </div>
-    </div>
-    <div class="comp-tabs" id="comp-tabs">
-      <div class="comp-tab active" onclick="compTab('events')">${ico('event',14)} Events</div>
-      <div class="comp-tab" onclick="compTab('info')">${ico('trophy',14)} Team Info</div>
-      <div class="comp-tab" onclick="compTab('links')">${ico('link',14)} Links</div>
-      <div class="comp-tab" onclick="compTab('tasks')">${ico('check',14)} Tasks</div>
-    </div>
-    <div class="comp-body">
-      <div class="comp-tab-panel active" id="comp-panel-events"></div>
-      <div class="comp-tab-panel" id="comp-panel-info"></div>
-      <div class="comp-tab-panel" id="comp-panel-links"></div>
-      <div class="comp-tab-panel" id="comp-panel-tasks"></div>
-    </div>
-  </div>`;
-}
-
 window.toggleFaq = (i)=>{
   const a=document.getElementById(`faq-${i}`); const c=document.getElementById(`chev-${i}`);
   a.classList.toggle('open'); c.classList.toggle('open');
@@ -1105,12 +1045,9 @@ async function loadStudentClasses(){
   grid.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading...</div>';
 
   // Check for pending invites
-  const inviteSnaps = await getDocs(query(collection(db,'invites'),where('studentEmail','==',currentUser.email)));
-  const pendingInvites = inviteSnaps.docs.filter(d=>d.data().status==='pending');
-  // Separate team invites for badge
-  const pendingTeamInvites = pendingInvites.filter(d=>d.data().type==='team');
+  const inviteSnaps = await getDocs(query(collection(db,'invites'),where('studentEmail','==',currentUser.email),where('status','==','pending')));
   const inviteBadge = document.getElementById('invite-badge');
-  if(inviteBadge) inviteBadge.style.display = pendingInvites.length>0 ? 'block':'none';
+  if(inviteBadge) inviteBadge.style.display = inviteSnaps.size>0 ? 'block':'none';
 
   const enrolled = userProfile.enrolledClasses || [];
   if(!enrolled.length){
@@ -1143,19 +1080,16 @@ async function loadStudentClasses(){
 }
 
 window.openPendingInvites = async()=>{
-  const inviteSnaps = await getDocs(query(collection(db,'invites'),where('studentEmail','==',currentUser.email)));
-  const invites = inviteSnaps.docs.filter(d=>d.data().status==='pending').map(d=>({id:d.id,...d.data()}));
-  if(!invites.length){ toast('No pending invites','info'); return; }
-  openModal('Pending Invites',`
+  const inviteSnaps = await getDocs(query(collection(db,'invites'),where('studentEmail','==',currentUser.email),where('status','==','pending')));
+  if(!inviteSnaps.size){ toast('No pending invites','info'); return; }
+  const invites = inviteSnaps.docs.map(d=>({id:d.id,...d.data()}));
+  openModal('Pending Class Invites',`
     <div style="display:flex;flex-direction:column;gap:10px;">
       ${invites.map(inv=>`
-        <div style="background:var(--surface2);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;">
           <div>
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-              <div style="font-size:14px;font-weight:700;">${inv.className}</div>
-              <span class="badge ${inv.type==='team'?'badge-warn':'badge-white'}" style="font-size:9px;">${inv.type==='team'?'⚡ Team':'📚 Class'}</span>
-            </div>
-            <div style="font-size:12px;color:var(--text2);">From: ${inv.teacherName}</div>
+            <div style="font-size:14px;font-weight:700;margin-bottom:2px;">${inv.className}</div>
+            <div style="font-size:12px;color:var(--text2);">Teacher: ${inv.teacherName}</div>
             <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:3px;">${ts2str(inv.createdAt)}</div>
           </div>
           <div style="display:flex;gap:8px;">
@@ -1167,27 +1101,29 @@ window.openPendingInvites = async()=>{
 };
 
 window.acceptInvite = async(inviteId, classId)=>{
-  const invSnap = await getDoc(doc(db,'invites',inviteId));
-  if(!invSnap.exists()) return;
-  const invData = invSnap.data();
-  await updateDoc(doc(db,'invites',inviteId),{status:'accepted',acceptedAt:serverTimestamp()});
-
-  if(invData.type === 'team'){
-    // Join team
-    await updateDoc(doc(db,'teams',classId),{members:arrayUnion(currentUser.uid)});
-    await updateDoc(doc(db,'users',currentUser.uid),{teamIds:arrayUnion(classId)});
-    userProfile.teamIds = [...(userProfile.teamIds||[]),classId];
-    closeModalDirect();
-    toast('Joined team!','success');
-    loadStudentClasses();
-  } else {
-    // Join class
-    await updateDoc(doc(db,'users',currentUser.uid),{enrolledClasses:arrayUnion(classId)});
-    await updateDoc(doc(db,'classes',classId),{students:arrayUnion(currentUser.uid)});
-    userProfile.enrolledClasses = [...(userProfile.enrolledClasses||[]),classId];
-    closeModalDirect();
-    toast('Joined class!','success');
-    loadStudentClasses();
+  try {
+    const invSnap = await getDoc(doc(db,'invites',inviteId));
+    if(!invSnap.exists()){ toast('Invite not found','error'); return; }
+    const invData = invSnap.data();
+    await updateDoc(doc(db,'invites',inviteId),{status:'accepted',acceptedAt:serverTimestamp()});
+    if(invData.type === 'team'){
+      await updateDoc(doc(db,'teams',classId),{members:arrayUnion(currentUser.uid)});
+      await updateDoc(doc(db,'users',currentUser.uid),{teamIds:arrayUnion(classId)});
+      userProfile.teamIds = [...(userProfile.teamIds||[]),classId];
+      closeModalDirect();
+      toast('Joined team!','success');
+      loadStudentClasses();
+    } else {
+      await updateDoc(doc(db,'users',currentUser.uid),{enrolledClasses:arrayUnion(classId)});
+      await updateDoc(doc(db,'classes',classId),{students:arrayUnion(currentUser.uid)});
+      userProfile.enrolledClasses = [...(userProfile.enrolledClasses||[]), classId];
+      closeModalDirect();
+      toast('Joined class!','success');
+      loadStudentClasses();
+    }
+  } catch(e){
+    toast('Error: '+(e.message||'try again'), 'error');
+    console.error('acceptInvite:', e);
   }
 };
 
@@ -1271,7 +1207,7 @@ async function loadClassLessons(classId){
       <div class="lesson-num">${String(l.order||1).padStart(2,'0')}</div>
       <div class="lesson-info">
         <div class="lesson-title">${l.title}</div>
-        <div class="lesson-meta">${l.type||'Lesson'} · ${l.duration||''}</div>
+        <div class="lesson-meta">${l.type||'Lesson'} · ${l.duration||'—'}</div>
       </div>
       <div class="lesson-status">
         ${done ? '<span class="badge badge-success">✓ Done</span>' : '<span class="badge badge-grey">Not started</span>'}
@@ -1326,7 +1262,7 @@ async function loadClassmates(classId){
   if(!students.length){ el.innerHTML='<div class="empty-state"><h3>No classmates yet</h3></div>'; return; }
   const profiles = await Promise.all(students.map(uid=>getDoc(doc(db,'users',uid))));
   el.innerHTML=`<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Name</th><th>Email</th><th>Points</th></tr></thead><tbody>
-    ${profiles.filter(s=>s.exists()).map(s=>{const d=s.data();return`<tr><td>${d.displayName||''}</td><td style="font-family:var(--mono);font-size:12px;color:var(--text3);">${d.email||''}</td><td><span class="badge badge-white">${d.points||0} pts</span></td></tr>`;}).join('')}
+    ${profiles.filter(s=>s.exists()).map(s=>{const d=s.data();return`<tr><td>${d.displayName||'—'}</td><td style="font-family:var(--mono);font-size:12px;color:var(--text3);">${d.email||'—'}</td><td><span class="badge badge-white">${d.points||0} pts</span></td></tr>`;}).join('')}
   </tbody></table></div>`;
 }
 
@@ -1376,7 +1312,7 @@ function renderStudentLessons(lessons){
       <div class="lesson-num">${String(l.order||1).padStart(2,'0')}</div>
       <div class="lesson-info">
         <div class="lesson-title">${l.title}</div>
-        <div class="lesson-meta">${l.className} · ${l.type||'Lesson'} · ${l.duration||''}</div>
+        <div class="lesson-meta">${l.className} · ${l.type||'Lesson'} · ${l.duration||'—'}</div>
       </div>
       <div>${l.completed?'<span class="badge badge-success">✓</span>':'<span class="badge badge-grey">Pending</span>'}</div>
     </div>`).join('');
@@ -1427,7 +1363,7 @@ window.saveProfile = async()=>{
 };
 
 // ── INVITE SYSTEM (replaces join-by-code) ──
-// Students are added by teachers via email. See the add-student-by-email flow below.
+// Students are added by teachers via email — see teacher add-student-by-email flow below
 
 // ── MESSAGE TEACHER ──
 window.openMessageTeacher = (classId, teacherId, teacherName)=>{
@@ -1487,8 +1423,9 @@ function buildTeacherApp(){
 
   sidebar.innerHTML=`
     <div class="sidebar-section">
+      <div class="sidebar-label">Overview</div>
       <div class="sidebar-item active" id="tnav-analytics" onclick="tNav('analytics')">
-        ${ico('chart')} Dashboard
+        ${ico('chart')} Analytics
       </div>
     </div>
     <div class="sidebar-section">
@@ -1497,31 +1434,28 @@ function buildTeacherApp(){
         ${ico('grid')} My Classes
       </div>
       <div class="sidebar-item" id="tnav-create-class" onclick="tNav('create-class')">
-        ${ico('plus')} New Class
+        ${ico('plus')} Create Class
       </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Content</div>
+      <div class="sidebar-item" id="tnav-lessons" onclick="tNav('lessons')">
+        ${ico('book')} Lessons
+      </div>
+      <div class="sidebar-item" id="tnav-add-lesson" onclick="tNav('add-lesson')">
+        ${ico('plus')} Add Lesson
+      </div>
+      <div class="sidebar-item" id="tnav-ai-lesson" onclick="tNav('ai-lesson')">
+        ${ico('ai')} AI Lesson Creator
+      </div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">Students</div>
       <div class="sidebar-item" id="tnav-students" onclick="tNav('students')">
-        ${ico('users')} Students
+        ${ico('users')} Manage Students
       </div>
       <div class="sidebar-item" id="tnav-messages" onclick="tNav('messages')">
         ${ico('msg')} Messages
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Lessons</div>
-      <div class="sidebar-item" id="tnav-lessons" onclick="tNav('lessons')">
-        ${ico('book')} All Lessons
-      </div>
-      <div class="sidebar-item" id="tnav-add-lesson" onclick="tNav('add-lesson')">
-        ${ico('plus')} Lesson Builder
-      </div>
-      <div class="sidebar-item" id="tnav-ai-lesson" onclick="tNav('ai-lesson')">
-        ${ico('ai')} AI Creator
-      </div>
-    </div>
-    <div class="sidebar-section">
-      <div class="sidebar-label">Competition</div>
-      <div class="sidebar-item" id="tnav-competition" onclick="tNav('competition')">
-        ${ico('trophy')} Teams
       </div>
     </div>`;
 
@@ -1533,8 +1467,7 @@ function buildTeacherApp(){
     ${teacherAddLessonPanel()}
     ${teacherStudentsPanel()}
     ${teacherMessagesPanel()}
-    ${teacherAILessonPanel()}
-    ${competitionPanel()}`;
+    ${teacherAILessonPanel()}`;
 
   tNav('analytics');
   loadTeacherAnalytics();
@@ -1559,7 +1492,6 @@ window.tNav = (panel)=>{
     },50);
   }
   if(panel==='ai-lesson'){ loadAIClassDropdown(); }
-  if(panel==='competition'){ loadCompetitionPanel(); }
 };
 
 // ── TEACHER PANELS ──
@@ -1571,6 +1503,9 @@ function teacherAnalyticsPanel(){
         <div class="db-header-meta" id="db-meta-line">Loading...</div>
       </div>
       <div class="db-header-actions">
+        <select class="db-class-select" id="db-class-sel" onchange="loadTeacherAnalytics()">
+          <option value="">All Classes</option>
+        </select>
         <button class="db-action-btn" onclick="openAddStudentFromStudentsPanel()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
           Add Student
@@ -1585,32 +1520,9 @@ function teacherAnalyticsPanel(){
         </button>
       </div>
     </div>
-    <!-- Dashboard mode tabs -->
-    <div style="display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:var(--surface);flex-shrink:0;">
-      <div class="db-mode-tab active" id="db-tab-classes" onclick="switchDashTab('classes')"
-           style="font-size:13px;font-weight:600;color:var(--text3);padding:10px 0;margin-right:24px;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Classes
-      </div>
-      <div class="db-mode-tab" id="db-tab-teams" onclick="switchDashTab('teams')"
-           style="font-size:13px;font-weight:600;color:var(--text3);padding:10px 0;margin-right:24px;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        Teams
-      </div>
-    </div>
-    <div class="panel-body" id="analytics-body" style="padding:20px 24px;overflow-y:auto;"></div>
+    <div class="panel-body" id="analytics-body" style="padding:20px 24px;"></div>
   </div>`;
 }
-
-window.switchDashTab = (tab)=>{
-  document.querySelectorAll('.db-mode-tab').forEach(t=>{
-    const isActive = t.id === 'db-tab-'+tab;
-    t.style.color = isActive ? 'var(--white)' : 'var(--text3)';
-    t.style.borderBottomColor = isActive ? 'var(--white)' : 'transparent';
-  });
-  if(tab==='classes') loadTeacherAnalytics();
-  if(tab==='teams')   loadTeamsDashboard();
-};
 
 function teacherClassesPanel(){
   return `<div class="panel" id="t-panel-classes">
@@ -1630,7 +1542,7 @@ function teacherCreateClassPanel(){
     <div class="panel-body">
       <div style="max-width:520px;">
         <div class="card">
-          <div class="form-group"><label class="form-label">Class Name</label><input class="form-input" id="cc-name" placeholder="e.g. Robotics IQ Period 3"></div>
+          <div class="form-group"><label class="form-label">Class Name</label><input class="form-input" id="cc-name" placeholder="e.g. Robotics IQ — Period 3"></div>
           <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="cc-desc" placeholder="Brief description of this class..."></textarea></div>
           <div class="form-row">
             <div class="form-group"><label class="form-label">School Year</label><input class="form-input" id="cc-year" placeholder="2024-2025"></div>
@@ -1716,7 +1628,7 @@ function teacherAddLessonPanel(){
           <button class="btn btn-ghost btn-sm" onclick="addBlock('code')" style="justify-content:flex-start;gap:8px;">${icoBlock('{ }')} Code Block</button>
           <button class="btn btn-ghost btn-sm" onclick="addBlock('callout')" style="justify-content:flex-start;gap:8px;">${icoBlock('!')} Callout</button>
           <button class="btn btn-ghost btn-sm" onclick="addBlock('list')" style="justify-content:flex-start;gap:8px;">${icoBlock('≡')} Bullet List</button>
-          <button class="btn btn-ghost btn-sm" onclick="addBlock('divider')" style="justify-content:flex-start;gap:8px;">${icoBlock('')} Divider</button>
+          <button class="btn btn-ghost btn-sm" onclick="addBlock('divider')" style="justify-content:flex-start;gap:8px;">${icoBlock('—')} Divider</button>
           <button class="btn btn-ghost btn-sm" onclick="addBlock('video')" style="justify-content:flex-start;gap:8px;">${icoBlock('▶')} Video Embed</button>
           <button class="btn btn-ghost btn-sm" onclick="addBlock('quiz')" style="justify-content:flex-start;gap:8px;">${icoBlock('?')} Quiz Question</button>
         </div>
@@ -1774,7 +1686,7 @@ function teacherMessagesPanel(){
           </div>
           <div class="msg-list" id="msg-thread-list" style="max-height:none;height:100%;overflow-y:auto;"></div>
         </div>
-        <div id="msg-chat-area" style="background:var(--surface);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
+        <div id="msg-chat-area" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;">
           <div class="empty-state">${ico('msg',32)}<h3>Select a conversation</h3><p>Choose a student from the list.</p></div>
         </div>
       </div>
@@ -1824,9 +1736,9 @@ function teacherAILessonPanel(){
           <div class="form-row">
             <div class="form-group"><label class="form-label">Depth</label>
               <select class="form-select" id="ai-depth" style="font-size:13px;">
-                <option value="intro">Introductory</option>
-                <option value="standard" selected>Standard</option>
-                <option value="deep">Deep</option>
+                <option value="intro">Introductory — concepts + overview</option>
+                <option value="standard" selected>Standard — concepts + application</option>
+                <option value="deep">Deep — theory + code + lab exercises</option>
               </select>
             </div>
             <div class="form-group"><label class="form-label">Est. Duration</label>
@@ -1841,7 +1753,7 @@ function teacherAILessonPanel(){
           <div class="form-group">
             <label class="form-label">Your Gemini API Key</label>
             <input class="form-input" id="ai-key" type="password" placeholder="AIzaSy..." style="font-size:13px;" autocomplete="off">
-            <div class="form-hint">Free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--text2);text-decoration:underline;">aistudio.google.com/apikey</a>. Stays in your browser only and is never stored.</div>
+            <div class="form-hint">Free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--text2);text-decoration:underline;">aistudio.google.com/apikey</a> — stays in your browser only, never stored.</div>
           </div>
           <button class="btn btn-white" onclick="aiGenerateOutline()" id="ai-outline-btn">Generate Outline →</button>
         </div>
@@ -1869,28 +1781,15 @@ function teacherAILessonPanel(){
         </div>
 
         <!-- Step 4: Preview & save -->
-        <div class="ai-step" id="ai-step4" style="display:none;padding:0;overflow:hidden;">
-          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="ai-step-num">4</div>
-              <div class="ai-step-title">Review & Edit</div>
-              <span style="font-family:var(--mono);font-size:10px;color:var(--text3);">Click any section to edit</span>
-            </div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn btn-ghost btn-sm" onclick="aiEditInBuilder()">Open in Builder</button>
-              <button class="btn btn-white btn-sm" onclick="aiSaveLesson()">Publish Lesson →</button>
-            </div>
+        <div class="ai-step" id="ai-step4" style="display:none;">
+          <div class="ai-step-header">
+            <div class="ai-step-num">4</div>
+            <div class="ai-step-title">Preview & Save</div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 380px;height:600px;">
-            <!-- LEFT: full rendered lesson -->
-            <div id="ai-preview-body" style="overflow-y:auto;padding:32px 40px;border-right:1px solid var(--border);"></div>
-            <!-- RIGHT: section editor -->
-            <div id="ai-section-editor" style="overflow-y:auto;padding:20px;background:var(--surface);">
-              <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:12px;">Section Editor</div>
-              <div id="ai-editor-body" style="color:var(--text3);font-size:13px;line-height:1.6;">
-                Click any section heading or paragraph in the preview to edit that section here.
-              </div>
-            </div>
+          <div id="ai-preview-body"></div>
+          <div style="display:flex;gap:8px;margin-top:14px;">
+            <button class="btn btn-ghost btn-sm" onclick="aiEditInBuilder()">Open in Builder</button>
+            <button class="btn btn-white btn-sm" onclick="aiSaveLesson()">Save to Firestore →</button>
           </div>
         </div>
 
@@ -1913,9 +1812,9 @@ async function loadAIClassDropdown(){
   snaps.docs.forEach(d=>{ const o=document.createElement('option'); o.value=d.id; o.textContent=d.data().name; sel.appendChild(o); });
 }
 
-async function geminiCall(apiKey, prompt, model='gemini-3-flash-preview'){
+async function geminiCall(apiKey, prompt, model='gemini-3.0-flash'){
   const key = apiKey || GEMINI_API_KEY;
-  if(!key) throw new Error('No Gemini API key. Enter it in the AI Lesson Creator panel.');
+  if(!key) throw new Error('No Gemini API key. Enter it in the AI Lesson panel');
   const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -1943,11 +1842,11 @@ Requirements:
 - Must be a direct image URL ending in .jpg, .jpeg, .png, .gif, or .webp
 - Must be from a reputable educational or reference site (Wikipedia, NASA, educational institutions, robotics sites, etc.)
 - Must be relevant to VEX Robotics or the topic described
-- Return ONLY the raw URL, nothing else: no markdown, no explanation, no quotes
+- Return ONLY the raw URL, nothing else — no markdown, no explanation, no quotes
 
 If you cannot find a suitable image URL, return the word: NONE`;
 
-    const text = await geminiCall(key, searchPrompt, 'gemini-3-flash-preview');
+    const text = await geminiCall(key, searchPrompt, 'gemini-2.0-flash-exp');
     const trimmed = (text||'').trim();
     if(!trimmed || trimmed === 'NONE' || trimmed.length < 10) return null;
     // Validate it looks like a URL
@@ -2069,109 +1968,58 @@ window.aiGenerateFullLesson = async()=>{
     const s = sections[i];
     setProgress(`Writing section ${i+1}/${sections.length}: "${s.title}"...`, (i/totalSteps)*90);
 
-    // Ask for raw HTML directly - much more reliable than JSON-wrapped HTML
-    const depthGuide = {
-      intro: 'Write 2-3 short paragraphs. Keep it simple and clear. Focus on the core concept only.',
-      standard: 'Write 3-5 paragraphs with concrete examples. Include a real-world VEX application.',
-      deep: 'Write 5-8 paragraphs. Include theory, step-by-step explanation, code examples where relevant, and common mistakes to avoid.'
-    }[depth] || 'Write 3-5 paragraphs with clear explanations.';
+    const sectionPrompt = `Write the "${s.title}" section of a VEX Robotics lesson titled "${aiOutlineData.title}".
 
-    const quizGuide = s.type === 'quiz' ? `
-Since this is a quiz section, include 2-3 multiple choice questions using exactly this HTML structure (copy it exactly):
-<div class="quiz-block">
-  <div class="quiz-question">Your question here?</div>
-  <div class="quiz-opt" data-idx="0">Option A text</div>
-  <div class="quiz-opt" data-idx="1">Option B text</div>
-  <div class="quiz-opt correct-answer" data-idx="2">Correct option text</div>
-  <div class="quiz-opt" data-idx="3">Option D text</div>
-  <div class="quiz-explain">Explanation of why the correct answer is right.</div>
-</div>` : '';
-
-    const sectionPrompt = `You are writing one section of a VEX Robotics educational lesson.
-
-Lesson title: "${aiOutlineData.title}"
-Section title: "${s.title}"
 Section type: ${s.type}
-Audience: ${context || 'High school robotics students'}
-${instructions ? 'Extra instructions: ' + instructions : ''}
+Audience: ${context||'High school robotics students'}
+Depth: ${depth}
+${instructions?'Extra instructions: '+instructions:''}
 
-${depthGuide}
-${quizGuide}
-
-CRITICAL RULES:
-1. Output ONLY raw HTML. No markdown, no code fences, no JSON, no explanation text before or after.
-2. Do NOT include the section heading as an h2 tag. It is already added above your content.
-3. Use <h3> for subsection headings inside this section
-4. Use <p> tags for all paragraph text. Every sentence must be inside a <p> tag.
-5. Use <ul><li> for bullet lists
-6. Use <strong> for key terms
-7. For code examples use: <pre><code class="lang-javascript">your code here</code></pre>
-8. Write substantial content: at least 150 words of actual educational text
-9. Start your output directly with the first HTML tag, nothing else
-
-Write the full HTML content for this section now:`;
+Return ONLY valid JSON (no markdown, no code fences):
+{
+  "content": "Full section HTML content. Use <h3> for subsection headings, <p> for paragraphs, <ul><li> for lists, <pre><code class=\"lang-python\"> for code. Be thorough and educational. Minimum 150 words for concept sections. For quiz sections, include 2-3 multiple choice questions in this format: <div class=\"quiz-block\"><div class=\"quiz-question\">Question?</div><div class=\"quiz-opt\" data-idx=\"0\">A</div><div class=\"quiz-opt\" data-idx=\"1\">B</div><div class=\"quiz-opt correct-answer\" data-idx=\"2\">C</div><div class=\"quiz-explain\">Explanation</div></div>"
+}`;
 
     try {
-      let raw = await geminiCall(apiKey, sectionPrompt);
+      const raw = await geminiCall(apiKey, sectionPrompt);
+      const cleaned = raw.replace(/```json|```/g,'').trim();
+      let sectionData;
+      try { sectionData = JSON.parse(cleaned); } catch(e2){ sectionData={content:`<p>${cleaned.replace(/<[^>]+>/g,'').slice(0,500)}</p>`}; }
 
-      // Strip any accidental markdown fences or preamble text
-      raw = raw
-        .replace(/^```html\s*/i, '')
-        .replace(/^```\s*/i, '')
-        .replace(/\s*```$/i, '')
-        .trim();
-
-      // If Gemini still returned JSON somehow, extract content field
-      if(raw.startsWith('{') || raw.startsWith('{"')){
-        try {
-          const parsed = JSON.parse(raw);
-          raw = parsed.content || parsed.html || raw;
-        } catch(e){ /* not JSON, use as-is */ }
-      }
-
-      // Ensure content has paragraph tags: if Gemini returned only plain text wrap it
-      const hasParas = raw.includes("<p") || raw.includes("<ul") || raw.includes("<ol");
-      if(!hasParas && raw.length > 20){
-        raw = raw.split(String.fromCharCode(10))
-          .map(function(line){ return line.trim(); })
-          .filter(function(line){ return line.length > 0; })
-          .map(function(line){ return /^<[a-zA-Z]/.test(line) ? line : "<p>" + line + "</p>"; })
-          .join(String.fromCharCode(10));
-      }
-
-      // Add h2 heading
+      // Add heading block
       aiGeneratedBlocks.push({...blockDefaults('heading'), text:s.title, level:'h2'});
 
-      // Add image placeholder if needed
+      // If section has an image, add placeholder (filled after)
       if(s.hasImage){
         const imgBlock = {...blockDefaults('image'), src:'', alt:s.title, caption:s.imagePrompt?.slice(0,80)||s.title, _imagePrompt:s.imagePrompt};
         aiGeneratedBlocks.push(imgBlock);
         s._imgBlockId = imgBlock.id;
       }
 
-      // Store raw HTML in the block
-      aiGeneratedBlocks.push({...blockDefaults('text'), text:'', _html:raw, type:'text'});
+      // Add content as a text block (raw HTML stored in content field)
+      aiGeneratedBlocks.push({...blockDefaults('text'), text:'', _html:sectionData.content||'', type:'text'});
       s._done = true;
-
     } catch(e){
-      console.error('Section generation error:', e);
-      aiGeneratedBlocks.push({...blockDefaults('heading'), text:s.title, level:'h2'});
-      aiGeneratedBlocks.push({...blockDefaults('callout'),
-        text:`Could not generate this section: ${e.message}. Try regenerating.`,
-        variant:'warn'});
+      aiGeneratedBlocks.push({...blockDefaults('callout'), text:`Error generating section: ${e.message}`, variant:'danger'});
     }
     completed++;
   }
 
-  // Image blocks are left as empty placeholders. Teachers can add images
-  // in the preview editor (Step 4) by clicking the image block
-  const imageSections = sections.filter(s=>s.hasImage&&s._imgBlockId);
+  // Find web images for sections that need them
+  const imageSections = sections.filter(s=>s.hasImage&&s._imgBlockId&&s.imagePrompt);
   if(imageSections.length){
-    // Just label them so the preview editor knows what image to look for
-    imageSections.forEach(s=>{
-      const block = aiGeneratedBlocks.find(b=>b.id===s._imgBlockId);
-      if(block){ block.alt = s.title; block.caption = s.imagePrompt?.slice(0,80)||s.title; }
-    });
+    setProgress(`Finding images for ${imageSections.length} section${imageSections.length!==1?'s':''}...`, 90);
+    for(let i=0; i<imageSections.length; i++){
+      const s = imageSections[i];
+      setProgress(`Finding image ${i+1}/${imageSections.length}: "${s.title}"...`, 90+(i/imageSections.length)*7);
+      try {
+        const imgUrl = await geminiGenerateImage(apiKey, s.imagePrompt||s.title);
+        if(imgUrl){
+          const block = aiGeneratedBlocks.find(b=>b.id===s._imgBlockId);
+          if(block){ block.src = imgUrl; block.alt = s.title; }
+        }
+      } catch(e){ /* image search failed silently */ }
+    }
   }
 
   setProgress('Finalizing lesson...', 98);
@@ -2195,22 +2043,9 @@ Write the full HTML content for this section now:`;
 function renderBlockToHTML(b){
   switch(b.type){
     case 'heading': return `<${b.level||'h2'}>${b.text}</${b.level||'h2'}>`;
-    case 'text': {
-      // _html takes priority - this is where AI-generated content lives
-      if(b._html && b._html.trim()) return b._html;
-      if(b.text && b.text.trim()) return `<p>${b.text}</p>`;
-      return '';
-    }
-    case 'image': return b.src?`<figure><img src="${b.src}" alt="${b.alt||''}" style="max-width:100%;border-radius:8px;"><figcaption>${b.caption||''}</figcaption></figure>`:'';
+    case 'text': return b._html||`<p>${b.text}</p>`;
+    case 'image': return b.src?`<figure><img src="${b.src}" alt="${b.alt||''}"><figcaption>${b.caption||''}</figcaption></figure>`:'';
     case 'callout': return `<div class="callout callout-${b.variant||'info'}" style="border-left:3px solid var(--${b.variant==='warn'?'warn':b.variant==='danger'?'danger':b.variant==='success'?'success':'white'});padding:14px 18px;background:var(--surface2);margin:12px 0;">${b.text}</div>`;
-    case 'list': return `<ul>${(b.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
-    case 'code': return `<pre><code class="lang-${b.lang||'text'}">${b.text||''}</code></pre>`;
-    case 'divider': return `<hr>`;
-    case 'video': {
-      const yt=b.url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-      if(yt) return `<div style="position:relative;padding-bottom:56.25%;"><iframe src="https://www.youtube.com/embed/${yt[1]}" style="position:absolute;inset:0;width:100%;height:100%;border:none;" allowfullscreen></iframe></div>`;
-      return '';
-    }
     default: return '';
   }
 }
@@ -2218,229 +2053,30 @@ function renderBlockToHTML(b){
 function renderAIPreview(){
   const previewEl = document.getElementById('ai-preview-body');
   if(!previewEl) return;
+  const sections = aiGeneratedBlocks.filter(b=>b.type==='heading');
+  const imageCount = aiGeneratedBlocks.filter(b=>b.type==='image'&&b.src).length;
 
-  // Group blocks into sections: each h2 heading starts a new section
-  const sectionGroups = [];
-  let current = null;
-  aiGeneratedBlocks.forEach((block, idx) => {
-    if(block.type === 'heading' && block.level === 'h2'){
-      current = { headingIdx: idx, heading: block, contentBlocks: [] };
-      sectionGroups.push(current);
-    } else if(current){
-      current.contentBlocks.push({ block, idx });
-    }
-  });
-
-  // Render lesson title
-  const lessonTitle = aiOutlineData?.title || document.getElementById('ai-topic')?.value || 'Lesson';
-  const lessonType = document.getElementById('ai-type')?.value || 'Lesson';
-  const lessonDuration = document.getElementById('ai-duration')?.value || '';
-
-  let html = `
-    <div style="margin-bottom:28px;">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
-        <span class="badge badge-white">${lessonType}</span>
-        ${lessonDuration ? `<span style="font-family:var(--mono);font-size:11px;color:var(--text3);">⏱ ${lessonDuration}</span>` : ''}
-        <span style="font-family:var(--mono);font-size:10px;color:var(--success);">✓ ${sectionGroups.length} sections generated</span>
+  previewEl.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+      <div class="stat-card" style="padding:14px 16px;">
+        <div class="stat-label">Sections</div>
+        <div style="font-size:24px;font-weight:700;">${sections.length}</div>
       </div>
-      <div style="font-size:28px;font-weight:700;letter-spacing:-.02em;color:var(--white);margin-bottom:8px;">${lessonTitle}</div>
-      <div style="height:1px;background:var(--border);margin-top:16px;"></div>
-    </div>`;
-
-  sectionGroups.forEach((sg, sIdx) => {
-    const sectionId = 'ai-sec-' + sIdx;
-    html += `
-      <div class="ai-preview-section" id="${sectionId}" data-sidx="${sIdx}"
-           style="margin-bottom:4px;border-radius:6px;border:2px solid transparent;transition:border-color .15s;cursor:pointer;"
-           onclick="aiSelectSection(${sIdx})"
-           onmouseenter="this.style.borderColor='var(--border)'"
-           onmouseleave="if(window._aiSelectedSection!==${sIdx}) this.style.borderColor='transparent'">
-        <div style="padding:16px 16px 4px;">
-          <div style="font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--white);margin-bottom:12px;border-top:1px solid var(--border);padding-top:20px;">
-            ${sg.heading.text}
-            <span style="font-size:11px;font-weight:400;color:var(--text3);font-family:var(--mono);margin-left:10px;">click to edit</span>
-          </div>
-        </div>
-        <div style="padding:0 16px 16px;" class="doc-content">`;
-
-    sg.contentBlocks.forEach(({block}) => {
-      if(block.type === 'image'){
-        if(block.src){
-          html += `<figure style="margin:12px 0;"><img src="${block.src}" alt="${block.alt||''}" style="max-width:100%;border-radius:8px;"><figcaption style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">${block.caption||''}</figcaption></figure>`;
-        } else {
-          html += `<div style="background:var(--surface2);border:1px dashed var(--border);border-radius:6px;padding:16px;text-align:center;font-size:12px;color:var(--text3);margin:12px 0;">🖼 No image added yet</div>`;
-        }
-      } else if(block.type === 'text'){
-        const blockHtml = block._html || (block.text ? `<p>${block.text}</p>` : '');
-        html += blockHtml;
-      } else if(block.type === 'callout'){
-        const borderCol = block.variant==='warn'?'var(--warn)':block.variant==='danger'?'var(--danger)':block.variant==='success'?'var(--success)':'var(--white)';
-        html += `<div style="border-left:3px solid ${borderCol};padding:12px 16px;background:var(--surface2);border-radius:0 6px 6px 0;margin:12px 0;font-size:14px;color:var(--text2);">${block.text}</div>`;
-      }
-    });
-
-    html += `</div></div>`;
-  });
-
-  previewEl.innerHTML = html;
-
-  // Wire quiz interactions in preview
-  previewEl.querySelectorAll('.quiz-opt').forEach(opt => {
-    opt.style.cursor = 'pointer';
-    opt.addEventListener('click', function(){
-      const block = this.closest('.quiz-block');
-      if(!block || block.dataset.answered) return;
-      block.dataset.answered = '1';
-      const correct = this.dataset.correct === 'true' || this.classList.contains('correct-answer');
-      block.querySelectorAll('.quiz-opt').forEach(o => {
-        o.style.pointerEvents = 'none';
-        if(o.classList.contains('correct-answer') || o.dataset.correct === 'true'){
-          o.style.borderColor = 'var(--success)'; o.style.color = 'var(--success)';
-        } else if(o === this && !correct){
-          o.style.borderColor = 'var(--danger)'; o.style.color = 'var(--danger)';
-        }
-      });
-      const explain = block.querySelector('.quiz-explain');
-      if(explain) explain.style.display = 'block';
-    });
-  });
+      <div class="stat-card" style="padding:14px 16px;">
+        <div class="stat-label">Blocks</div>
+        <div style="font-size:24px;font-weight:700;">${aiGeneratedBlocks.length}</div>
+      </div>
+      <div class="stat-card" style="padding:14px 16px;">
+        <div class="stat-label">Images</div>
+        <div style="font-size:24px;font-weight:700;">${imageCount}</div>
+      </div>
+    </div>
+    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;">Sections generated</div>
+    ${sections.map(s=>`
+      <div class="ai-preview-card">
+        <div class="ai-preview-section-title">${s.text}</div>
+      </div>`).join('')}`;
 }
-
-window._aiSelectedSection = -1;
-
-window.aiSelectSection = function(sIdx){
-  // Deselect previous
-  if(window._aiSelectedSection >= 0){
-    const prev = document.getElementById('ai-sec-' + window._aiSelectedSection);
-    if(prev) prev.style.borderColor = 'transparent';
-  }
-  window._aiSelectedSection = sIdx;
-
-  // Highlight selected
-  const el = document.getElementById('ai-sec-' + sIdx);
-  if(el) el.style.borderColor = 'var(--white)';
-
-  // Find the section's heading and text blocks
-  const sectionGroups = [];
-  let current = null;
-  aiGeneratedBlocks.forEach((block, idx) => {
-    if(block.type === 'heading' && block.level === 'h2'){
-      current = { headingIdx: idx, heading: block, contentBlocks: [] };
-      sectionGroups.push(current);
-    } else if(current){
-      current.contentBlocks.push({ block, idx });
-    }
-  });
-
-  const sg = sectionGroups[sIdx];
-  if(!sg) return;
-
-  // Find the text block for this section
-  const textBlock = sg.contentBlocks.find(cb => cb.block.type === 'text');
-  const editorEl = document.getElementById('ai-editor-body');
-  if(!editorEl) return;
-
-  editorEl.innerHTML = `
-    <div style="margin-bottom:12px;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;">Section Title</div>
-      <input id="ai-edit-heading" class="form-input" style="font-size:14px;font-weight:600;"
-             value="${sg.heading.text.replace(/"/g,'&quot;')}">
-    </div>
-    <div style="margin-bottom:12px;">
-      <div style="font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--text3);text-transform:uppercase;margin-bottom:6px;">Content (HTML)</div>
-      <textarea id="ai-edit-content" class="form-textarea"
-                style="min-height:320px;font-family:var(--mono);font-size:12px;line-height:1.6;">${textBlock ? (textBlock.block._html||textBlock.block.text||'').replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''}</textarea>
-    </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-white btn-sm" style="flex:1;" onclick="aiApplySectionEdit(${sIdx},${sg.headingIdx},${textBlock?textBlock.idx:-1})">Apply Changes</button>
-      <button class="btn btn-ghost btn-sm" onclick="aiRegenerateSection(${sIdx})">↻ Regenerate</button>
-    </div>
-    <div style="margin-top:10px;font-family:var(--mono);font-size:10px;color:var(--text3);line-height:1.6;">
-      Edit the HTML directly. Use &lt;p&gt; for paragraphs, &lt;h3&gt; for subheadings, &lt;ul&gt;&lt;li&gt; for lists, &lt;strong&gt; for bold.
-    </div>`;
-};
-
-window.aiApplySectionEdit = function(sIdx, headingIdx, textIdx){
-  const newHeading = document.getElementById('ai-edit-heading')?.value.trim();
-  const newContent = document.getElementById('ai-edit-content')?.value || '';
-
-  if(newHeading && headingIdx >= 0){
-    aiGeneratedBlocks[headingIdx].text = newHeading;
-  }
-  if(textIdx >= 0){
-    aiGeneratedBlocks[textIdx]._html = newContent;
-    aiGeneratedBlocks[textIdx].text = '';
-  }
-
-  // Re-render preview
-  renderAIPreview();
-  // Re-select the section after re-render
-  setTimeout(() => aiSelectSection(sIdx), 50);
-  toast('Section updated','success');
-};
-
-window.aiRegenerateSection = async function(sIdx){
-  const apiKey = (document.getElementById('ai-key')?.value||'').trim();
-  if(!apiKey){ toast('Enter your Gemini API key in step 1','error'); return; }
-
-  const sectionGroups = [];
-  let current = null;
-  aiGeneratedBlocks.forEach((block, idx) => {
-    if(block.type === 'heading' && block.level === 'h2'){
-      current = { headingIdx: idx, heading: block, contentBlocks: [] };
-      sectionGroups.push(current);
-    } else if(current){
-      current.contentBlocks.push({ block, idx });
-    }
-  });
-
-  const sg = sectionGroups[sIdx];
-  if(!sg) return;
-
-  const editorEl = document.getElementById('ai-editor-body');
-  const origContent = editorEl.innerHTML;
-  editorEl.innerHTML = `<div class="ai-generating" style="flex-direction:column;gap:10px;"><div class="ai-dots"><span></span><span></span><span></span></div><div class="ai-generating-text">Regenerating "${sg.heading.text}"...</div></div>`;
-
-  const context = document.getElementById('ai-context')?.value || 'High school robotics students';
-  const depth = document.getElementById('ai-depth')?.value || 'standard';
-  const topic = aiOutlineData?.title || document.getElementById('ai-topic')?.value || '';
-
-  const prompt = `Write the "${sg.heading.text}" section of a VEX Robotics lesson titled "${topic}".
-Audience: ${context}
-Depth: ${depth}
-
-Output ONLY raw HTML: no markdown, no code fences, no explanation.
-Do NOT include the section heading <h2>.
-Use <h3> for subsections, <p> for paragraphs, <ul><li> for lists, <strong> for key terms.
-Write at least 150 words of educational content.
-Start directly with the first HTML tag.`;
-
-  try {
-    let raw = await geminiCall(apiKey, prompt);
-    raw = raw.replace(/^```html\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/i,'').trim();
-    const hasParas = raw.includes('<p') || raw.includes('<ul') || raw.includes('<ol');
-    if(!hasParas && raw.length > 20){
-      raw = raw.split(String.fromCharCode(10))
-        .map(function(line){ return line.trim(); })
-        .filter(function(line){ return line.length > 0; })
-        .map(function(line){ return /^<[a-zA-Z]/.test(line) ? line : '<p>' + line + '</p>'; })
-        .join(String.fromCharCode(10));
-    }
-
-    const textBlock = sg.contentBlocks.find(cb => cb.block.type === 'text');
-    if(textBlock){
-      aiGeneratedBlocks[textBlock.idx]._html = raw;
-      aiGeneratedBlocks[textBlock.idx].text = '';
-    }
-
-    renderAIPreview();
-    setTimeout(() => aiSelectSection(sIdx), 50);
-    toast('Section regenerated','success');
-  } catch(e){
-    editorEl.innerHTML = origContent;
-    toast('Regeneration failed: '+e.message,'error');
-  }
-};
 
 window.aiEditInBuilder = ()=>{
   // Push generated blocks into the lesson builder
@@ -2508,19 +2144,29 @@ async function loadTeacherAnalytics(){
   const el = document.getElementById('analytics-body');
   if(!el) return;
 
-  // Fetch all classes for filter
-  const allClassSnaps = await getDocs(query(collection(db,'classes'),where('teacherId','==',currentUser.uid)));
-  const allClassList = allClassSnaps.docs.map(d=>({id:d.id,...d.data()}));
+  // Populate class selector in header
+  const classSel = document.getElementById('db-class-sel');
+  if(classSel && classSel.options.length <= 1){
+    const allClasses = await getDocs(query(collection(db,'classes'),where('teacherId','==',currentUser.uid)));
+    allClasses.docs.forEach(d=>{
+      const o = document.createElement('option');
+      o.value = d.id; o.textContent = d.data().name; classSel.appendChild(o);
+    });
+  }
 
-  // Inline class filter (rendered in body)
-  const selectedClassId = window._dbSelectedClassId || '';
+  const selectedClassId = document.getElementById('db-class-sel')?.value || '';
 
   el.innerHTML='<div style="color:var(--text3);font-size:13px);padding:20px;">Loading...</div>';
 
-  // Filter classes
-  const classArr = selectedClassId
-    ? allClassList.filter(c=>c.id===selectedClassId)
-    : allClassList;
+  // Fetch classes
+  let classArr;
+  if(selectedClassId){
+    const s = await getDoc(doc(db,'classes',selectedClassId));
+    classArr = s.exists() ? [{id:s.id,...s.data()}] : [];
+  } else {
+    const snaps = await getDocs(query(collection(db,'classes'),where('teacherId','==',currentUser.uid)));
+    classArr = snaps.docs.map(d=>({id:d.id,...d.data()}));
+  }
 
   const activeClass = classArr.length===1 ? classArr[0] : null;
 
@@ -2528,7 +2174,7 @@ async function loadTeacherAnalytics(){
   const metaEl = document.getElementById('db-meta-line');
   if(metaEl){
     const totalStu = classArr.reduce((a,c)=>a+(c.students?.length||0),0);
-    metaEl.textContent = `${userProfile.displayName||'Teacher'} · ${totalStu} student${totalStu!==1?'s':''} · ${allClassList.length} class${allClassList.length!==1?'es':''}`;
+    metaEl.textContent = `${userProfile.displayName||'Teacher'} · ${totalStu} student${totalStu!==1?'s':''} · ${classArr.length} class${classArr.length!==1?'es':''}`;
   }
 
   // Fetch lessons
@@ -2572,14 +2218,7 @@ async function loadTeacherAnalytics(){
 
   const scoreClass = avgScore>=75?'good':avgScore>=40?'warn':'zero';
 
-  window._dbSelectedClassId = selectedClassId;
-
   el.innerHTML = `
-    <!-- Class filter chips -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px;">
-      <button class="btn ${!selectedClassId?'btn-white':'btn-ghost'} btn-sm" onclick="window._dbSelectedClassId='';loadTeacherAnalytics()">All</button>
-      ${allClassList.map(c=>`<button class="btn ${selectedClassId===c.id?'btn-white':'btn-ghost'} btn-sm" onclick="window._dbSelectedClassId='${c.id}';loadTeacherAnalytics()">${c.name}</button>`).join('')}
-    </div>
     <div style="display:grid;grid-template-columns:1fr auto;gap:16px;margin-bottom:20px;align-items:stretch;">
       <!-- Score summary card -->
       <div class="db-score-card">
@@ -2594,7 +2233,7 @@ async function loadTeacherAnalytics(){
           <div class="db-score-assigned-num">${totalLessons}</div>
           <div class="db-score-assigned-label">Total lessons scheduled</div>
         </div>
-        <div class="db-score-trophy">🏆</div>
+        <div class="db-score-trophy"></div>
       </div>
       <!-- Status tiles -->
       <div class="db-status-grid" style="min-width:340px;">
@@ -2762,216 +2401,6 @@ window.postAnnouncement = async()=>{
   toast('Announcement posted!','success');
 };
 
-// ── TEAMS DASHBOARD ──
-async function loadTeamsDashboard(){
-  const el = document.getElementById('analytics-body');
-  if(!el) return;
-  el.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading teams...</div>';
-
-  // Fetch all teams where user is coach or member
-  const coachSnap  = await getDocs(query(collection(db,'teams'),where('teacherId','==',currentUser.uid)));
-  const memberSnap = await getDocs(query(collection(db,'teams'),where('members','array-contains',currentUser.uid)));
-  const allTeamMap = {};
-  [...coachSnap.docs,...memberSnap.docs].forEach(d=>{ allTeamMap[d.id]={id:d.id,...d.data()}; });
-  const teams = Object.values(allTeamMap);
-
-  // Update meta
-  const metaEl = document.getElementById('db-meta-line');
-  if(metaEl) metaEl.textContent = `${userProfile.displayName||'Teacher'} · ${teams.length} team${teams.length!==1?'s':''}`;
-
-  if(!teams.length){
-    el.innerHTML = `
-      <div class="empty-state" style="padding-top:60px;">
-        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".3"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        <h3 style="margin-top:12px;">No teams yet</h3>
-        <p>Create a team in Competition Mode to see team stats here.</p>
-        <button class="btn btn-white" style="margin-top:14px;" onclick="tNav('competition')">Go to Competition Mode</button>
-      </div>`;
-    return;
-  }
-
-  // Team filter chips
-  const selTeamId = window._dbSelectedTeamId || teams[0]?.id || '';
-  window._dbSelectedTeamId = selTeamId;
-  const team = teams.find(t=>t.id===selTeamId) || teams[0];
-
-  // Fetch team subcollections in parallel
-  const [evSnaps, taskSnaps] = await Promise.all([
-    getDocs(collection(db,'teams',team.id,'events')),
-    getDocs(collection(db,'teams',team.id,'tasks'))
-  ]);
-
-  const now = new Date();
-  const events = evSnaps.docs.map(d=>({id:d.id,...d.data()}))
-    .sort((a,b)=>{
-      const da = a.date?.toDate?a.date.toDate():new Date(a.date||0);
-      const db2 = b.date?.toDate?b.date.toDate():new Date(b.date||0);
-      return da-db2;
-    });
-  const upcomingEvents = events.filter(e=>{
-    const d = e.date?.toDate?e.date.toDate():new Date(e.date||0);
-    return d >= now;
-  });
-  const tasks = taskSnaps.docs.map(d=>({id:d.id,...d.data()}));
-  const openTasks = tasks.filter(t=>!t.done);
-  const doneTasks = tasks.filter(t=>t.done);
-  const taskPct = tasks.length ? Math.round((doneTasks.length/tasks.length)*100) : 0;
-
-  // W/L/T
-  const wins = team.wins||0, losses = team.losses||0, ties = team.ties||0;
-  const totalMatches = wins+losses+ties;
-  const winRate = totalMatches>0 ? Math.round((wins/totalMatches)*100) : 0;
-
-  el.innerHTML = `
-    <!-- Team filter chips -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:20px;">
-      ${teams.map(t=>`
-        <button class="btn ${selTeamId===t.id?'btn-white':'btn-ghost'} btn-sm"
-                onclick="window._dbSelectedTeamId='${t.id}';loadTeamsDashboard()">
-          ${t.name} <span style="font-family:var(--mono);font-size:10px;opacity:.6;">${t.number}</span>
-        </button>`).join('')}
-      <button class="btn btn-ghost btn-sm" onclick="tNav('competition')" style="margin-left:auto;">
-        Open Competition Mode →
-      </button>
-    </div>
-
-    <!-- Top stats row -->
-    <div style="display:grid;grid-template-columns:1fr auto;gap:16px;margin-bottom:20px;align-items:stretch;">
-      <div class="db-score-card">
-        <div class="db-score-main">
-          <div class="db-score-label">World Skills Rank</div>
-          <div class="db-score-pct ${team.worldSkillsRank&&team.worldSkillsRank&&team.worldSkillsRank!=='N/A'?'warn':'zero'}"
-               style="font-size:${team.worldSkillsRank&&team.worldSkillsRank.length>4?'28px':'42px'};">
-            ${team.worldSkillsRank||'N/A'}
-          </div>
-          <div class="db-score-sub">Skills score: ${team.skillsScore||'N/A'}</div>
-        </div>
-        <div class="db-score-divider"></div>
-        <div class="db-score-main">
-          <div class="db-score-label">Match Record</div>
-          <div style="font-size:22px;font-weight:700;letter-spacing:-.02em;">${wins}W · ${losses}L · ${ties}T</div>
-          <div class="db-score-sub">Win rate: ${winRate}%</div>
-        </div>
-        <div class="db-score-divider"></div>
-        <div class="db-score-main">
-          <div class="db-score-label">High Score</div>
-          <div class="db-score-pct zero" style="font-size:32px;">${team.highScore||'N/A'}</div>
-          <div class="db-score-sub">Avg: ${team.avgScore||'N/A'}</div>
-        </div>
-        <div class="db-score-trophy">🏆</div>
-      </div>
-      <div class="db-status-grid" style="min-width:340px;">
-        <div class="db-status-tile db-tile-green">
-          <div class="db-status-tile-num">${upcomingEvents.length}</div>
-          <div class="db-status-tile-label">upcoming events</div>
-        </div>
-        <div class="db-status-tile db-tile-yellow">
-          <div class="db-status-tile-num">${openTasks.length}</div>
-          <div class="db-status-tile-label">open tasks</div>
-        </div>
-        <div class="db-status-tile db-tile-orange">
-          <div class="db-status-tile-num">${team.members?.length||1}</div>
-          <div class="db-status-tile-label">team members</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Two column: events + tasks -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
-
-      <!-- Upcoming Events -->
-      <div class="db-progress-section">
-        <div class="db-progress-header">
-          <div class="db-progress-title">Upcoming Events</div>
-          <button class="btn btn-ghost btn-xs" onclick="tNav('competition')">View all</button>
-        </div>
-        ${!upcomingEvents.length
-          ? '<div style="padding:24px;text-align:center;color:var(--text3);font-size:13px;">No upcoming events</div>'
-          : upcomingEvents.slice(0,4).map(ev=>{
-              const evDate = ev.date?.toDate?ev.date.toDate():new Date(ev.date||Date.now());
-              const month = evDate.toLocaleString('en-US',{month:'short'}).toUpperCase();
-              const day = evDate.getDate();
-              const daysUntil = Math.ceil((evDate-now)/(1000*60*60*24));
-              return `<div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);">
-                <div class="event-date-badge" style="min-width:44px;">
-                  <div class="event-date-month">${month}</div>
-                  <div class="event-date-day">${day}</div>
-                </div>
-                <div style="flex:1;min-width:0;">
-                  <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${ev.name}</div>
-                  <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">${ev.location||'Location TBD'}</div>
-                </div>
-                <div style="font-family:var(--mono);font-size:10px;color:${daysUntil<=7?'var(--warn)':'var(--text3)'};">${daysUntil}d</div>
-              </div>`;
-            }).join('')}
-      </div>
-
-      <!-- Open Tasks -->
-      <div class="db-progress-section">
-        <div class="db-progress-header">
-          <div class="db-progress-title">Tasks</div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <div style="font-size:12px;color:var(--text3);">${doneTasks.length}/${tasks.length} done</div>
-            <div class="db-prog-bar" style="width:80px;"><div class="db-prog-fill" style="width:${taskPct}%;background:${taskPct===100?'var(--success)':taskPct>50?'var(--warn)':'var(--danger)'};"></div></div>
-            <button class="btn btn-ghost btn-xs" onclick="tNav('competition')">View all</button>
-          </div>
-        </div>
-        ${!openTasks.length
-          ? `<div style="padding:24px;text-align:center;color:var(--text3);font-size:13px;">${tasks.length?'All tasks complete ✓':'No tasks yet'}</div>`
-          : openTasks.slice(0,5).map(t=>`
-            <div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);">
-              <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:${t.priority==='high'?'var(--danger)':t.priority==='medium'?'var(--warn)':'var(--border-mid)'};"></div>
-              <div style="flex:1;min-width:0;">
-                <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.title}</div>
-                <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">${t.assignee?'→ '+t.assignee:'Unassigned'}${t.dueDate?' · Due '+new Date(t.dueDate).toLocaleDateString():''}</div>
-              </div>
-              ${t.priority==='high'?'<span class="badge badge-danger" style="font-size:9px;">High</span>':''}
-            </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Team stats detail + skills breakdown -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Skills Breakdown</div>
-          <button class="btn btn-ghost btn-xs" onclick="tNav('competition')">Edit</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px;">
-          <div class="team-stat-card"><div class="team-stat-label">Driver Skills</div><div class="team-stat-val">${team.driverScore||'N/A'}</div></div>
-          <div class="team-stat-card"><div class="team-stat-label">Prog Skills</div><div class="team-stat-val">${team.progScore||'N/A'}</div></div>
-          <div class="team-stat-card"><div class="team-stat-label">AWP</div><div class="team-stat-val">${team.autonomousWinPoint||0}</div></div>
-          <div class="team-stat-card"><div class="team-stat-label">Awards</div><div class="team-stat-val">${team.totalAwards||0}</div></div>
-        </div>
-        ${team.lastPulled?`<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-top:10px;">Last synced: ${new Date(team.lastPulled).toLocaleString()}</div>`:''}
-        <button class="btn btn-white btn-sm" style="margin-top:12px;width:100%;" onclick="tNav('competition')">
-          Sync from VEX Events API →
-        </button>
-      </div>
-      <div class="card">
-        <div class="card-header"><div class="card-title">Quick Actions</div></div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px;">
-          <button class="db-action-btn" onclick="tNav('competition')" style="justify-content:flex-start;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-            Open Competition Mode
-          </button>
-          <button class="db-action-btn" onclick="window._dbSelectedTeamId='${team.id}';tNav('competition');setTimeout(()=>compTab('tasks'),400)" style="justify-content:flex-start;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Add Task
-          </button>
-          <button class="db-action-btn" onclick="window._dbSelectedTeamId='${team.id}';tNav('competition');setTimeout(()=>compTab('events'),400)" style="justify-content:flex-start;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Add Event
-          </button>
-          <button class="db-action-btn" onclick="openTeamMembersModal()" style="justify-content:flex-start;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Manage Members
-          </button>
-        </div>
-      </div>
-    </div>`;
-}
-
 // ── TEACHER CLASSES ──
 async function loadTeacherClasses(){
   const el = document.getElementById('teacher-classes-list');
@@ -3036,10 +2465,7 @@ window.deleteClass = async(classId, name)=>{
 
 // ── ADD STUDENTS BY EMAIL ──
 window.openAddStudentsByEmail = (classId, className)=>{
-  // Store on window so onclick doesn't need string interpolation
-  window._inviteClassId = classId;
-  window._inviteClassName = className;
-  openModal(`Add Students: ${className}`,`
+  openModal(`Add Students — ${className}`,`
     <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Enter student email addresses. Each student will receive an invite they can accept from their Classes page.</p>
     <div class="form-group">
       <label class="form-label">Email Addresses</label>
@@ -3048,8 +2474,8 @@ window.openAddStudentsByEmail = (classId, className)=>{
     </div>
     <div id="invite-preview" style="margin-top:8px;"></div>`,
     `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="sendEmailInvites()">Send Invites</button>`);
-  setTimeout(()=>document.getElementById('invite-emails')?.addEventListener('input', previewInviteEmails), 50);
+     <button class="btn btn-white btn-sm" onclick="sendEmailInvites('${classId}','${className.replace(/'/g,"\\'")}')">Send Invites</button>`);
+  document.getElementById('invite-emails').addEventListener('input', previewInviteEmails);
 };
 
 function previewInviteEmails(){
@@ -3063,65 +2489,45 @@ function previewInviteEmails(){
     </div>`).join('');
 }
 
-window.sendEmailInvites = async()=>{
-  const classId = window._inviteClassId;
-  const className = window._inviteClassName || '';
-  if(!classId){ toast('No class selected','error'); return; }
-
-  const raw = document.getElementById('invite-emails')?.value || '';
+window.sendEmailInvites = async(classId, className)=>{
+  const raw = document.getElementById('invite-emails').value;
   const emails = raw.split(/[\n,]+/).map(e=>e.trim().toLowerCase()).filter(e=>e.includes('@'));
-  if(!emails.length){ toast('Enter at least one valid email address','error'); return; }
-
-  const btn = document.querySelector('#modal-box .btn-white');
-  if(btn){ btn.textContent = 'Sending...'; btn.disabled = true; }
+  if(!emails.length){ toast('Enter at least one email','error'); return; }
 
   let sent=0, alreadyIn=0, existing=0;
-  try {
-    for(const email of emails){
-      // Check if user already enrolled
-      const userQ = await getDocs(query(collection(db,'users'),where('email','==',email)));
-      if(!userQ.empty){
-        const student = userQ.docs[0].data();
-        if((student.enrolledClasses||[]).includes(classId)){ alreadyIn++; continue; }
-      }
-      // Check for existing pending invite: use only two where clauses to avoid composite index
-      const existingInvite = await getDocs(query(
-        collection(db,'invites'),
-        where('classId','==',classId),
-        where('studentEmail','==',email)
-      ));
-      const hasPending = existingInvite.docs.some(d=>d.data().status==='pending');
-      if(hasPending){ existing++; continue; }
-      // Create invite
-      await addDoc(collection(db,'invites'),{
-        classId, className, studentEmail:email,
-        teacherId:currentUser.uid, teacherName:userProfile.displayName,
-        status:'pending', createdAt:serverTimestamp()
-      });
-      sent++;
+  for(const email of emails){
+    // Check if already a student in this class
+    const userQ = await getDocs(query(collection(db,'users'),where('email','==',email)));
+    if(!userQ.empty){
+      const student = userQ.docs[0].data();
+      if((student.enrolledClasses||[]).includes(classId)){ alreadyIn++; continue; }
     }
-  } catch(err) {
-    console.error('Invite error:', err);
-    toast('Error sending invites: '+err.message,'error');
-    if(btn){ btn.textContent='Send Invites'; btn.disabled=false; }
-    return;
+    // Check if invite already pending
+    const existingInvite = await getDocs(query(collection(db,'invites'),where('classId','==',classId),where('studentEmail','==',email),where('status','==','pending')));
+    if(!existingInvite.empty){ existing++; continue; }
+    // Create invite
+    await addDoc(collection(db,'invites'),{
+      classId, className, studentEmail:email,
+      teacherId:currentUser.uid, teacherName:userProfile.displayName,
+      status:'pending', createdAt:serverTimestamp()
+    });
+    sent++;
   }
-
   closeModalDirect();
   const parts=[];
   if(sent) parts.push(`${sent} invite${sent!==1?'s':''} sent`);
   if(alreadyIn) parts.push(`${alreadyIn} already enrolled`);
   if(existing) parts.push(`${existing} already pending`);
   toast(parts.join(' · ')||'Done','success');
-  if(sent) pushNotif('Invites Sent',`${sent} invite${sent!==1?'s':''} sent for "${className}"`);
+  pushNotif('Invites Sent',`${sent} student invite${sent!==1?'s':''} sent for "${className}"`);
 };
 
 window.openPendingInvitesList = async(classId, className)=>{
-  const snaps = await getDocs(query(collection(db,'invites'),where('classId','==',classId)));
+  const snaps = await getDocs(query(collection(db,'invites'),where('classId','==',classId),orderBy('createdAt','desc')));
   if(!snaps.size){ toast('No invites for this class yet','info'); return; }
   const invites = snaps.docs.map(d=>({id:d.id,...d.data()}));
   const statusColor={pending:'var(--warn)',accepted:'var(--success)',declined:'var(--danger)'};
-  openModal(`Invites: ${className}`,`
+  openModal(`Invites — ${className}`,`
     <div class="tbl-wrap">
       <table class="tbl">
         <thead><tr><th>Email</th><th>Status</th><th>Sent</th><th></th></tr></thead>
@@ -3130,7 +2536,7 @@ window.openPendingInvitesList = async(classId, className)=>{
             <td style="font-family:var(--mono);font-size:12px;">${inv.studentEmail}</td>
             <td><span style="color:${statusColor[inv.status]||'var(--text3)'};font-family:var(--mono);font-size:11px;text-transform:uppercase;">${inv.status}</span></td>
             <td style="font-family:var(--mono);font-size:11px;color:var(--text3);">${ts2str(inv.createdAt)}</td>
-            <td>${inv.status==='pending'?`<button class="btn btn-danger btn-xs" onclick="cancelInvite('${inv.id}')">Cancel</button>`:''}</td>
+            <td>${inv.status==='pending'?`<button class="btn btn-danger btn-xs" onclick="cancelInvite('${inv.id}')">Cancel</button>`:'—'}</td>
           </tr>`).join('')}
         </tbody>
       </table>
@@ -3177,7 +2583,7 @@ function renderTeacherLessons(lessons){
       <div class="lesson-num">${String(l.order||1).padStart(2,'0')}</div>
       <div class="lesson-info">
         <div class="lesson-title">${l.title}</div>
-        <div class="lesson-meta">${l.className} · ${l.type||'Lesson'} · ${l.duration||''}</div>
+        <div class="lesson-meta">${l.className} · ${l.type||'Lesson'} · ${l.duration||'—'}</div>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="btn btn-ghost btn-xs" onclick="editLesson('${l.id}')">Edit</button>
@@ -3269,9 +2675,9 @@ function renderCanvas(){
 
     el.innerHTML = renderBlockContent(block)+`
       <div class="lb-block-toolbar" style="position:absolute;top:6px;right:6px;display:${lbSelectedId===block.id?'flex':'none'};gap:4px;z-index:10;">
-        <button onclick="event.stopPropagation();moveBlock('${block.id}',-1)" style="background:var(--surface2);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Move up">↑</button>
-        <button onclick="event.stopPropagation();moveBlock('${block.id}',1)" style="background:var(--surface2);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Move down">↓</button>
-        <button onclick="event.stopPropagation();duplicateBlock('${block.id}')" style="background:var(--surface2);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Duplicate">⧉</button>
+        <button onclick="event.stopPropagation();moveBlock('${block.id}',-1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Move up">↑</button>
+        <button onclick="event.stopPropagation();moveBlock('${block.id}',1)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Move down">↓</button>
+        <button onclick="event.stopPropagation();duplicateBlock('${block.id}')" style="background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Duplicate">⧉</button>
         <button onclick="event.stopPropagation();deleteBlock('${block.id}')" style="background:rgba(255,68,68,.15);border:1px solid var(--danger);color:var(--danger);padding:2px 6px;border-radius:2px;font-size:11px;cursor:pointer;" title="Delete">✕</button>
       </div>
       <div style="position:absolute;left:6px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;cursor:grab;display:${lbSelectedId===block.id?'block':'none'};" title="Drag to reorder">⋮⋮</div>`;
@@ -3288,12 +2694,12 @@ function renderBlockContent(b){
     case 'text': return `<div style="${pad}font-size:15px;color:var(--text2);line-height:1.7;">${esc(b.text).replace(/\n/g,'<br>')}</div>`;
     case 'image':
       if(!b.src) return `<div style="${pad}background:var(--surface2);border:2px dashed var(--border);border-radius:4px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;" onclick="event.stopPropagation();triggerImageUpload('${b.id}')">
-        <div style="font-size:28px;opacity:.4;">🖼</div>
+        <div style="font-size:28px;opacity:.4;"></div>
         <div style="font-size:13px;color:var(--text3);">Click or drag an image here</div>
         <input type="file" id="img-inp-${b.id}" style="display:none;" accept="image/*" onchange="handleImageFile(event,'${b.id}')">
       </div>`;
       return `<div style="padding:8px 40px 8px 32px;"><img src="${b.src}" alt="${esc(b.alt)}" style="width:${b.width||'100%'};max-width:100%;border-radius:4px;display:block;">${b.caption?`<div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">${esc(b.caption)}</div>`:''}</div>`;
-    case 'code': return `<div style="${pad}"><pre style="background:var(--surface2);border-radius:4px;padding:14px;margin:0;overflow-x:auto;"><code style="font-family:var(--mono);font-size:13px;color:var(--white);">${esc(b.text)}</code></pre>${b.lang?`<div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.1em;">${b.lang}</div>`:''}</div>`;
+    case 'code': return `<div style="${pad}"><pre style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:14px;margin:0;overflow-x:auto;"><code style="font-family:var(--mono);font-size:13px;color:var(--white);">${esc(b.text)}</code></pre>${b.lang?`<div style="font-family:var(--mono);font-size:9px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:.1em;">${b.lang}</div>`:''}</div>`;
     case 'callout': {
       const colors={info:'rgba(255,255,255,.08)',warn:'rgba(255,204,68,.1)',danger:'rgba(255,68,68,.1)',success:'rgba(68,255,136,.1)'};
       const borders={info:'var(--white)',warn:'var(--warn)',danger:'var(--danger)',success:'var(--success)'};
@@ -3341,7 +2747,7 @@ function renderProps(id){
   switch(block.type){
     case 'heading':
       html=pg('Text',ta('text','Heading text',block.text))+
-           pg('Level',sel('level',[{v:'h1',l:'H1: Large'},{v:'h2',l:'H2: Medium'},{v:'h3',l:'H3: Small'}]));
+           pg('Level',sel('level',[{v:'h1',l:'H1 — Large'},{v:'h2',l:'H2 — Medium'},{v:'h3',l:'H3 — Small'}]));
       break;
     case 'text':
       html=pg('Text',ta('text','Paragraph text...',block.text));
@@ -3518,7 +2924,7 @@ function serializeBlocks(){
       }
       case 'quiz': return `<div class="quiz-block" data-correct="${b.correct||0}" style="background:var(--surface2);padding:16px;border-radius:4px;margin:12px 0;">
         <div style="font-weight:600;margin-bottom:10px;">${b.question}</div>
-        ${(b.options||[]).map((opt,i)=>`<div class="quiz-opt" data-idx="${i}" onclick="checkQuizAnswer(this,${b.correct||0})" style="padding:8px 12px;background:var(--surface);border-radius:3px;margin-bottom:6px;cursor:pointer;font-size:13px;">${opt}</div>`).join('')}
+        ${(b.options||[]).map((opt,i)=>`<div class="quiz-opt" data-idx="${i}" onclick="checkQuizAnswer(this,${b.correct||0})" style="padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:3px;margin-bottom:6px;cursor:pointer;font-size:13px;">${opt}</div>`).join('')}
         ${b.explanation?`<div class="quiz-explain" style="display:none;margin-top:8px;font-size:12px;color:var(--text3);font-style:italic;">${b.explanation}</div>`:''}
       </div>`;
       default: return '';
@@ -3658,8 +3064,8 @@ window.filterTeacherStudents = async(classId, className)=>{
     <tbody>
       ${students.map(s=>`
         <tr>
-          <td style="font-weight:600;">${s.displayName||''}</td>
-          <td style="font-family:var(--mono);font-size:12px;color:var(--text3);">${s.email||''}</td>
+          <td style="font-weight:600;">${s.displayName||'—'}</td>
+          <td style="font-family:var(--mono);font-size:12px;color:var(--text3);">${s.email||'—'}</td>
           <td><input class="grade-input" id="pts-${s.id}" value="${s.points||0}" type="number" min="0"></td>
           <td><span class="badge badge-grey">${(s.enrolledClasses||[]).length} classes</span></td>
           <td class="student-row-actions">
@@ -3695,35 +3101,20 @@ window.openAddStudentFromStudentsPanel = async()=>{
 
 window.sendEmailInvitesFromPanel = async()=>{
   const sel=document.getElementById('ase-class');
-  if(!sel||!sel.value){ toast('Select a class first','error'); return; }
   const classId=sel.value;
-  const className=sel.options[sel.selectedIndex]?.text||'';
-  const raw=document.getElementById('ase-emails')?.value||'';
+  const className=sel.options[sel.selectedIndex].dataset.name||sel.options[sel.selectedIndex].text;
+  const raw=document.getElementById('ase-emails').value;
   const emails=raw.split(/[\n,]+/).map(e=>e.trim().toLowerCase()).filter(e=>e.includes('@'));
-  if(!emails.length){ toast('Enter at least one valid email','error'); return; }
-
-  const btn=document.querySelector('#modal-box .btn-white');
-  if(btn){btn.textContent='Sending...';btn.disabled=true;}
-
+  if(!emails.length){ toast('Enter at least one email','error'); return; }
+  // reuse sendEmailInvites logic
+  document.getElementById('invite-emails') || document.createElement('textarea');
   let sent=0;
-  try{
-    for(const email of emails){
-      // Two where clauses only: avoids composite index requirement
-      const existing=await getDocs(query(collection(db,'invites'),
-        where('classId','==',classId),where('studentEmail','==',email)));
-      const hasPending=existing.docs.some(d=>d.data().status==='pending');
-      if(!hasPending){
-        await addDoc(collection(db,'invites'),{classId,className,studentEmail:email,
-          teacherId:currentUser.uid,teacherName:userProfile.displayName,
-          status:'pending',createdAt:serverTimestamp()});
-        sent++;
-      }
+  for(const email of emails){
+    const existing=await getDocs(query(collection(db,'invites'),where('classId','==',classId),where('studentEmail','==',email),where('status','==','pending')));
+    if(existing.empty){
+      await addDoc(collection(db,'invites'),{classId,className,studentEmail:email,teacherId:currentUser.uid,teacherName:userProfile.displayName,status:'pending',createdAt:serverTimestamp()});
+      sent++;
     }
-  }catch(err){
-    console.error('Invite error:',err);
-    toast('Error: '+err.message,'error');
-    if(btn){btn.textContent='Send Invites';btn.disabled=false;}
-    return;
   }
   closeModalDirect();
   toast(`${sent} invite${sent!==1?'s':''} sent`,'success');
@@ -3736,7 +3127,7 @@ window.awardPoints = async(uid)=>{
 };
 
 window.giveCoinsToStudent = (uid, name, currentPts)=>{
-  openModal(`Give VCoins: ${name}`,`
+  openModal(`Give VCoins — ${name}`,`
     <div style="margin-bottom:16px;">
       <div style="font-size:13px;color:var(--text2);margin-bottom:12px;">Current balance: <strong style="color:var(--warn)">${currentPts} VC</strong></div>
       <div class="form-group"><label class="form-label">Amount to Award</label>
@@ -3913,10 +3304,6 @@ function ico(name, size=16){
     external:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`,
     calendar:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
     ai:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 8v4l3 3"/><path d="M18 2v4h4"/></svg>`,
-    trophy:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>`,
-    link:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
-    check:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>`,
-    event:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>`,
     img:`<svg ${s} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
   };
   return icons[name]||'';
@@ -4154,7 +3541,7 @@ document.addEventListener('click', e => {
 
   const explain = block.querySelector('.quiz-explain');
   if(explain) explain.style.display = 'block';
-  toast(isCorrect ? '✓ Correct!' : 'Not quite: see the explanation below', isCorrect?'success':'info');
+  toast(isCorrect ? '✓ Correct!' : 'Not quite — see the explanation below', isCorrect?'success':'info');
 });
 
 // ── LIGHTBOX ──
@@ -4181,1061 +3568,6 @@ document.addEventListener('keydown', e=>{
     else if(document.getElementById('doc-viewer').classList.contains('open')) closeDocViewer();
   }
 });
-
-
-// ══════════════════════════════════════════════════════
-// COMPETITION MODE
-// ══════════════════════════════════════════════════════
-
-function competitionPanel(){
-  return `<div class="panel" id="t-panel-competition">
-    <div class="comp-header">
-      <div class="comp-title-row">
-        <div>
-          <div class="panel-title">Competition Mode</div>
-          <div class="panel-sub">Manage teams, events, rankings, and match prep</div>
-        </div>
-        <div class="team-selector">
-          <select class="team-select" id="comp-team-sel" onchange="switchCompTeam()">
-            <option value="">Select team...</option>
-          </select>
-          <button class="btn btn-ghost btn-sm" id="comp-members-btn" onclick="openTeamMembersModal()" style="display:none;">
-            ${ico('users',13)} Members
-          </button>
-          <button class="btn btn-white btn-sm" id="comp-new-team-btn" onclick="openCreateTeamModal()" style="display:none;">+ New Team</button>
-        </div>
-      </div>
-    </div>
-    <div class="comp-tabs" id="comp-tabs">
-      <div class="comp-tab active" onclick="compTab('events')">
-        ${ico('event',14)} Events
-      </div>
-      <div class="comp-tab" onclick="compTab('info')">
-        ${ico('trophy',14)} Team Info
-      </div>
-      <div class="comp-tab" onclick="compTab('links')">
-        ${ico('link',14)} Links
-      </div>
-      <div class="comp-tab" onclick="compTab('tasks')">
-        ${ico('check',14)} Tasks
-      </div>
-    </div>
-    <div class="comp-body">
-      <div class="comp-tab-panel active" id="comp-panel-events"></div>
-      <div class="comp-tab-panel" id="comp-panel-info"></div>
-      <div class="comp-tab-panel" id="comp-panel-links"></div>
-      <div class="comp-tab-panel" id="comp-panel-tasks"></div>
-    </div>
-  </div>`;
-}
-
-// ── State ──
-let _compTeamId = null;
-let _compTeamData = null;
-let _taskListener = null;
-
-// ── Init ──
-async function loadCompetitionPanel(){
-  const sel = document.getElementById('comp-team-sel');
-  if(!sel) return;
-  sel.innerHTML = '<option value="">Select team...</option>';
-
-  // Fetch teams where user is coach OR member
-  const isTeacher = userProfile.role === 'teacher';
-  let allDocs = [];
-
-  if(isTeacher){
-    const snap = await getDocs(query(collection(db,'teams'),where('teacherId','==',currentUser.uid)));
-    allDocs = snap.docs;
-  }
-  // Also fetch teams where user is a member (students, or teachers on other teams)
-  const memberSnap = await getDocs(query(collection(db,'teams'),where('members','array-contains',currentUser.uid)));
-  const existingIds = new Set(allDocs.map(d=>d.id));
-  memberSnap.docs.forEach(d=>{ if(!existingIds.has(d.id)) allDocs.push(d); });
-
-  allDocs.forEach(d => {
-    const o = document.createElement('option');
-    o.value = d.id; o.textContent = d.data().name; sel.appendChild(o);
-  });
-
-  if(allDocs.length > 0){
-    sel.value = allDocs[0].id;
-    await switchCompTeam();
-  } else {
-    const emptyMsg = isTeacher
-      ? `<button class="btn btn-white" style="margin-top:16px;" onclick="openCreateTeamModal()">+ Create Team</button>`
-      : `<p style="font-size:13px;color:var(--text3);margin-top:8px;">Ask your coach to add you to a team.</p>`;
-    document.getElementById('comp-panel-events').innerHTML = `
-      <div class="empty-state" style="padding-top:60px;">
-        ${ico('trophy',48)}
-        <h3>No teams yet</h3>
-        ${emptyMsg}
-      </div>`;
-  }
-}
-
-window.switchCompTeam = async()=>{
-  const sel = document.getElementById('comp-team-sel');
-  _compTeamId = sel?.value || null;
-  if(!_compTeamId) return;
-  const snap = await getDoc(doc(db,'teams',_compTeamId));
-  if(!snap.exists()) return;
-  _compTeamData = {id:snap.id,...snap.data()};
-
-  // Show/hide coach-only UI
-  const isCoach = _compTeamData.teacherId === currentUser.uid;
-  const membersBtn = document.getElementById('comp-members-btn');
-  const newTeamBtn = document.getElementById('comp-new-team-btn');
-  if(membersBtn) membersBtn.style.display = isCoach ? 'inline-flex' : 'none';
-  if(newTeamBtn) newTeamBtn.style.display = userProfile.role==='teacher' ? 'inline-flex' : 'none';
-
-  // Render whichever tab is active
-  const activeTab = document.querySelector('.comp-tab.active');
-  const tabName = activeTab?.textContent?.trim().toLowerCase().replace(/\s+.*/,'') || 'events';
-  compTab(tabName);
-};
-
-window.compTab = (tab)=>{
-  document.querySelectorAll('.comp-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.comp-tab-panel').forEach(p=>p.classList.remove('active'));
-  // Match tab by first word of text content
-  document.querySelectorAll('.comp-tab').forEach(t=>{
-    const name = t.textContent.trim().toLowerCase().replace(/\s+.*/,'');
-    if(name===tab) t.classList.add('active');
-  });
-  const panel = document.getElementById('comp-panel-'+tab);
-  if(panel) panel.classList.add('active');
-
-  if(!_compTeamId){
-    if(panel) panel.innerHTML='<div style="padding:40px;text-align:center;color:var(--text3);font-size:13px;">Select or create a team first.</div>';
-    return;
-  }
-  if(tab==='events') renderCompEvents();
-  if(tab==='info')   { renderCompInfo(); if(_reToken && _compTeamData?.number) fetchLiveRankings(); }
-  if(tab==='links')  renderCompLinks();
-  if(tab==='tasks')  renderCompTasks();
-};
-
-// ──────────────────── TEAM MEMBERS ────────────────────
-window.openTeamMembersModal = async()=>{
-  if(!_compTeamId||!_compTeamData) return;
-  const isCoach = _compTeamData.teacherId === currentUser.uid;
-
-  // Load member profiles
-  const memberIds = _compTeamData.members || [];
-  const profiles = await Promise.all(memberIds.map(uid=>getDoc(doc(db,'users',uid))));
-  const members = profiles.filter(s=>s.exists()).map(s=>({id:s.id,...s.data()}));
-
-  // Load pending invites
-  const invSnaps = await getDocs(query(collection(db,'invites'),
-    where('classId','==',_compTeamId), where('type','==','team')));
-  const pendingInvites = invSnaps.docs.filter(d=>d.data().status==='pending').map(d=>({id:d.id,...d.data()}));
-
-  openModal(`Team Members: ${_compTeamData.name}`,`
-    <div style="margin-bottom:16px;">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">${members.length} Member${members.length!==1?'s':''}</div>
-      ${members.map(m=>`
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
-          <div style="width:30px;height:30px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">
-            ${(m.displayName||'?')[0].toUpperCase()}
-          </div>
-          <div style="flex:1;">
-            <div style="font-size:13px;font-weight:600;">${m.displayName||''}</div>
-            <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">${m.email||''}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${m.id===_compTeamData.teacherId ? '<span class="badge badge-white">Coach</span>' : ''}
-            ${isCoach && m.id!==currentUser.uid ? `<button class="btn btn-danger btn-xs" onclick="removeTeamMember('${m.id}')">Remove</button>` : ''}
-          </div>
-        </div>`).join('')}
-    </div>
-    ${isCoach ? `
-    <div style="border-top:1px solid var(--border);padding-top:16px;">
-      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;">Invite Members</div>
-      <div style="display:flex;gap:8px;margin-bottom:8px;">
-        <textarea class="form-textarea" id="team-invite-emails" style="min-height:80px;font-family:var(--mono);font-size:13px;flex:1;" placeholder="student@school.edu&#10;teammate@school.edu"></textarea>
-      </div>
-      <div class="form-hint" style="margin-bottom:10px;">One email per line. Members can view all tabs and collaborate on tasks.</div>
-      ${pendingInvites.length ? `
-        <div style="margin-bottom:10px;">
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:6px;">PENDING INVITES</div>
-          ${pendingInvites.map(inv=>`
-            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:12px;">
-              <span style="font-family:var(--mono);color:var(--text2);">${inv.studentEmail}</span>
-              <button class="btn btn-danger btn-xs" onclick="cancelTeamInvite('${inv.id}')">Cancel</button>
-            </div>`).join('')}
-        </div>` : ''}
-    </div>` : ''}`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Close</button>
-     ${isCoach ? `<button class="btn btn-white btn-sm" onclick="sendTeamInvites()">Send Invites</button>` : ''}`
-  );
-};
-
-window.sendTeamInvites = async()=>{
-  const raw = document.getElementById('team-invite-emails')?.value||'';
-  const nl = String.fromCharCode(10);
-  const emails = raw.split(nl).concat(raw.split(',')).map(function(e){ return e.trim().toLowerCase(); }).filter(function(e){ return e.includes('@'); });
-  if(!emails.length){ toast('Enter at least one email','error'); return; }
-
-  const btn = document.querySelector('#modal-box .btn-white');
-  if(btn){ btn.textContent='Sending...'; btn.disabled=true; }
-
-  let sent=0, existing=0;
-  for(const email of emails){
-    const existQ = await getDocs(query(collection(db,'invites'),
-      where('classId','==',_compTeamId), where('studentEmail','==',email)));
-    const hasPending = existQ.docs.some(d=>d.data().status==='pending');
-    if(hasPending){ existing++; continue; }
-    await addDoc(collection(db,'invites'),{
-      classId:_compTeamId, className:_compTeamData.name,
-      studentEmail:email, type:'team',
-      teacherId:currentUser.uid, teacherName:userProfile.displayName||'',
-      status:'pending', createdAt:serverTimestamp()
-    });
-    sent++;
-  }
-  closeModalDirect();
-  const parts=[];
-  if(sent) parts.push(`${sent} invite${sent!==1?'s':''} sent`);
-  if(existing) parts.push(`${existing} already pending`);
-  toast(parts.join(' · ')||'Done','success');
-};
-
-window.cancelTeamInvite = async(inviteId)=>{
-  await deleteDoc(doc(db,'invites',inviteId));
-  toast('Invite cancelled','info');
-  openTeamMembersModal();
-};
-
-window.removeTeamMember = async(memberId)=>{
-  if(!confirm('Remove this member from the team?')) return;
-  await updateDoc(doc(db,'teams',_compTeamId),{members:arrayRemove(memberId)});
-  _compTeamData.members = (_compTeamData.members||[]).filter(id=>id!==memberId);
-  // Remove the team from user's teamIds
-  await updateDoc(doc(db,'users',memberId),{teamIds:arrayRemove(_compTeamId)}).catch(()=>{});
-  toast('Member removed','info');
-  openTeamMembersModal();
-};
-
-// ──────────────────── CREATE TEAM ────────────────────
-window.openCreateTeamModal = ()=>{
-  openModal('Create Team',`
-    <div class="form-group"><label class="form-label">Team Name</label>
-      <input class="form-input" id="ct-name" placeholder="e.g. Vexify Robotics 1234A"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Team Number</label>
-        <input class="form-input" id="ct-number" placeholder="1234A"></div>
-      <div class="form-group"><label class="form-label">Program</label>
-        <select class="form-select" id="ct-program">
-          <option value="VRC">VRC (High School)</option>
-          <option value="VIQRC">VIQRC (Middle School)</option>
-          <option value="VEXU">VEXU (College)</option>
-          <option value="VURC">VURC</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Season</label>
-      <input class="form-input" id="ct-season" placeholder="e.g. 2024-2025 High Stakes"></div>
-    <div class="form-group"><label class="form-label">Organization / School</label>
-      <input class="form-input" id="ct-org" placeholder="e.g. Lincoln High School"></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="createTeam()">Create Team</button>`);
-};
-
-window.createTeam = async()=>{
-  const name = document.getElementById('ct-name')?.value.trim();
-  const number = document.getElementById('ct-number')?.value.trim().toUpperCase();
-  const program = document.getElementById('ct-program')?.value;
-  const season = document.getElementById('ct-season')?.value.trim();
-  const org = document.getElementById('ct-org')?.value.trim();
-  if(!name||!number){ toast('Name and team number required','error'); return; }
-  const ref = await addDoc(collection(db,'teams'),{
-    name, number, program, season, org,
-    teacherId:currentUser.uid, teacherName:userProfile.displayName||'',
-    members:[currentUser.uid], createdAt:serverTimestamp(),
-    worldSkillsRank:'N/A', regionalRank:'N/A', wins:0, losses:0, ties:0,
-    autonomousWinPoint:0, avgScore:0, highScore:0, links:[], events:[]
-  });
-  closeModalDirect();
-  toast(`Team ${number} created!`,'success');
-  // Reload team selector and switch to new team
-  const sel = document.getElementById('comp-team-sel');
-  if(sel){
-    const o = document.createElement('option');
-    o.value = ref.id; o.textContent = name; sel.appendChild(o);
-    sel.value = ref.id;
-    await switchCompTeam();
-  }
-};
-
-// ──────────────────── EVENTS TAB ────────────────────
-async function renderCompEvents(){
-  const el = document.getElementById('comp-panel-events');
-  if(!el||!_compTeamData) return;
-  el.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading...</div>';
-
-  const evSnaps = await getDocs(query(collection(db,'teams',_compTeamId,'events'),orderBy('date')));
-  const events = evSnaps.docs.map(d=>({id:d.id,...d.data()}));
-  const now = new Date();
-
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:700;">${events.length} Event${events.length!==1?'s':''}</div>
-      ${_compTeamData?.teacherId===currentUser.uid ? `<div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost btn-sm" onclick="openVexEventsSearch()">
-          ${ico('event',13)} Find via VEX Events API
-        </button>
-        <button class="btn btn-white btn-sm" onclick="openAddEventModal()">+ Add Manually</button>
-      </div>` : ''}
-    </div>
-    ${!events.length ? `
-      <div class="empty-state">
-        ${ico('event',40)}
-        <h3>No events yet</h3>
-        <p>Add events manually or search the VEX Events API.</p>
-      </div>` :
-      events.map(ev=>{
-        const evDate = ev.date?.toDate ? ev.date.toDate() : new Date(ev.date||Date.now());
-        const isPast = evDate < now;
-        const month = evDate.toLocaleString('en-US',{month:'short'}).toUpperCase();
-        const day = evDate.getDate();
-        return `<div class="event-card">
-          <div class="event-date-badge">
-            <div class="event-date-month">${month}</div>
-            <div class="event-date-day">${day}</div>
-          </div>
-          <div class="event-info">
-            <div class="event-name">${ev.name}</div>
-            <div class="event-meta">
-              <span>📍 ${ev.location||'Location TBD'}</span>
-              <span>🏆 ${ev.program||_compTeamData.program||'VRC'}</span>
-              ${ev.teamCount ? `<span>👥 ${ev.teamCount} teams</span>` : ''}
-              ${ev.sku ? `<span style="font-family:var(--mono);">SKU: ${ev.sku}</span>` : ''}
-            </div>
-            ${ev.notes ? `<div style="font-size:12px;color:var(--text3);margin-top:6px;">${ev.notes}</div>` : ''}
-          </div>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            <span class="event-type-badge ${isPast?'event-past':'event-upcoming'}">${isPast?'Past':'Upcoming'}</span>
-            ${_compTeamData?.teacherId===currentUser.uid ? `<button class="btn btn-danger btn-xs" onclick="deleteCompEvent('${ev.id}')">Remove</button>` : ''}
-          </div>
-        </div>`;
-      }).join('')}`;
-}
-
-window.openAddEventModal = ()=>{
-  openModal('Add Event Manually',`
-    <div class="form-group"><label class="form-label">Event Name</label>
-      <input class="form-input" id="ae-name" placeholder="e.g. State Championship"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Date</label>
-        <input class="form-input" id="ae-date" type="date"></div>
-      <div class="form-group"><label class="form-label">Program</label>
-        <select class="form-select" id="ae-program">
-          <option value="VRC">VRC</option><option value="VIQRC">VIQRC</option>
-          <option value="VEXU">VEXU</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Location</label>
-      <input class="form-input" id="ae-location" placeholder="City, State / Venue name"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">SKU (optional)</label>
-        <input class="form-input" id="ae-sku" placeholder="RE-VRC-24-1234"></div>
-      <div class="form-group"><label class="form-label">Teams Expected</label>
-        <input class="form-input" id="ae-teams" type="number" placeholder="64"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Notes</label>
-      <textarea class="form-textarea" id="ae-notes" style="min-height:60px;" placeholder="Hotel info, registration deadline, etc."></textarea></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="addCompEvent()">Add Event</button>`);
-};
-
-window.addCompEvent = async()=>{
-  const name = document.getElementById('ae-name')?.value.trim();
-  const dateVal = document.getElementById('ae-date')?.value;
-  if(!name){ toast('Event name required','error'); return; }
-  const dateObj = dateVal ? new Date(dateVal+'T12:00:00') : new Date();
-  await addDoc(collection(db,'teams',_compTeamId,'events'),{
-    name, date:dateObj,
-    program:document.getElementById('ae-program')?.value||'VRC',
-    location:document.getElementById('ae-location')?.value.trim()||'',
-    sku:document.getElementById('ae-sku')?.value.trim()||'',
-    teamCount:parseInt(document.getElementById('ae-teams')?.value)||0,
-    notes:document.getElementById('ae-notes')?.value.trim()||'',
-    source:'manual', addedAt:serverTimestamp()
-  });
-  closeModalDirect();
-  toast('Event added','success');
-  renderCompEvents();
-};
-
-window.deleteCompEvent = async(eventId)=>{
-  if(!confirm('Remove this event?')) return;
-  await deleteDoc(doc(db,'teams',_compTeamId,'events',eventId));
-  renderCompEvents();
-};
-
-// VEX Events API search
-window.openVexEventsSearch = ()=>{
-  openModal('Find Events: VEX Events API',`
-    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">
-      Search the live RobotEvents.com API for events near you or matching your program.
-    </p>
-    <div class="vex-search-row" style="flex-wrap:wrap;gap:8px;">
-      <input class="form-input" id="vex-search-q" placeholder="Event name or leave blank for all" style="flex:1;min-width:180px;">
-      <select class="form-select" id="vex-search-prog" style="width:110px;">
-        <option value="VRC">VRC</option><option value="VIQRC">VIQRC</option><option value="VEXU">VEXU</option>
-      </select>
-      <button class="btn btn-white btn-sm" onclick="searchVexEvents()">Search</button>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
-      <input class="form-input" id="vex-search-token" type="password"
-             placeholder="RobotEvents API token (required for search)"
-             style="flex:1;font-size:12px;"
-             value="">
-    </div>
-    <div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:12px;">
-      API: events.vex.com/api/v2 · Token from events.vex.com → My Account → API Key
-    </div>
-    <div id="vex-results" style="max-height:380px;overflow-y:auto;"></div>`);
-};
-
-window.searchVexEvents = async()=>{
-  const q       = document.getElementById('vex-search-q')?.value.trim();
-  const prog    = document.getElementById('vex-search-prog')?.value || 'VRC';
-  const tokenIn = document.getElementById('vex-search-token')?.value.trim();
-  if(tokenIn) _reToken = tokenIn;
-
-  const resultsEl = document.getElementById('vex-results');
-  if(!resultsEl) return;
-  resultsEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">Searching RobotEvents...</div>';
-
-  // Program IDs for events.vex.com/api/v2
-  const progIds = { VRC:1, VIQRC:41, VEXU:4, VURC:57 };
-  const progId  = progIds[prog] || 1;
-
-  // Current active season IDs (2024-25): VRC=190, VIQRC=191, VEXU=192
-  const seasonIds = { 1:190, 41:191, 4:192, 57:190 };
-  const seasonId  = seasonIds[progId] || 190;
-
-  const params = new URLSearchParams();
-  params.append('program[]', progId);
-  params.append('season[]',  seasonId);
-  params.append('per_page', 25);
-  if(q) params.set('name', q);
-
-  const headers = { Accept: 'application/json' };
-  if(_reToken) headers['Authorization'] = `Bearer ${_reToken}`;
-
-  try {
-    const res = await fetch(`https://events.vex.com/api/v2/events?${params}`, { headers });
-
-    if(res.status === 401){
-      resultsEl.innerHTML = `<div style="padding:12px 0;color:var(--warn);font-size:13px;">
-        ⚠ Authentication required for event search.<br>
-        <span style="font-size:12px;color:var(--text3);">Paste your RobotEvents token in the Team Info tab, then search again.</span>
-      </div>`;
-      return;
-    }
-    if(!res.ok) throw new Error(`RobotEvents API error ${res.status}`);
-
-    const data   = await res.json();
-    const events = data.data || [];
-
-    if(!events.length){
-      resultsEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text3);font-size:13px;">No events found. Try a different location or program.</div>';
-      return;
-    }
-
-    resultsEl.innerHTML = events.map(ev => {
-      const start  = ev.start ? new Date(ev.start).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'TBD';
-      const city   = ev.location?.city   || '';
-      const region = ev.location?.region || '';
-      const loc    = [city, region].filter(Boolean).join(', ') || ev.location?.venue || '';
-      const payload = { id:ev.id, name:ev.name, date:ev.start, loc, sku:ev.sku||'', teams:ev.capacity||0, prog };
-      const safe = JSON.stringify(payload).replace(/"/g,'&quot;');
-      return `<div class="vex-result-item" onclick="addVexEvent('${safe}')">
-        <div>
-          <div style="font-weight:600;margin-bottom:2px;">${ev.name}</div>
-          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);">${start} · ${loc}${ev.sku ? ' · '+ev.sku : ''}</div>
-        </div>
-        <button class="btn btn-white btn-xs" onclick="event.stopPropagation();addVexEvent('${safe}')">+ Add</button>
-      </div>`;
-    }).join('');
-  } catch(e){
-    resultsEl.innerHTML = `<div style="padding:16px;color:var(--danger);font-size:13px;">Error: ${e.message}</div>`;
-  }
-};
-
-window.addVexEvent = async(safeDataStr)=>{
-  let evData;
-  try { evData = JSON.parse(safeDataStr.replace(/&quot;/g,'"')); } catch(e){ toast('Error parsing event data','error'); return; }
-  await addDoc(collection(db,'teams',_compTeamId,'events'),{
-    name:evData.name||'VEX Event',
-    date:evData.date ? new Date(evData.date) : new Date(),
-    location:evData.loc||'',
-    sku:evData.sku||'',
-    teamCount:evData.teams||0,
-    program:evData.prog||_compTeamData?.program||'VRC',
-    source:'robotevents',
-    robotEventsId:evData.id||'',
-    addedAt:serverTimestamp()
-  });
-  toast('Event added!','success');
-  closeModalDirect();
-  renderCompEvents();
-};
-
-// ──────────────────── TEAM INFO TAB ────────────────────
-async function renderCompInfo(){
-  const el = document.getElementById('comp-panel-info');
-  if(!el||!_compTeamData) return;
-
-  const t = _compTeamData;
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <div>
-        <div style="font-size:24px;font-weight:700;letter-spacing:-.02em;">${t.name}</div>
-        <div style="font-family:var(--mono);font-size:12px;color:var(--text3);margin-top:3px;">${t.number} · ${t.program||'VRC'} · ${t.season||''} · ${t.org||''}</div>
-      </div>
-      ${_compTeamData?.teacherId===currentUser.uid ? `<button class="btn btn-ghost btn-sm" onclick="openEditTeamStatsModal()">Edit Stats</button>` : ''}
-    </div>
-    ${t.lastPulled ? `<div style="font-family:var(--mono);font-size:10px;color:var(--text3);margin-bottom:14px;">Last pulled from RobotEvents: ${new Date(t.lastPulled).toLocaleString()}</div>` : ''}
-    <div class="team-info-grid">
-      <div class="team-stat-card">
-        <div class="team-stat-label">World Skills Rank</div>
-        <div class="team-stat-val" style="color:var(--warn);">${t.worldSkillsRank||''}</div>
-        <div class="team-stat-sub">Combined score: ${t.skillsScore||'N/A'}</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Regional Rank</div>
-        <div class="team-stat-val">${t.regionalRank||''}</div>
-        <div class="team-stat-sub">${t.region||'Latest tournament'}</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">W / L / T</div>
-        <div class="team-stat-val" style="font-size:20px;">${t.wins||0} / ${t.losses||0} / ${t.ties||0}</div>
-        <div class="team-stat-sub">Win rate: ${(t.wins||0)+(t.losses||0)+(t.ties||0)>0?Math.round(((t.wins||0)/((t.wins||0)+(t.losses||0)+(t.ties||0)))*100):0}%</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Avg Match Score</div>
-        <div class="team-stat-val">${t.avgScore||'N/A'}</div>
-        <div class="team-stat-sub">Points per match</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">High Score</div>
-        <div class="team-stat-val">${t.highScore||'N/A'}</div>
-        <div class="team-stat-sub">Best single match</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Driver Skills</div>
-        <div class="team-stat-val">${t.driverScore||'N/A'}</div>
-        <div class="team-stat-sub">Driver run score</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Prog Skills</div>
-        <div class="team-stat-val">${t.progScore||'N/A'}</div>
-        <div class="team-stat-sub">Autonomous run</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Auto Win Points</div>
-        <div class="team-stat-val">${t.autonomousWinPoint||0}</div>
-        <div class="team-stat-sub">AWP total</div>
-      </div>
-      <div class="team-stat-card">
-        <div class="team-stat-label">Awards</div>
-        <div class="team-stat-val">${t.totalAwards||0}</div>
-        <div class="team-stat-sub">Total won</div>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">
-        <div class="card-title">Live Rankings: RobotEvents API</div>
-        <button class="btn btn-white btn-xs" onclick="fetchLiveRankings()" id="fetch-btn">↻ Refresh</button>
-      </div>
-      <div id="live-rankings-body">
-        <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px;">
-          <div style="flex:1;">
-            <label class="form-label">RobotEvents API Token</label>
-            <input class="form-input" id="re-api-token" type="password" placeholder="Paste Bearer token from events.vex.com" style="font-size:13px;" value="${_reToken}">
-          </div>
-          <button class="btn btn-white btn-sm" onclick="fetchLiveRankings()">Pull Stats</button>
-        </div>
-        <div class="form-hint" style="margin-bottom:8px;">
-          Get your free token: <a href="https://events.vex.com/api/v2" target="_blank" style="color:var(--text2);text-decoration:underline;">events.vex.com</a> → My Account → Generate API Key. Pulls skills rank, W/L/T, avg score, high score, AWP, and upcoming events.
-        </div>
-        <div id="re-status"></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-title">Team Notes</div></div>
-      <textarea class="form-textarea" id="team-notes-ta" style="min-height:100px;" placeholder="Strategy notes, strengths, areas to improve...">${t.notes||''}</textarea>
-      <button class="btn btn-white btn-sm" style="margin-top:10px;" onclick="saveTeamNotes()">Save Notes</button>
-    </div>`;
-}
-
-window.openEditTeamStatsModal = ()=>{
-  if(!_compTeamData) return;
-  const t = _compTeamData;
-  openModal('Edit Team Stats',`
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">World Skills Rank</label>
-        <input class="form-input" id="ts-wsrank" value="${t.worldSkillsRank||''}"></div>
-      <div class="form-group"><label class="form-label">Regional Rank</label>
-        <input class="form-input" id="ts-regrank" value="${t.regionalRank||''}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Wins</label>
-        <input class="form-input" id="ts-wins" type="number" value="${t.wins||0}"></div>
-      <div class="form-group"><label class="form-label">Losses</label>
-        <input class="form-input" id="ts-losses" type="number" value="${t.losses||0}"></div>
-      <div class="form-group"><label class="form-label">Ties</label>
-        <input class="form-input" id="ts-ties" type="number" value="${t.ties||0}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Avg Score</label>
-        <input class="form-input" id="ts-avg" type="number" value="${t.avgScore||0}"></div>
-      <div class="form-group"><label class="form-label">High Score</label>
-        <input class="form-input" id="ts-high" type="number" value="${t.highScore||0}"></div>
-      <div class="form-group"><label class="form-label">AWP Count</label>
-        <input class="form-input" id="ts-awp" type="number" value="${t.autonomousWinPoint||0}"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Region</label>
-      <input class="form-input" id="ts-region" value="${t.region||''}" placeholder="e.g. California"></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="saveTeamStats()">Save</button>`);
-};
-
-window.saveTeamStats = async()=>{
-  const updates = {
-    worldSkillsRank:document.getElementById('ts-wsrank')?.value.trim()||'',
-    regionalRank:document.getElementById('ts-regrank')?.value.trim()||'',
-    wins:parseInt(document.getElementById('ts-wins')?.value)||0,
-    losses:parseInt(document.getElementById('ts-losses')?.value)||0,
-    ties:parseInt(document.getElementById('ts-ties')?.value)||0,
-    avgScore:parseFloat(document.getElementById('ts-avg')?.value)||0,
-    highScore:parseInt(document.getElementById('ts-high')?.value)||0,
-    autonomousWinPoint:parseInt(document.getElementById('ts-awp')?.value)||0,
-    region:document.getElementById('ts-region')?.value.trim()||''
-  };
-  await updateDoc(doc(db,'teams',_compTeamId), updates);
-  Object.assign(_compTeamData, updates);
-  closeModalDirect();
-  toast('Stats updated','success');
-  renderCompInfo();
-};
-
-window.saveTeamNotes = async()=>{
-  const notes = document.getElementById('team-notes-ta')?.value||'';
-  await updateDoc(doc(db,'teams',_compTeamId),{notes});
-  _compTeamData.notes = notes;
-  toast('Notes saved','success');
-};
-
-// ── Token persisted in localStorage so it survives refresh ──
-let _reToken = '';
-try { _reToken = localStorage.getItem('vex_re_token') || ''; } catch(e){}
-
-window.fetchLiveRankings = async()=>{
-  const inputToken = document.getElementById('re-api-token')?.value.trim();
-  if(inputToken){
-    _reToken = inputToken;
-    try { localStorage.setItem('vex_re_token', _reToken); } catch(e){}
-  }
-  const token = _reToken;
-
-  if(!token){ toast('Paste your RobotEvents API token first','error'); return; }
-  if(!_compTeamData?.number){ toast('Team number not set','error'); return; }
-
-  const statusEl = document.getElementById('re-status');
-  const fetchBtn = document.getElementById('fetch-btn');
-  const setStatus = (msg, color='var(--text3)') => {
-    if(statusEl) statusEl.innerHTML = `<div style="font-family:var(--mono);font-size:11px;color:${color};padding:6px 0;">${msg}</div>`;
-  };
-  if(fetchBtn){ fetchBtn.textContent = '↻ Pulling...'; fetchBtn.disabled = true; }
-  setStatus('Looking up team ' + _compTeamData.number + '...');
-
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
-
-  try {
-    // ── 1. Find team by number ──
-    const teamRes = await fetch(
-      `https://events.vex.com/api/v2/teams?number[]=${encodeURIComponent(_compTeamData.number)}&per_page=5`,
-      { headers }
-    );
-    if(teamRes.status === 401) throw new Error('Invalid token: check your RobotEvents API key');
-    if(!teamRes.ok) throw new Error(`Team lookup failed (${teamRes.status})`);
-    const teamData = await teamRes.json();
-    const team = teamData.data?.[0];
-    if(!team) throw new Error(`Team "${_compTeamData.number}" not found on RobotEvents`);
-
-    const teamId = team.id;
-    const teamName = team.team_name || team.number;
-    setStatus(`Found: ${teamName} (ID ${teamId}). Fetching all stats...`);
-
-    // ── 2. Fetch world skills rankings ──
-    const [skillsRes, rankingsRes, awardsRes, eventsRes] = await Promise.all([
-      fetch(`https://events.vex.com/api/v2/teams/${teamId}/skills?per_page=25`, { headers }),
-      fetch(`https://events.vex.com/api/v2/teams/${teamId}/rankings?per_page=50`, { headers }),
-      fetch(`https://events.vex.com/api/v2/teams/${teamId}/awards?per_page=25`, { headers }),
-      fetch(`https://events.vex.com/api/v2/teams/${teamId}/events?per_page=20`, { headers })
-    ]);
-
-    const skillsData   = skillsRes.ok   ? await skillsRes.json()   : { data: [] };
-    const rankingsData = rankingsRes.ok ? await rankingsRes.json() : { data: [] };
-    const awardsData   = awardsRes.ok   ? await awardsRes.json()   : { data: [] };
-    const eventsData   = eventsRes.ok   ? await eventsRes.json()   : { data: [] };
-
-    // ── 3. Parse skills ──
-    // skills entries: { type: 'driver'|'programming'|'combined', score, rank, ... }
-    const combinedSkill = skillsData.data?.find(s => s.type === 'combined') || skillsData.data?.[0];
-    const driverSkill   = skillsData.data?.find(s => s.type === 'driver');
-    const progSkill     = skillsData.data?.find(s => s.type === 'programming');
-    const worldSkillsRank = combinedSkill?.rank ? '#' + combinedSkill.rank : '';
-    const skillsScore     = combinedSkill?.score ?? '';
-
-    // ── 4. Parse match rankings ──
-    let wins = 0, losses = 0, ties = 0, totalScore = 0, highScore = 0, awpCount = 0, matchCount = 0;
-    let regionalRank = '';
-    (rankingsData.data || []).forEach(r => {
-      wins        += r.wins   || 0;
-      losses      += r.losses || 0;
-      ties        += r.ties   || 0;
-      awpCount    += r.wp     || 0; // WP includes AWPs
-      if(r.rank && regionalRank === '') regionalRank = '#' + r.rank;
-      // average points
-      if(r.average_points) { totalScore += r.average_points; matchCount++; }
-      if(r.max_score && r.max_score > highScore) highScore = r.max_score;
-    });
-    const avgScore = matchCount > 0 ? Math.round(totalScore / matchCount) : 0;
-
-    // ── 5. Parse upcoming events ──
-    const now = new Date();
-    const upcomingEvents = (eventsData.data || [])
-      .filter(e => new Date(e.start) > now)
-      .slice(0, 5);
-
-    // ── 6. Build updates object ──
-    const updates = {
-      worldSkillsRank,
-      regionalRank,
-      wins, losses, ties,
-      avgScore,
-      highScore: highScore || 0,
-      autonomousWinPoint: awpCount,
-      skillsScore: String(skillsScore),
-      driverScore: String(driverSkill?.score ?? ''),
-      progScore: String(progSkill?.score ?? ''),
-      totalAwards: awardsData.data?.length || 0,
-      lastPulled: new Date().toISOString(),
-      reTeamId: teamId,
-      reTeamName: teamName
-    };
-
-    // ── 7. Save to Firestore ──
-    await updateDoc(doc(db,'teams',_compTeamId), updates);
-    Object.assign(_compTeamData, updates);
-
-    // ── 8. Auto-add upcoming events not already saved ──
-    let newEventsAdded = 0;
-    if(upcomingEvents.length){
-      const existingEvSnaps = await getDocs(collection(db,'teams',_compTeamId,'events'));
-      const existingSkus = new Set(existingEvSnaps.docs.map(d => d.data().sku).filter(Boolean));
-      for(const ev of upcomingEvents){
-        if(ev.sku && existingSkus.has(ev.sku)) continue;
-        const city   = ev.location?.city   || '';
-        const region = ev.location?.region || '';
-        const loc    = [city,region].filter(Boolean).join(', ') || ev.location?.venue || '';
-        await addDoc(collection(db,'teams',_compTeamId,'events'),{
-          name: ev.name,
-          date: new Date(ev.start),
-          location: loc,
-          sku: ev.sku || '',
-          teamCount: ev.capacity || 0,
-          program: ev.program?.abbr || _compTeamData.program || 'VRC',
-          source: 'robotevents_autopull',
-          robotEventsId: ev.id,
-          addedAt: serverTimestamp()
-        });
-        newEventsAdded++;
-      }
-    }
-
-    // ── 9. Re-render ──
-    renderCompInfo();
-    if(newEventsAdded) renderCompEvents();
-
-    const summary = [
-      `World Skills: ${worldSkillsRank}`,
-      `Regional: ${regionalRank}`,
-      `Record: ${wins}W-${losses}L-${ties}T`,
-      highScore ? `High: ${highScore}` : '',
-      newEventsAdded ? `+${newEventsAdded} event${newEventsAdded!==1?'s':''} added` : ''
-    ].filter(Boolean).join(' · ');
-
-    setStatus('✓ Updated: ' + summary, 'var(--success)');
-    toast('Stats pulled from RobotEvents!', 'success');
-
-  } catch(e){
-    setStatus('✗ ' + e.message, 'var(--danger)');
-    toast('Pull failed: ' + e.message, 'error');
-  } finally {
-    if(fetchBtn){ fetchBtn.textContent = '↻ Refresh'; fetchBtn.disabled = false; }
-  }
-};
-
-// ──────────────────── LINKS TAB ────────────────────
-async function renderCompLinks(){
-  const el = document.getElementById('comp-panel-links');
-  if(!el||!_compTeamData) return;
-  const links = _compTeamData.links || [];
-
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:700;">${links.length} Link${links.length!==1?'s':''}</div>
-      <button class="btn btn-white btn-sm" onclick="openAddLinkModal()">+ Add Link</button>
-    </div>
-    ${!links.length ? `
-      <div class="empty-state">
-        ${ico('link',40)}
-        <h3>No links yet</h3>
-        <p>Add notebooks, CAD files, YouTube channels, Discord servers, anything.</p>
-      </div>` :
-      links.map((lnk,i)=>`
-        <div class="link-card">
-          <div class="link-favicon">${lnk.emoji||'🔗'}</div>
-          <div class="link-info">
-            <div class="link-title">${lnk.title}</div>
-            <div class="link-url">${lnk.url}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-shrink:0;">
-            <a href="${lnk.url}" target="_blank" class="btn btn-ghost btn-xs">Open</a>
-            ${_compTeamData?.teacherId===currentUser.uid ? `<button class="btn btn-danger btn-xs" onclick="deleteCompLink(${i})">✕</button>` : ''}
-          </div>
-        </div>`).join('')}`;
-}
-
-window.openAddLinkModal = ()=>{
-  openModal('Add Link',`
-    <div class="form-group"><label class="form-label">Title</label>
-      <input class="form-input" id="al-title2" placeholder="e.g. Engineering Notebook, CAD Files, Team Discord"></div>
-    <div class="form-group"><label class="form-label">URL</label>
-      <input class="form-input" id="al-url" placeholder="https://..."></div>
-    <div class="form-group"><label class="form-label">Emoji Icon</label>
-      <input class="form-input" id="al-emoji" placeholder="📓" maxlength="2" style="max-width:80px;font-size:20px;"></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="addCompLink()">Add Link</button>`);
-};
-
-window.addCompLink = async()=>{
-  const title = document.getElementById('al-title2')?.value.trim();
-  const url = document.getElementById('al-url')?.value.trim();
-  const emoji = document.getElementById('al-emoji')?.value.trim()||'🔗';
-  if(!title||!url){ toast('Title and URL required','error'); return; }
-  const fullUrl = url.startsWith('http') ? url : 'https://'+url;
-  const links = [...(_compTeamData.links||[]), {title, url:fullUrl, emoji}];
-  await updateDoc(doc(db,'teams',_compTeamId),{links});
-  _compTeamData.links = links;
-  closeModalDirect();
-  toast('Link added','success');
-  renderCompLinks();
-};
-
-window.deleteCompLink = async(idx)=>{
-  const links = [...(_compTeamData.links||[])];
-  links.splice(idx,1);
-  await updateDoc(doc(db,'teams',_compTeamId),{links});
-  _compTeamData.links = links;
-  renderCompLinks();
-};
-
-// ──────────────────── TASKS TAB ────────────────────
-async function renderCompTasks(){
-  const el = document.getElementById('comp-panel-tasks');
-  if(!el||!_compTeamId) return;
-  el.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading tasks...</div>';
-
-  // Cancel previous listener
-  if(_taskListener){ _taskListener(); _taskListener=null; }
-
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-size:15px;font-weight:700;">Team Tasks</div>
-      <button class="btn btn-white btn-sm" onclick="openAddTaskModal()">+ Add Task</button>
-    </div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button class="btn btn-white btn-xs" onclick="filterTasks('all')" id="tf-all">All</button>
-      <button class="btn btn-ghost btn-xs" onclick="filterTasks('open')" id="tf-open">Open</button>
-      <button class="btn btn-ghost btn-xs" onclick="filterTasks('done')" id="tf-done">Done</button>
-    </div>
-    <div id="tasks-list"></div>`;
-
-  // Real-time listener
-  const q = query(collection(db,'teams',_compTeamId,'tasks'),orderBy('createdAt','desc'));
-  _taskListener = onSnapshot(q, snaps=>{
-    window._allTasks = snaps.docs.map(d=>({id:d.id,...d.data()}));
-    filterTasks(window._taskFilter||'all');
-  });
-}
-
-window._taskFilter = 'all';
-window.filterTasks = (filter)=>{
-  window._taskFilter = filter;
-  ['all','open','done'].forEach(f=>{
-    const btn = document.getElementById('tf-'+f);
-    if(btn){ btn.className = filter===f ? 'btn btn-white btn-xs' : 'btn btn-ghost btn-xs'; }
-  });
-  const tasks = (window._allTasks||[]).filter(t=>{
-    if(filter==='open') return !t.done;
-    if(filter==='done') return t.done;
-    return true;
-  });
-  renderTasksList(tasks);
-};
-
-function renderTasksList(tasks){
-  const el = document.getElementById('tasks-list');
-  if(!el) return;
-  if(!tasks.length){
-    el.innerHTML=`<div class="empty-state">${ico('check',40)}<h3>No tasks</h3><p>Add tasks for your team to work through.</p></div>`;
-    return;
-  }
-  el.innerHTML = tasks.map(t=>`
-    <div class="todo-item ${t.done?'done':''}" id="task-${t.id}">
-      <div style="display:flex;align-items:flex-start;gap:12px;">
-        <div class="todo-check ${t.done?'checked':''}" onclick="toggleTask('${t.id}',${!t.done})">
-          ${t.done ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
-            <div class="todo-title">${t.title}</div>
-            ${t.priority==='high' ? '<span class="badge badge-danger">High</span>' : ''}
-            ${t.priority==='medium' ? '<span class="badge badge-warn">Medium</span>' : ''}
-            ${t.assignee ? `<span style="font-family:var(--mono);font-size:10px;color:var(--text3);">→ ${t.assignee}</span>` : ''}
-          </div>
-          <div class="todo-meta">
-            Added by ${t.addedBy||'Team'} · ${timeAgo(t.createdAt)}
-            ${t.dueDate ? ` · Due ${new Date(t.dueDate).toLocaleDateString()}` : ''}
-          </div>
-          ${t.description ? `<div class="todo-note">${t.description}</div>` : ''}
-          ${t.imageUrl ? `<img src="${t.imageUrl}" class="todo-img" onclick="openLightbox('${t.imageUrl}','${t.title}')">` : ''}
-          ${t.done && t.completionNote ? `
-            <div class="todo-completion">
-              <div style="font-family:var(--mono);font-size:9px;color:var(--success);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;">✓ Completed by ${t.completedBy||'Team'}</div>
-              <div style="font-size:13px;color:var(--text2);">${t.completionNote}</div>
-              ${t.completionImageUrl ? `<img src="${t.completionImageUrl}" class="todo-img" onclick="openLightbox('${t.completionImageUrl}','Completion photo')">` : ''}
-            </div>` : ''}
-        </div>
-        <div style="display:flex;gap:4px;flex-shrink:0;">
-          ${!t.done ? `<button class="btn btn-ghost btn-xs" onclick="openCompleteTaskModal('${t.id}','${t.title.replace(/'/g,"\\'")}')">Complete</button>` : ''}
-          <button class="btn btn-danger btn-xs" onclick="deleteTask('${t.id}')">✕</button>
-        </div>
-      </div>
-    </div>`).join('');
-}
-
-window.openAddTaskModal = ()=>{
-  openModal('Add Task',`
-    <div class="form-group"><label class="form-label">Task Title</label>
-      <input class="form-input" id="nt-title" placeholder="e.g. Build intake mechanism, Practice autonomous"></div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Assign to</label>
-        <input class="form-input" id="nt-assignee" placeholder="Name or leave blank"></div>
-      <div class="form-group"><label class="form-label">Priority</label>
-        <select class="form-select" id="nt-priority">
-          <option value="normal">Normal</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select></div>
-    </div>
-    <div class="form-group"><label class="form-label">Due Date (optional)</label>
-      <input class="form-input" id="nt-due" type="date"></div>
-    <div class="form-group"><label class="form-label">Description</label>
-      <textarea class="form-textarea" id="nt-desc" style="min-height:70px;" placeholder="Details, context, acceptance criteria..."></textarea></div>
-    <div class="form-group"><label class="form-label">Attach Image (optional)</label>
-      <input type="file" id="nt-img" accept="image/*" class="form-input" style="padding:6px;"></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-white btn-sm" onclick="addTask()">Add Task</button>`);
-};
-
-window.addTask = async()=>{
-  const title = document.getElementById('nt-title')?.value.trim();
-  if(!title){ toast('Task title required','error'); return; }
-  const imgFile = document.getElementById('nt-img')?.files?.[0];
-  let imageUrl = '';
-  if(imgFile){
-    imageUrl = await new Promise(resolve=>{
-      const r = new FileReader();
-      r.onload = e => resolve(e.target.result);
-      r.readAsDataURL(imgFile);
-    });
-  }
-  const dueVal = document.getElementById('nt-due')?.value;
-  await addDoc(collection(db,'teams',_compTeamId,'tasks'),{
-    title,
-    description:document.getElementById('nt-desc')?.value.trim()||'',
-    assignee:document.getElementById('nt-assignee')?.value.trim()||'',
-    priority:document.getElementById('nt-priority')?.value||'normal',
-    dueDate:dueVal||'',
-    imageUrl,
-    done:false,
-    addedBy:userProfile.displayName||'Teacher',
-    addedByUid:currentUser.uid,
-    createdAt:serverTimestamp()
-  });
-  closeModalDirect();
-  toast('Task added','success');
-};
-
-window.toggleTask = async(taskId, newDone)=>{
-  if(newDone){
-    // If marking done, open completion modal
-    openCompleteTaskModal(taskId, '');
-  } else {
-    await updateDoc(doc(db,'teams',_compTeamId,'tasks',taskId),{
-      done:false, completionNote:'', completionImageUrl:'', completedBy:''
-    });
-  }
-};
-
-window.openCompleteTaskModal = (taskId, taskTitle)=>{
-  window._completingTaskId = taskId;
-  openModal(`Complete Task${taskTitle?': '+taskTitle:''}`,`
-    <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Add a note and optional photo to document the completion.</p>
-    <div class="form-group"><label class="form-label">Completion Note</label>
-      <textarea class="form-textarea" id="ct-note" style="min-height:80px;" placeholder="What was done? Any notes for the team?"></textarea></div>
-    <div class="form-group"><label class="form-label">Attach Photo (optional)</label>
-      <input type="file" id="ct-img" accept="image/*" class="form-input" style="padding:6px;"></div>`,
-    `<button class="btn btn-ghost btn-sm" onclick="closeModalDirect()">Cancel</button>
-     <button class="btn btn-success btn-sm" onclick="completeTask()">Mark Complete ✓</button>`);
-};
-
-window.completeTask = async()=>{
-  const taskId = window._completingTaskId;
-  if(!taskId) return;
-  const note = document.getElementById('ct-note')?.value.trim()||'';
-  const imgFile = document.getElementById('ct-img')?.files?.[0];
-  let completionImageUrl = '';
-  if(imgFile){
-    completionImageUrl = await new Promise(resolve=>{
-      const r = new FileReader();
-      r.onload = e => resolve(e.target.result);
-      r.readAsDataURL(imgFile);
-    });
-  }
-  await updateDoc(doc(db,'teams',_compTeamId,'tasks',taskId),{
-    done:true, completionNote:note, completionImageUrl,
-    completedBy:userProfile.displayName||'Team',
-    completedAt:serverTimestamp()
-  });
-  closeModalDirect();
-  toast('Task completed ✓','success');
-  window._completingTaskId = null;
-};
-
-window.deleteTask = async(taskId)=>{
-  if(!confirm('Delete this task?')) return;
-  await deleteDoc(doc(db,'teams',_compTeamId,'tasks',taskId));
-};
-
 
 document.addEventListener('click', e=>{
   if(!e.target.closest('#notif-panel')&&!e.target.closest('#notif-btn')){
